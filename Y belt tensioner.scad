@@ -14,12 +14,11 @@
  */
 
 // Render quality: Minimum angle
-$fa = 3;
+$fa = 1;
 // Render quality: Minimu size
 $fs = 0.1;
 
-// cutoutAngle = 25.5;
-// #import( "thirdparty/Prusa_Y_Front.stl" );
+// Uncomment this to view/print the idler arm. My intention was that the idler arm should be gotten from the original files at Thingiverse (link above)
 // import( "thirdparty/Prusa_Y_Belt_Idler.stl" );
 
 bodyWidth = 58;
@@ -35,6 +34,7 @@ retainerBoltXOffset = 18;
 cornerHeight = 10;
 cornerLength = 5;
 
+// Construct the unit
 difference()
 {
     {
