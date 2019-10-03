@@ -18,9 +18,6 @@ $fa = 1;
 // Render quality: Minimu size
 $fs = 0.1;
 
-// Uncomment this to view/print the idler arm. My intention was that the idler arm should be gotten from the original files at Thingiverse (link above)
-// import( "thirdparty/Prusa_Y_Belt_Idler.stl" );
-
 bodyWidth = 58;
 bodyDepth = 20;
 bodyHeight = 17;
@@ -31,32 +28,141 @@ cutoutDepth = 16;
 throughHoleDiameter = 3.45;
 retainerBoltXOffset = 18;
 
-cornerHeight = 10;
+cornerHeight = 11;
 cornerLength = 5;
 
+rearShapeOffset = 4;
+
 // Construct the unit
-difference()
+mainUnit();
+
+// Construct the custom idler pulley arm
+// idlerPulleyArm();
+
+
+module mainUnit()
 {
+    difference()
     {
-        body();
-    }
-    {
-        union()
         {
-            cutout();
-            translate( [retainerBoltXOffset, (bodyDepth/2), 0] )
+            body();
+        }
+        {
+            union()
             {
-                m5Cutout();
-            }
-            translate( [(-1 * retainerBoltXOffset), (bodyDepth/2), 0] )
-            {
-                m5Cutout();
+                cutout();
+                translate( [retainerBoltXOffset, (bodyDepth/2), 0] )
+                {
+                    m5Cutout();
+                }
+                translate( [(-1 * retainerBoltXOffset), (bodyDepth/2), 0] )
+                {
+                    m5Cutout();
+                }
             }
         }
     }
 }
 
+// This is a funky mash-up of the original model to make it work with a 6mm pulley
+// The end-result should look like it was intended to be this size
+module idlerPulleyArm()
+{
+    idlerPulleyArmRear();
+    idlerPulleyArmMiddle();
+    translate( [0, 4, 0] )
+    {
+        idlerPulleyArmMiddle();
+        idlerPulleyArmFront();
+    }
+}
 
+module idlerPulleyArmMiddle()
+{
+    difference()
+    {
+        {
+            import( "thirdparty/Prusa_Y_Belt_Idler.stl" );
+        }
+        {
+            union()
+            {
+                {
+                    idlerPulleyArmFrontCutout();
+                }
+                {
+                    idlerPulleyArmRearCutout();
+                }
+            }
+        }
+    }
+}
+
+module idlerPulleyArmRear()
+{
+    difference()
+    {
+        {
+            import( "thirdparty/Prusa_Y_Belt_Idler.stl" );
+        }
+        {
+            union()
+            {
+                {
+                    idlerPulleyArmFrontCutout();
+                }
+                {
+                    idlerPulleyArmMiddleCutout();
+                }
+            }
+        }
+    }
+}
+
+module idlerPulleyArmFront()
+{
+    difference()
+    {
+        {
+            import( "thirdparty/Prusa_Y_Belt_Idler.stl" );
+        }
+        {
+            union()
+            {
+                {
+                    idlerPulleyArmRearCutout();
+                }
+                {
+                    idlerPulleyArmMiddleCutout();
+                }
+            }
+        }
+    }
+}
+    
+module idlerPulleyArmMiddleCutout()
+{
+    translate( [-25.7, -152.2, 21] )
+    {
+        cube( [20, 4, 10] );
+    }
+}
+
+module idlerPulleyArmRearCutout()
+{
+    translate( [-25.7, -173.8, 21] )
+    {
+        cube( [20, 21.6, 10] );
+    }
+}
+
+module idlerPulleyArmFrontCutout()
+{
+    translate( [-25.7, -148.2, 21] )
+    {
+        cube( [20, 10, 10] );
+    }
+}
 
 
 module cutout()
@@ -88,7 +194,7 @@ module body()
         {
             translate( [(-1 * ((bodyWidth/2) - (cornerLength))), 0, 0] )
             {
-                cube( [(bodyWidth - (cornerLength*2)), bodyDepth, bodyHeight] );
+                cube( [(bodyWidth - (cornerLength*2)), bodyDepth - rearShapeOffset, bodyHeight] );
             }
         }
         {
