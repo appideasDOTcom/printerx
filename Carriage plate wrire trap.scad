@@ -9,13 +9,13 @@ buildPlateXY = 219;
 buildPlateZ = 3.3; // A little bigger than reality to add a little tolerance
 
 throughHoleDiameter = 3.4;
-throughHoleEndOffset = 5;
+throughHoleEndOffset = 5.1;
 
 nutDepth = 2.5;
 nutDiameter = 6.6;
 boltHeadDiameter = 6;
 
-topThickness = 2;
+topThickness = 3.8;
 elbowThickness = 3;
 bottomThickness = nutDepth + 2;
 
@@ -47,8 +47,27 @@ cornerDiameter = 4;
 
 
 // simulatedCarriagePlate();
-base();
-shelf();
+union()
+{
+    {
+        base();
+        baseEndcaps();
+    }
+    {
+        difference()
+        {
+            {
+                shelf();
+            }
+            {
+                tieCutout();
+            }
+        }
+    }
+
+}
+
+
 
 
 module shelf()
@@ -56,10 +75,18 @@ module shelf()
     translate( [(pieceWidth/2) - shelfNeckWidth, elbowThickness, -1 * bottomThickness] )
     {
         cube( [shelfNeckWidth, shelfNeckLength, shelfNeckThickness] );
+
+        translate( [0, (cornerDiameter/2), shelfNeckThickness + (cornerDiameter/2)] )
+        {
+            rotate( [90, 0, 90] )
+            {
+                essCurve( d = cornerDiameter, h = shelfNeckWidth );
+            }
+        }
         
         translate( [(-1 * shelfLength) + shelfNeckWidth, shelfNeckLength, (shelfCutouEdgeDiameter/2)] )
         {
-            cutoutSupport();
+            // cutoutSupport();
             difference()
             {
                 {
@@ -83,6 +110,8 @@ module shelf()
                             }
                         }
                     }
+
+                    
                     
 
                 }
@@ -97,13 +126,60 @@ module shelf()
                             }
                         }
                     }
-                    translate( [3, -1 * (shelfCutouEdgeDiameter/2) - 0.1, (-1 * bottomThickness) + 4] )
-                    {
-                        cube( [tiedownWidth, shelfWidth + (shelfCutouEdgeDiameter) +  0.2, shelfCutouEdgeDiameter - 2] );
-                    }
+                    
                 }
             }
+
+            // This should print without supports
+            shelfEndcaps();
+
             
+
+            
+        }
+    }
+}
+
+module tieCutout()
+{
+    // "+7" on the Z brings it to the top of the shelf.
+    translate( [-1 * (shelfLength - tiedownWidth - 2.4), shelfWidth/2 - 1, (-1 * bottomThickness) + 7 - 2.5] )
+    {
+        cube( [tiedownWidth, shelfWidth + (shelfCutouEdgeDiameter) +  0.2, shelfCutouEdgeDiameter - 2] );
+    }
+}
+
+module baseEndcaps()
+{
+    translate( [-1 * (baseX/2), -1 * shelfNeckWidth, baseZ - bottomThickness - (topThickness/2)] )
+    {
+        rotate( [0, 90, 0] )
+        {
+            cylinder( d = topThickness, h = baseX );
+        }
+    }
+
+    translate( [-1 * (baseX/2), -1 * shelfNeckWidth, -1 * (bottomThickness/2)] )
+    {
+        rotate( [0, 90, 0] )
+        {
+            cylinder( d = bottomThickness, h = baseX );
+        }
+    }
+}
+
+module shelfEndcaps()
+{
+    rotate( [0, 90, 0] )
+    {
+        cylinder( d = shelfCutouEdgeDiameter, h = shelfLength );
+    }
+
+    translate( [0, shelfNeckWidth + (shelfCutouEdgeDiameter/2) - 0.5, 0] )
+    {
+        rotate( [0, 90, 0] )
+        {
+            cylinder( d = shelfCutouEdgeDiameter, h = shelfLength );
         }
     }
 }
@@ -143,10 +219,30 @@ module base()
     difference()
     {
         {
-            translate( [-1 * pieceOffsetX, -1 * pieceDepth, -1 * bottomThickness] )
+            hull()
             {
-                cube( [baseX, baseY, baseZ] );
+                {
+                    translate( [-1 * pieceOffsetX, -1 * pieceDepth, -1 * bottomThickness] )
+                    {
+                        cube( [baseX, baseY - (topThickness/2), baseZ] );
+                    }
+                }
+                {
+                    translate( [-1 * (baseX/2),  1.1, baseZ - bottomThickness - (cornerDiameter/2) + 0.1] )
+                    {
+                        rotate( [0, 90, 0] )
+                        {
+                            cylinder( d = topThickness, h = baseX);
+                        }
+                    }
+
+                    translate( [-1 * (baseX/2), -1.5, -1 * (bottomThickness) ] )
+                    {
+                        cube( [baseX, bottomThickness, bottomThickness] );
+                    }
+                }
             }
+
         }
         {
             union()
@@ -161,7 +257,7 @@ module base()
                         m3ThroughHole( height = 20 );
                     }
 
-                    translate( [0, -1 * throughHoleEndOffset, (buildPlateZ + topThickness - 1)] )
+                    translate( [0, -1 * throughHoleEndOffset, (buildPlateZ + 1)] )
                     {
                         m3Head( height = 3 );
                     }
@@ -169,6 +265,8 @@ module base()
             }
         }
     }
+
+
 }
 
 
@@ -205,4 +303,43 @@ module m3Nut()
 module m3Head( height )
 {
      cylinder( d = boltHeadDiameter, h = height, $fn = 128 );
+}
+
+module essCurve( d, h )
+{
+  xDimension = d;
+  yDimension = d;
+  zDimension = h;
+
+  difference()
+    {
+      {
+        translate( [(-1 * (xDimension / 2)), (-1 * (yDimension / 2)), 0] )
+        {
+          cube( [xDimension, yDimension, zDimension] );
+        }
+      }
+      {
+        translate( [ 0, 0, -1 ] )
+        {
+          translate( [0, (-1 * yDimension), 0] )
+          {
+            cube( [xDimension, yDimension * 2, (zDimension + 2)] );
+          }
+          translate( [(-1 * xDimension), 0, 0] )
+          {
+            cube( [xDimension, yDimension, (zDimension + 2)] );
+          }
+
+          linear_extrude( height=(zDimension + 2), twist=0, scale=[1, 1], center=false)
+          {
+            $fn=64;    //set sides to 64
+            circle(r=(xDimension / 2));
+          }
+          
+        }
+
+      }
+    
+  }
 }
