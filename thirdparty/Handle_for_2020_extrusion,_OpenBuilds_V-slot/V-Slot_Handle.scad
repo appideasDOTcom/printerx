@@ -1,13 +1,17 @@
 length = 110;
 width = 20;
-height = 40;
+height = 42;
 boltHoleDiameter = 5.5;
 boltCounterboreDiameter = 12;
-bottomThickness = 5;
+bottomThickness = 7;
 filletRadius = 5;
-$fn=200;
 
-rHandle = 2 * (width/2);
+// $fn=200; // That's not efficient
+// Much better
+$fa = 10;
+$fs = 0.8;
+
+rHandle = 2 * (width/2) + 10;
 
 module side() {
   difference() {
