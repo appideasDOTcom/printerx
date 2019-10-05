@@ -83,50 +83,186 @@ horizRailLength = 300;
 
 bottomRailLength = 80.3;
 
+topPieceHeight = 19;
+topWallWidth = 18.2;
 
-// Build it
+
+// Build things
 
 // Model of a 608 bearing for fit
 // #bearing( model= "SkateBearing" );
 
 /* Constructed components */
-// leadScrewBearingAdapter();
+
+// leadScrewBearingAdapter(); // obsolete
+
+// These are probably the things you will want to print
 // bearingSpacer();
-
-translate( [-1 * pieceDepth - 0.1, -1 * railWidth - 0.1, -0.1] )
-{
-    %rails();
-}
-bottomLeftBase();
-
+// bottomLeftBase();
 // bottomRightBase();
+// topLeftBase();
+topRightBase();
 
-// bearingUnit();
-
+// These are helpers, and not necessarily useful as stand-alone prints
 // retainerCutouts();
+// rails();
+// bearingUnit();
+// constructedUnit();
 
-/* Tests & support */
+// Tests & support
 // xIdlerTest();
 // xMotorTest();
 
 // x_end_idler();
 // x_end_motor();
 
+// Below here is module code
 
+module constructedUnit()
+{
+    translate( [-1 * pieceDepth - 0.1, -1 * railWidth - 0.1, -0.1] )
+    {
+        %rails();
+    }
 
+    color( "blue" ) bottomLeftBase();
 
+    translate( [0, -1 * horizRailLength - (railWidth * 2), 0] )
+    {
+        color( "blue" ) bottomRightBase();
+    }
 
-// translate( [0, 0, 70] )
-// {
-//     base();
-// }
+    translate( [0, 0, vertRailLength + railWidth] )
+    {
+        color( "blue" ) topLeftBase();
+    }
 
+    translate( [0, -1 * (horizRailLength + (railWidth * 2)), vertRailLength + railWidth] )
+    {
+        color( "blue" ) topRightBase();
+    }
 
-module bottomRightBase()
+}
+
+module topLeftBase()
+{
+    topToCut = railWidth - 0.9;
+
+    union()
+    {
+        {
+            translate( [0, 0, topToCut] )
+            {
+                difference()
+                {
+                    {
+                        translate( [0, 0, bottomToCut] )
+                        {
+                            rotate( [180, 0, 0] )
+                            {
+                                bottomRightBase( 0 );
+                            }
+                        }
+                    }
+                    {
+                        translate( [-79, -50, -1 * topToCut] )
+                        {
+                            cube( [80, 80, topToCut + 0.1] );
+                        }
+                    }
+                }
+            }
+        }
+        {
+            topSideBracketConnector();
+        }
+    }
+}
+
+module topRightBase()
 {
     mirror( [0, 1, 0] )
     {
-        bottomLeftBase();
+        topLeftBase();
+    }
+}
+
+module topSideBracketConnector()
+{
+    difference()
+    {
+        {
+            hull()
+            {
+                {
+                    translate( [(cornerDiameter/2), (cornerDiameter/2), -1 * (topPieceHeight + wallHeight)] )
+                    {
+                        cube( [railWidth - cornerDiameter, topWallWidth - cornerDiameter, topPieceHeight + wallHeight] );
+                    }
+                }
+                {
+                    union()
+                    {
+                        translate( [railWidth - (cornerDiameter/2), railWidth - cornerDiameter + 0.2, -1 * (topPieceHeight + wallHeight)] )
+                        {
+                            cylinder( d= cornerDiameter, h = topPieceHeight + wallHeight );
+                        }
+
+                        translate( [railWidth - (cornerDiameter), 0, -1 * (topPieceHeight + wallHeight)] )
+                        {
+                            cube( [cornerDiameter, cornerDiameter, topPieceHeight + wallHeight] );
+                        }
+
+                        translate( [-1 * (cornerDiameter * 2) + 2, cornerDiameter/2, -1 * (topPieceHeight + wallHeight)] )
+                        {
+                            cylinder( d= cornerDiameter, h = topPieceHeight + wallHeight );
+                        }
+
+                        translate( [-1 * (cornerDiameter * 2) + 6, railWidth - (cornerDiameter) + 0.2, -1 * (topPieceHeight + wallHeight)] )
+                        {
+                            cylinder( d= cornerDiameter, h = topPieceHeight + wallHeight );
+                        }
+                    }
+                }
+            }
+        }
+        {
+            union()
+            {
+                translate( [(railWidth/2), railWidth - 0.1, -1 * topThroughHoleOffset] )
+                {
+                    rotate( [90, 0, 0] )
+                    {
+                        m5TroughHole( h = railWidth );
+                        translate( [0, 0, -3.1] )
+                        {
+                            m5HeadCutout();
+                        }
+                    }
+                }
+
+                translate( [(railWidth/2), railWidth - 0.1, -1 * (topPieceHeight + wallHeight - topThroughHoleOffset)] )
+                {
+                    rotate( [90, 0, 0] )
+                    {
+                        m5TroughHole( h = railWidth );
+                        translate( [0, 0, -3.1] )
+                        {
+                            m5HeadCutout();
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+module bottomRightBase(  includeEndHoles = 1  )
+{
+    mirror( [0, 1, 0] )
+    {
+        bottomLeftBase( includeEndHoles );
     }
 }
 
@@ -177,7 +313,7 @@ module rails()
 }
 
 
-module bottomLeftBase()
+module bottomLeftBase( includeEndHoles = 1 )
 {
     difference()
     {
@@ -195,7 +331,7 @@ module bottomLeftBase()
                 {
                     rails();
                 }
-                baseThroughHoles();
+                baseThroughHoles( includeEndHoles );
 
                 translate( [-80, -50, -10 + bottomToCut] )
                 {
@@ -207,7 +343,7 @@ module bottomLeftBase()
 }
 
 
-module baseThroughHoles()
+module baseThroughHoles( includeEndHoles = 1 )
 {
     translate( [0.1, -1 * railWidth/2, pieceHeight + wallHeight - 6] )
     {
@@ -257,16 +393,19 @@ module baseThroughHoles()
         }
     }
 
-    translate( [-1 * (pieceDepth) + topThroughHoleOffset, -1 * (railWidth/2), railWidth - 0.1])
+    if( includeEndHoles == 1 )
     {
-        rotate( [0, 0, 0] )
+        translate( [-1 * (pieceDepth) + topThroughHoleOffset, -1 * (railWidth/2), railWidth - 0.1])
         {
-            m5TroughHole();
-        }
+            rotate( [0, 0, 0] )
+            {
+                m5TroughHole();
+            }
 
-        translate( [0, 0, 4] )
-        {
-            m5HeadCutout();
+            translate( [0, 0, 4] )
+            {
+                m5HeadCutout();
+            }
         }
     }
 }
@@ -491,10 +630,10 @@ module leadScrewBearingAdapter()
     }
 }
 
-module m5TroughHole()
+module m5TroughHole( h = 10 )
 {
     m5ThroughHoleDiameter = 5.6; // no press-fit for a bolt!
-    cylinder( d=m5ThroughHoleDiameter, h=10 );
+    cylinder( d=m5ThroughHoleDiameter, h=h );
 }
 
 module m5HeadCutout()
