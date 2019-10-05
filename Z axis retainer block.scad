@@ -36,15 +36,27 @@ bearingReliefDiameter = 15;
 bearingReliefInset = 1;
 /* END Bearing retainer variables */
 
+// Bearing spacer parameters
+// Bearing spacer superceded the (now obsolete) lead screw retainer
+bearingSpacerPostDiameter = 8;
+bearingSpacerPostZOffset = 1;
+bearingSpacerPostHeight = (bearingHeight - bearingSpacerPostZOffset);
+
+bearingSpacerBufferDiameter = 10.5;
+bearingSpacerBufferHeight = 2;
+
+bearingSpacerPlatformDiameter = 13;
+bearingSpacerPlatformHeight = 0;
+
 /* Linear rod retainer variables */
 linearRodCutoutDiameter = 8.2;
 linearRodCutoutDepth = 7;
 /* END Linear rod retainer variables */
 
-pieceHeight = 30; // 28 puts the bottom of the bearing cutout exactly at the rail
+pieceHeight = 30 + bearingHeight + bearingSpacerBufferHeight + bearingSpacerPlatformHeight; // 28 puts the bottom of the bearing cutout exactly at the rail
 railWidth = 20;
 
-wallThickness = (pieceHeight - railWidth);
+wallThickness = 10;
 wallHeight = 24;
 
 distanceBetweenRetainers = 17;
@@ -66,16 +78,32 @@ supportCubeDimension = 6;
 
 bottomToCut = 1;
 
+vertRailLength = 330;
+horizRailLength = 300;
+
+bottomRailLength = 80.3;
+
 
 // Build it
 
 // Model of a 608 bearing for fit
-// bearing( model= "SkateBearing" );
+// #bearing( model= "SkateBearing" );
 
 /* Constructed components */
 // leadScrewBearingAdapter();
-// bottomLeftBase();
-bottomRightBase();
+// bearingSpacer();
+
+translate( [-1 * pieceDepth - 0.1, -1 * railWidth - 0.1, -0.1] )
+{
+    %rails();
+}
+bottomLeftBase();
+
+// bottomRightBase();
+
+// bearingUnit();
+
+// retainerCutouts();
 
 /* Tests & support */
 // xIdlerTest();
@@ -84,11 +112,67 @@ bottomRightBase();
 // x_end_idler();
 // x_end_motor();
 
+
+
+
+
+// translate( [0, 0, 70] )
+// {
+//     base();
+// }
+
+
 module bottomRightBase()
 {
     mirror( [0, 1, 0] )
     {
-    bottomLeftBase();
+        bottomLeftBase();
+    }
+}
+
+module bearingUnit()
+{
+    bearing( model= "SkateBearing" );
+    bearingSpacer();
+
+    translate( [0, 0, (bearingHeight + bearingSpacerBufferHeight + bearingSpacerPlatformHeight)] )
+    {
+        bearing( model= "SkateBearing" );
+    }
+
+}
+
+module rails()
+{
+    railCutout( height = bottomRailLength );
+
+    translate( [bottomRailLength - railWidth - 0.2, 0, vertRailLength + railWidth] )
+    {
+        rotate( [0, 90, 0] )
+        {
+            railCutout( height = vertRailLength );
+        }
+    }
+
+    translate( [bottomRailLength - railWidth - 0.2, 0.1, vertRailLength - 0.2] )
+    {
+        rotate( [0, 0, -90] )
+        {
+            railCutout( height = horizRailLength );
+        }
+    }
+
+    translate( [bottomRailLength - railWidth - 0.2, -1 * (horizRailLength + railWidth), vertRailLength + railWidth] )
+    {
+        rotate( [0, 90, 0] )
+        {
+            railCutout( height = vertRailLength );
+        }
+    }
+
+    translate( [0, -1 * (horizRailLength + railWidth), 0] )
+    {
+        railCutout( height = bottomRailLength );
     }
 }
 
@@ -103,13 +187,13 @@ module bottomLeftBase()
         {
             union()
             {
-                translate( [-1 * distanceFromTower, distanceFromInside, pieceHeight - linearRodCutoutDepth] )
+                translate( [-1 * distanceFromTower, distanceFromInside, pieceHeight - linearRodCutoutDepth - bearingHeight - bearingSpacerBufferHeight - bearingSpacerPlatformHeight] )
                 {
                     retainerCutouts();
                 }
                 translate( [-1 * pieceDepth - 0.1, -1 * railWidth - 0.1, -0.1] )
                 {
-                    railCutout();
+                    rails();
                 }
                 baseThroughHoles();
 
@@ -320,15 +404,15 @@ module supportWall()
 module retainerCutouts()
 {
     bearingRetainerCutout();
-    translate( [0, distanceBetweenRetainers, 0] )
+    translate( [0, distanceBetweenRetainers, (bearingHeight + bearingSpacerBufferHeight + bearingSpacerPlatformHeight)] )
     {
         linearRodCutout();
     }
 }
 
-module railCutout()
+module railCutout( height = (pieceDepth + 0.2)  )
 {
-    cube( [pieceDepth + 0.2, railWidth + 0.2, railWidth + 0.1] );
+    cube( [height, railWidth + 0.2, (railWidth + 0.2)] );
 }
 
 module linearRodCutout()
@@ -340,11 +424,29 @@ module bearingRetainerCutout()
 {
     union()
     {
-        cylinder( d=bearingOuterDiameter, h=(bearingRetainerHeight + 0.1) );
+        cylinder( d=bearingOuterDiameter, h=((bearingRetainerHeight * 2) + bearingSpacerBufferHeight + bearingSpacerPlatformHeight + 0.1) );
         translate( [0, 0, -1 * bearingReliefInset] )
         {
             cylinder( d=bearingReliefDiameter, h=(bearingRetainerHeight + bearingReliefInset + 0.1) );
         }
+    }
+}
+
+module bearingSpacer()
+{
+    translate( [0, 0, bearingSpacerPostZOffset] )
+    {
+        cylinder( d = bearingSpacerPostDiameter, h = bearingSpacerPostHeight );
+    }
+
+    translate( [0, 0, bearingHeight] )
+    {
+        cylinder( d = bearingSpacerBufferDiameter, h = bearingSpacerBufferHeight );
+    }
+
+    translate( [0, 0, bearingHeight + bearingSpacerBufferHeight] )
+    {
+        cylinder( d = bearingSpacerPlatformDiameter, h = bearingSpacerPlatformHeight );
     }
 }
 

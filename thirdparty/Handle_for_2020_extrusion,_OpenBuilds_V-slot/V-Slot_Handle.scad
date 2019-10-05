@@ -8,8 +8,8 @@ filletRadius = 5;
 
 // $fn=200; // That's not efficient
 // Much better
-$fa = 10;
-$fs = 0.8;
+$fa = 1;
+$fs = 0.1;
 
 rHandle = 2 * (width/2) + 10;
 
