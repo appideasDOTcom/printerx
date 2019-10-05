@@ -101,13 +101,13 @@ topWallWidth = 18.2;
 // bottomLeftBase();
 // bottomRightBase();
 // topLeftBase();
-topRightBase();
+// topRightBase();
 
 // These are helpers, and not necessarily useful as stand-alone prints
 // retainerCutouts();
 // rails();
 // bearingUnit();
-// constructedUnit();
+constructedUnit();
 
 // Tests & support
 // xIdlerTest();
@@ -327,7 +327,7 @@ module bottomLeftBase( includeEndHoles = 1 )
                 {
                     retainerCutouts();
                 }
-                translate( [-1 * pieceDepth - 0.1, -1 * railWidth - 0.1, -0.1] )
+                translate( [-1 * pieceDepth - 0, -1 * railWidth - 0.1, -0.1] )
                 {
                     rails();
                 }
@@ -336,6 +336,33 @@ module bottomLeftBase( includeEndHoles = 1 )
                 translate( [-80, -50, -10 + bottomToCut] )
                 {
                     cube( [100, 100, 10] );
+                }
+
+                if( includeEndHoles == 1 )
+                {
+                    cutoutHeight = (bearingHeight * 2) + bearingSpacerBufferHeight + bearingSpacerPlatformHeight;
+                    cutoutAmount = 0.6; // Cut a few layers out of the circle when printed on edge to force a small bridge on the top and to make the requisite <layer height> flats be outside of the zero-tolerance shapes 
+
+                    translate( [-1 * distanceFromTower - (bearingOuterDiameter/2) - cutoutAmount, -1 * (bearingOuterDiameter/2) - 2.5, pieceHeight - cutoutHeight] )
+                    {
+                        cube( [5, bearingOuterDiameter/3, cutoutHeight + 0.1] );
+                        translate( [bearingOuterDiameter - 4.4 + cutoutAmount, 0, 0] )
+                        {
+                            cube( [5, bearingOuterDiameter/3, cutoutHeight + 0.1] );
+                        }
+                    }
+
+                    smallCutoutAmount = 0.4;
+
+                    translate( [-1 * distanceFromTower - (linearRodCutoutDiameter/2) - smallCutoutAmount, -1 * (bearingOuterDiameter/2) + distanceBetweenRetainers - 0.2, pieceHeight - linearRodCutoutDepth] )
+                    {
+                        cube( [2, linearRodCutoutDiameter/3, linearRodCutoutDepth + 0.1] );
+
+                        translate( [linearRodCutoutDiameter - 1.6 + smallCutoutAmount, 0, 0] )
+                        {
+                            cube( [2, linearRodCutoutDiameter/3, linearRodCutoutDepth + 0.1] );
+                        }
+                    }
                 }
             }
         }
