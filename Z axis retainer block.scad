@@ -101,13 +101,14 @@ topWallWidth = 18.2;
 // bottomLeftBase();
 // bottomRightBase();
 // topLeftBase();
-// topRightBase();
+topRightBase();
+
+// constructedUnit();
 
 // These are helpers, and not necessarily useful as stand-alone prints
 // retainerCutouts();
 // rails();
 // bearingUnit();
-constructedUnit();
 
 // Tests & support
 // xIdlerTest();
@@ -195,7 +196,7 @@ module topSideBracketConnector()
             hull()
             {
                 {
-                    translate( [(cornerDiameter/2), (cornerDiameter/2), -1 * (topPieceHeight + wallHeight)] )
+                    translate( [(cornerDiameter/2), (cornerDiameter/2), -1 * (topPieceHeight + wallHeight) + 0.1] )
                     {
                         cube( [railWidth - cornerDiameter, topWallWidth - cornerDiameter, topPieceHeight + wallHeight] );
                     }
@@ -203,22 +204,22 @@ module topSideBracketConnector()
                 {
                     union()
                     {
-                        translate( [railWidth - (cornerDiameter/2), railWidth - cornerDiameter + 0.2, -1 * (topPieceHeight + wallHeight)] )
+                        translate( [railWidth - (cornerDiameter/2), railWidth - cornerDiameter + 0.2, -1 * (topPieceHeight + wallHeight) + 0.1] )
                         {
                             cylinder( d= cornerDiameter, h = topPieceHeight + wallHeight );
                         }
 
-                        translate( [railWidth - (cornerDiameter), 0, -1 * (topPieceHeight + wallHeight)] )
+                        translate( [railWidth - (cornerDiameter), 0, -1 * (topPieceHeight + wallHeight) + 0.1] )
                         {
                             cube( [cornerDiameter, cornerDiameter, topPieceHeight + wallHeight] );
                         }
 
-                        translate( [-1 * (cornerDiameter * 2) + 2, cornerDiameter/2, -1 * (topPieceHeight + wallHeight)] )
+                        translate( [-1 * (cornerDiameter * 2) + 2, cornerDiameter/2, -1 * (topPieceHeight + wallHeight) + 0.1] )
                         {
                             cylinder( d= cornerDiameter, h = topPieceHeight + wallHeight );
                         }
 
-                        translate( [-1 * (cornerDiameter * 2) + 6, railWidth - (cornerDiameter) + 0.2, -1 * (topPieceHeight + wallHeight)] )
+                        translate( [-1 * (cornerDiameter * 2) + 6, railWidth - (cornerDiameter) + 0.2, -1 * (topPieceHeight + wallHeight) + 0.1] )
                         {
                             cylinder( d= cornerDiameter, h = topPieceHeight + wallHeight );
                         }
