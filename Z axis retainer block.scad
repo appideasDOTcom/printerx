@@ -86,6 +86,10 @@ bottomRailLength = 80.3;
 topPieceHeight = 19;
 topWallWidth = 18.2;
 
+zIdlerSpacerInnerDiameter = 5.6;
+zIdlerSpacerOuterDiameter = 10;
+zIdlerSpacerHeight = 2;
+
 
 // Build things
 
@@ -98,10 +102,11 @@ topWallWidth = 18.2;
 
 // These are probably the things you will want to print
 // bearingSpacer();
-// bottomLeftBase();
+// zAxisIdlerPulleySpacer();
+bottomLeftBase();
 // bottomRightBase();
 // topLeftBase();
-topRightBase();
+// topRightBase();
 
 // constructedUnit();
 
@@ -344,7 +349,7 @@ module bottomLeftBase( includeEndHoles = 1 )
                     cutoutHeight = (bearingHeight * 2) + bearingSpacerBufferHeight + bearingSpacerPlatformHeight;
                     cutoutAmount = 0.6; // Cut a few layers out of the circle when printed on edge to force a small bridge on the top and to make the requisite <layer height> flats be outside of the zero-tolerance shapes 
 
-                    translate( [-1 * distanceFromTower - (bearingOuterDiameter/2) - cutoutAmount, -1 * (bearingOuterDiameter/2) - 2.5, pieceHeight - cutoutHeight] )
+                    #translate( [-1 * distanceFromTower - (bearingOuterDiameter/2) - cutoutAmount, -1 * (bearingOuterDiameter/2) - 2.5, pieceHeight - cutoutHeight] )
                     {
                         cube( [5, bearingOuterDiameter/3, cutoutHeight + 0.1] );
                         translate( [bearingOuterDiameter - 4.4 + cutoutAmount, 0, 0] )
@@ -617,6 +622,24 @@ module bearingSpacer()
     }
 }
 
+module zAxisIdlerPulleySpacer()
+{
+    difference()
+    {
+        {
+            cylinder( d = zIdlerSpacerOuterDiameter, h = zIdlerSpacerHeight );
+        }
+        {
+            translate( [0, 0, -0.1] )
+            {
+                cylinder( d = zIdlerSpacerInnerDiameter, h = zIdlerSpacerHeight + 0.2 );
+            }
+        }
+    }
+}
+
+
+// obsolete
 module leadScrewBearingAdapter()
 {
     difference()
