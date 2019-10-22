@@ -30,7 +30,7 @@ supportGap = 0.1;
 /* END Lead screw retainer variables */
 
 /* Bearing retainer variables */
-bearingOuterDiameter = 22.2;
+bearingOuterDiameter = 22.2; // Don't squeeze this bearing
 bearingRetainerHeight = bearingHeight;
 bearingReliefDiameter = 15;
 bearingReliefInset = 1;
@@ -38,7 +38,7 @@ bearingReliefInset = 1;
 
 // Bearing spacer parameters
 // Bearing spacer superceded the (now obsolete) lead screw retainer
-bearingSpacerPostDiameter = 8;
+bearingSpacerPostDiameter = 8.3;
 bearingSpacerPostZOffset = 1;
 bearingSpacerPostHeight = (bearingHeight - bearingSpacerPostZOffset);
 
@@ -60,7 +60,7 @@ wallThickness = 10;
 wallHeight = 24;
 
 distanceBetweenRetainers = 17;
-distanceFromTower = 35;
+distanceFromTower = 45;
 distanceFromInside = (-1 * (railWidth/2)) + 0; // pull it to the center of the rail, then offset
 rightSideDistanceFromInside = (-1 * (railWidth/2)) - 30;
 
@@ -81,7 +81,7 @@ bottomToCut = 1;
 vertRailLength = 330;
 horizRailLength = 300;
 
-bottomRailLength = 80.3;
+bottomRailLength = 90.3;
 
 topPieceHeight = 19;
 topWallWidth = 18.2;
@@ -99,11 +99,11 @@ zIdlerSpacerHeight = 2;
 /* Constructed components */
 
 // leadScrewBearingAdapter(); // obsolete
+// zAxisIdlerPulleySpacer(); // obsolete
 
 // These are probably the things you will want to print
 // bearingSpacer();
-// zAxisIdlerPulleySpacer();
-bottomLeftBase();
+// bottomLeftBase();
 // bottomRightBase();
 // topLeftBase();
 // topRightBase();
@@ -180,7 +180,23 @@ module topLeftBase()
             }
         }
         {
-            topSideBracketConnector();
+            difference()
+            {
+                {
+                    translate( [0, 0, 0] )
+                    {
+                        topSideBracketConnector();
+                    }
+                }
+                {
+                    translate( [-10, -3, 0] )
+                    {
+                        cube( [35, 26, 1] );
+                    }
+                }
+            }
+
+
         }
     }
 }
@@ -195,6 +211,7 @@ module topRightBase()
 
 module topSideBracketConnector()
 {
+    hullOffset = bearingOuterDiameter - 22.0;
     difference()
     {
         {
@@ -209,7 +226,7 @@ module topSideBracketConnector()
                 {
                     union()
                     {
-                        translate( [railWidth - (cornerDiameter/2), railWidth - cornerDiameter + 0.2, -1 * (topPieceHeight + wallHeight) + 0.1] )
+                        translate( [railWidth - (cornerDiameter/2), railWidth - cornerDiameter + hullOffset, -1 * (topPieceHeight + wallHeight) + 0.1] )
                         {
                             cylinder( d= cornerDiameter, h = topPieceHeight + wallHeight );
                         }
@@ -224,7 +241,7 @@ module topSideBracketConnector()
                             cylinder( d= cornerDiameter, h = topPieceHeight + wallHeight );
                         }
 
-                        translate( [-1 * (cornerDiameter * 2) + 6, railWidth - (cornerDiameter) + 0.2, -1 * (topPieceHeight + wallHeight) + 0.1] )
+                        translate( [-1 * (cornerDiameter * 2) + 6, railWidth - (cornerDiameter) + hullOffset, -1 * (topPieceHeight + wallHeight) + 0.1] )
                         {
                             cylinder( d= cornerDiameter, h = topPieceHeight + wallHeight );
                         }
@@ -333,7 +350,7 @@ module bottomLeftBase( includeEndHoles = 1 )
                 {
                     retainerCutouts();
                 }
-                translate( [-1 * pieceDepth - 0, -1 * railWidth - 0.1, -0.1] )
+                #translate( [-1 * pieceDepth, -1 * railWidth - 0.1, -0.1] )
                 {
                     rails();
                 }
@@ -349,7 +366,7 @@ module bottomLeftBase( includeEndHoles = 1 )
                     cutoutHeight = (bearingHeight * 2) + bearingSpacerBufferHeight + bearingSpacerPlatformHeight;
                     cutoutAmount = 0.6; // Cut a few layers out of the circle when printed on edge to force a small bridge on the top and to make the requisite <layer height> flats be outside of the zero-tolerance shapes 
 
-                    #translate( [-1 * distanceFromTower - (bearingOuterDiameter/2) - cutoutAmount, -1 * (bearingOuterDiameter/2) - 2.5, pieceHeight - cutoutHeight] )
+                    translate( [-1 * distanceFromTower - (bearingOuterDiameter/2) - cutoutAmount, -1 * (bearingOuterDiameter/2) - 2.5, pieceHeight - cutoutHeight] )
                     {
                         cube( [5, bearingOuterDiameter/3, cutoutHeight + 0.1] );
                         translate( [bearingOuterDiameter - 4.4 + cutoutAmount, 0, 0] )
@@ -548,8 +565,6 @@ module supportWallEssCurves()
 
 module supportWall()
 {
-
-
     hull()
     {
         {
