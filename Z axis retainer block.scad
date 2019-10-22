@@ -103,7 +103,7 @@ zIdlerSpacerHeight = 2;
 
 // These are probably the things you will want to print
 // bearingSpacer();
-// bottomLeftBase();
+bottomLeftBase();
 // bottomRightBase();
 // topLeftBase();
 // topRightBase();
