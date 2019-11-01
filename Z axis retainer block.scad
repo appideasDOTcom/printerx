@@ -30,15 +30,15 @@ supportGap = 0.1;
 /* END Lead screw retainer variables */
 
 /* Bearing retainer variables */
-bearingOuterDiameter = 22.2; // Don't squeeze this bearing
+bearingOuterDiameter = 22.0; // Don't squeeze this bearing
 bearingRetainerHeight = bearingHeight;
 bearingReliefDiameter = 15;
 bearingReliefInset = 1;
 /* END Bearing retainer variables */
 
-// Bearing spacer parameters
-// Bearing spacer superceded the (now obsolete) lead screw retainer
-bearingSpacerPostDiameter = 8.3;
+// Bearing spacer (flange) parameters
+// Bearing flange superceded the (now obsolete) lead screw retainer
+bearingSpacerPostDiameter = 8.2;
 bearingSpacerPostZOffset = 1;
 bearingSpacerPostHeight = (bearingHeight - bearingSpacerPostZOffset);
 
@@ -49,8 +49,11 @@ bearingSpacerPlatformDiameter = 13;
 bearingSpacerPlatformHeight = 0;
 
 /* Linear rod retainer variables */
-linearRodCutoutDiameter = 8.2;
-linearRodCutoutDepth = 7;
+linearRodCutoutDiameter = 8.0; // It would be OK to squeeze this one a little as long as the plastic isn't compromised
+// To make it so that we can use pre-cut 362mm linear motion rods with pre-cut 350mm lead screws, sink
+//   the linear rod 6mm deeper on each side
+linearRodCutoutDepth = bearingHeight;
+linearRodCutoutAdjustedDepth = linearRodCutoutDepth + 6;
 /* END Linear rod retainer variables */
 
 pieceHeight = 30 + bearingHeight + bearingSpacerBufferHeight + bearingSpacerPlatformHeight; // 28 puts the bottom of the bearing cutout exactly at the rail
@@ -102,8 +105,8 @@ zIdlerSpacerHeight = 2;
 // zAxisIdlerPulleySpacer(); // obsolete
 
 // These are probably the things you will want to print
-// bearingSpacer();
-bottomLeftBase();
+bearingFlange();
+// bottomLeftBase();
 // bottomRightBase();
 // topLeftBase();
 // topRightBase();
@@ -211,7 +214,7 @@ module topRightBase()
 
 module topSideBracketConnector()
 {
-    hullOffset = bearingOuterDiameter - 22.0;
+    hullOffset = 22.0 - bearingOuterDiameter;
     difference()
     {
         {
@@ -292,7 +295,7 @@ module bottomRightBase(  includeEndHoles = 1  )
 module bearingUnit()
 {
     bearing( model= "SkateBearing" );
-    bearingSpacer();
+    bearingFlange();
 
     translate( [0, 0, (bearingHeight + bearingSpacerBufferHeight + bearingSpacerPlatformHeight)] )
     {
@@ -350,7 +353,7 @@ module bottomLeftBase( includeEndHoles = 1 )
                 {
                     retainerCutouts();
                 }
-                #translate( [-1 * pieceDepth, -1 * railWidth - 0.1, -0.1] )
+                translate( [-1 * pieceDepth, -1 * railWidth - 0.1, -0.1] )
                 {
                     rails();
                 }
@@ -377,13 +380,13 @@ module bottomLeftBase( includeEndHoles = 1 )
 
                     smallCutoutAmount = 0.4;
 
-                    translate( [-1 * distanceFromTower - (linearRodCutoutDiameter/2) - smallCutoutAmount, -1 * (bearingOuterDiameter/2) + distanceBetweenRetainers - 0.2, pieceHeight - linearRodCutoutDepth] )
+                    translate( [-1 * distanceFromTower - (linearRodCutoutDiameter/2) - smallCutoutAmount, -1 * (bearingOuterDiameter/2) + distanceBetweenRetainers - 0.2, pieceHeight - linearRodCutoutAdjustedDepth] )
                     {
-                        cube( [2, linearRodCutoutDiameter/3, linearRodCutoutDepth + 0.1] );
+                        cube( [2, linearRodCutoutDiameter/3, linearRodCutoutAdjustedDepth + 0.1] );
 
                         translate( [linearRodCutoutDiameter - 1.6 + smallCutoutAmount, 0, 0] )
                         {
-                            cube( [2, linearRodCutoutDiameter/3, linearRodCutoutDepth + 0.1] );
+                            cube( [2, linearRodCutoutDiameter/3, linearRodCutoutAdjustedDepth + 0.1] );
                         }
                     }
                 }
@@ -604,7 +607,13 @@ module railCutout( height = (pieceDepth + 0.2)  )
 
 module linearRodCutout()
 {
-    cylinder( d=linearRodCutoutDiameter, h=linearRodCutoutDepth + 0.1 );
+    // linearRodCutoutAdjustedDepth
+    // linearRodCutoutDepth
+    zAdjust = -1 * (linearRodCutoutAdjustedDepth - linearRodCutoutDepth);
+    translate( [0, 0, zAdjust] )
+    {
+        cylinder( d=linearRodCutoutDiameter, h=linearRodCutoutAdjustedDepth + 0.1 );
+    }
 }
 
 module bearingRetainerCutout()
@@ -619,22 +628,54 @@ module bearingRetainerCutout()
     }
 }
 
-module bearingSpacer()
+module bearingFlange()
 {
-    translate( [0, 0, bearingSpacerPostZOffset] )
+    flangeEndShapeHeight = 1.6;
+
+    difference()
     {
-        cylinder( d = bearingSpacerPostDiameter, h = bearingSpacerPostHeight );
+        {
+            union()
+            {
+                hull()
+                {
+                    {
+                        translate( [0, 0, bearingSpacerPostZOffset + flangeEndShapeHeight] )
+                        {
+                            cylinder( d = bearingSpacerPostDiameter, h = bearingSpacerPostHeight - flangeEndShapeHeight );
+                        }
+                    }
+                    {
+                        translate( [0, 0, bearingSpacerPostZOffset + (bearingSpacerPostDiameter/2) ] )
+                        {
+                            sphere( d = bearingSpacerPostDiameter );
+                        }
+                    }
+                }
+
+
+                translate( [0, 0, bearingHeight] )
+                {
+                    cylinder( d = bearingSpacerBufferDiameter, h = bearingSpacerBufferHeight );
+                }
+
+                translate( [0, 0, bearingHeight + bearingSpacerBufferHeight] )
+                {
+                    cylinder( d = bearingSpacerPlatformDiameter, h = bearingSpacerPlatformHeight );
+                }
+            }
+        }
+        {
+
+            translate( [-5, -5, (bearingHeight + bearingSpacerBufferHeight)] )
+            {
+                cube( [10, 10, 5] );
+            }
+
+        }
     }
 
-    translate( [0, 0, bearingHeight] )
-    {
-        cylinder( d = bearingSpacerBufferDiameter, h = bearingSpacerBufferHeight );
-    }
 
-    translate( [0, 0, bearingHeight + bearingSpacerBufferHeight] )
-    {
-        cylinder( d = bearingSpacerPlatformDiameter, h = bearingSpacerPlatformHeight );
-    }
 }
 
 module zAxisIdlerPulleySpacer()

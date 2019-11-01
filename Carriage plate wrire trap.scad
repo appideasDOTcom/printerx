@@ -72,7 +72,7 @@ union()
 
 module shelf()
 {
-    translate( [(pieceWidth/2) - shelfNeckWidth, elbowThickness, -1 * bottomThickness] )
+    translate( [-1 * (pieceWidth/2), elbowThickness, -1 * bottomThickness] )
     {
         cube( [shelfNeckWidth, shelfNeckLength, shelfNeckThickness] );
 
@@ -84,58 +84,61 @@ module shelf()
             }
         }
         
-        translate( [(-1 * shelfLength) + shelfNeckWidth, shelfNeckLength, (shelfCutouEdgeDiameter/2)] )
+        rotate( [0, 0, 180] )
         {
-            // cutoutSupport();
-            difference()
+            translate( [(-1 * shelfLength), -1 * (shelfNeckWidth + shelfNeckLength + (cornerDiameter/2) + 1), (shelfCutouEdgeDiameter/2)] )
             {
+                // cutoutSupport();
+                difference()
                 {
-                    hull()
                     {
+                        hull()
                         {
-
-                        }
-                        {
-                            rotate( [0, 90, 0] )
                             {
-                                cylinder( d = shelfCutouEdgeDiameter, h = shelfLength );
-                            }
 
-                            translate( [0, shelfWidth, 0] )
+                            }
                             {
                                 rotate( [0, 90, 0] )
                                 {
                                     cylinder( d = shelfCutouEdgeDiameter, h = shelfLength );
                                 }
+
+                                translate( [0, shelfWidth, 0] )
+                                {
+                                    rotate( [0, 90, 0] )
+                                    {
+                                        cylinder( d = shelfCutouEdgeDiameter, h = shelfLength );
+                                    }
+                                }
                             }
                         }
+
+                        
+                        
+
                     }
-
-                    
-                    
-
-                }
-                {
-                    translate( [-0.1, shelfWidth/2 + 0.5, 4.5 ] )
                     {
-                        scale( [1, 1.4, 1.05] )
+                        translate( [-0.1, shelfWidth/2 + 0.5, 4.5 ] )
                         {
-                            rotate( [0, 90, 0] )
+                            scale( [1, 1.4, 1.05] )
                             {
-                                cylinder( d = shelfWidth/1.3,  h = shelfLength + 0.2 );
+                                rotate( [0, 90, 0] )
+                                {
+                                    cylinder( d = shelfWidth/1.3,  h = shelfLength + 0.2 );
+                                }
                             }
                         }
+                        
                     }
-                    
                 }
+
+                // This should print without supports
+                shelfEndcaps();
+
+                
+
+                
             }
-
-            // This should print without supports
-            shelfEndcaps();
-
-            
-
-            
         }
     }
 }
@@ -143,7 +146,7 @@ module shelf()
 module tieCutout()
 {
     // "+7" on the Z brings it to the top of the shelf.
-    translate( [-1 * (shelfLength - tiedownWidth - 2.4), shelfWidth/2 - 1, (-1 * bottomThickness) + 7 - 2.5] )
+    translate( [1 * (shelfLength - (2 * tiedownWidth) - 3), shelfWidth/2 - 1, (-1 * bottomThickness) + 7 - 4.0] )
     {
         cube( [tiedownWidth, shelfWidth + (shelfCutouEdgeDiameter) +  0.2, shelfCutouEdgeDiameter - 2] );
     }
@@ -247,7 +250,9 @@ module base()
         {
             union()
             {
-                    translate( [0, -1 * throughHoleEndOffset, (-1 * nutDepth) - 2.1] )
+                m3HeadDepth = 2.8;
+
+                    translate( [0, -1 * throughHoleEndOffset, (shelfNeckThickness + 0.1) - nutDepth] )
                     {
                         m3Nut();
                     }
@@ -257,7 +262,8 @@ module base()
                         m3ThroughHole( height = 20 );
                     }
 
-                    translate( [0, -1 * throughHoleEndOffset, (buildPlateZ + 1)] )
+
+                    translate( [0, -1 * throughHoleEndOffset, -7.5 + m3HeadDepth ] )
                     {
                         m3Head( height = 3 );
                     }

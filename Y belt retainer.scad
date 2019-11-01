@@ -1,16 +1,14 @@
 /**
  * Modified a part from this: https://www.thingiverse.com/thing:2140441 (NOTE: This URL lists a "CC share-alike license")
  *
- * I needed to add 6mm of additional clearance to the Y carriage to clear the printer's custom towers.
- * I added 8mm so that I could use common M3x20mm bolts. This pushes the belt retainer 8mm away from the carriage bed to compensate for the raised bed.
- * I printed in PETG, but ABS will probably be OK too. I do not recommend PLA for this applciation.
+ * I needed to add clearance to the Y carriage to clear the printer's custom towers.
  * 
  **/ 
 
 $fa = 1;
 $fs = 0.1;
 
-extraHeight = 8;
+extraHeight = 6;
 
 pieceWidth = 55;
 pieceHeight = 16;

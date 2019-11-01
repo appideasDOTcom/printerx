@@ -6,5 +6,5 @@ $fa = 1;
 $fs = 0.1;
 /* END Render quality variables */
 
-x_end_idler();
-// x_end_motor();
+// x_end_idler();
+x_end_motor();
