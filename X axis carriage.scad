@@ -18,10 +18,16 @@ supportWidth = 42;
 supportHeight = 42;
 cornerDiameter = 4;
 
+integratedSupportHeight = 10;
+
 nemaHoleOffset = 5.5;
 
-spacerPlate();
-// xCarriage();
+translate( [0, -0.5, yOffset + 0.1] )
+{
+    integratedSpacerPlate();
+}
+xCarriage();
+//spacerPlate();
 
 module xCarriage()
 {
@@ -31,27 +37,84 @@ module xCarriage()
             import( "thirdParty/X-Carriage-mod.stl" );
         }
         {
-            translate( [-1 * (distanceBetweenThroughHoles/2), yOffset, -1] )
+            union()
             {
-                m3ThroughHole();
+                translate( [-1 * (distanceBetweenThroughHoles/2), yOffset, -1] )
+                {
+                    m3ThroughHole();
 
-                translate( [0, 0, 5.7] )
-                {
-                    m3HeadCutout();
+                    translate( [0, 0, 5.7] )
+                    {
+                        m3HeadCutout();
+                    }
                 }
-            }
-            translate( [(distanceBetweenThroughHoles/2), yOffset, -1] )
-            {
-                m3ThroughHole();
-                translate( [0, 0, 5.7] )
+                translate( [(distanceBetweenThroughHoles/2), yOffset, -1] )
                 {
-                    m3HeadCutout();
+                    m3ThroughHole();
+                    translate( [0, 0, 5.7] )
+                    {
+                        m3HeadCutout();
+                    }
                 }
             }
         }
     }
 }
 
+module integratedSpacerPlate()
+{
+    difference()
+    {
+        {
+            translate( [-1 * (supportWidth/2), 5.25, -1 * supportDepth] )
+            {
+                hull()
+                {
+                    {
+                        translate( [(cornerDiameter/2), (cornerDiameter/2), 0] )
+                        {
+                            cube( [supportWidth - cornerDiameter, integratedSupportHeight - cornerDiameter, supportDepth] );
+                        }
+                    }
+                    {
+                        union()
+                        {
+                            translate( [(cornerDiameter/2), (cornerDiameter/2), 0] )
+                            {
+                                cylinder( d = cornerDiameter, h = supportDepth);
+                            }
+
+                            translate( [(cornerDiameter/2), integratedSupportHeight - (cornerDiameter/2), 0] )
+                            {
+                                cylinder( d = cornerDiameter, h = supportDepth);
+                            }
+
+                            translate( [supportWidth - (cornerDiameter/2), (cornerDiameter/2), 0] )
+                            {
+                                cylinder( d = cornerDiameter, h = supportDepth);
+                            }
+
+                            translate( [supportWidth - (cornerDiameter/2), integratedSupportHeight - (cornerDiameter/2), 0] )
+                            {
+                                cylinder( d = cornerDiameter, h = supportDepth);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        {
+            translate( [-1 * (distanceBetweenThroughHoles/2), 5 + nemaHoleOffset, -10] )
+            {
+                m3ThroughHole();
+            }
+            translate( [(distanceBetweenThroughHoles/2), 5 + nemaHoleOffset, -10] )
+            {
+                m3ThroughHole();
+            }
+        }
+    }
+}
 
 
 module spacerPlate()

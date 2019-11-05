@@ -89,6 +89,9 @@ bottomRailLength = 90.3;
 topPieceHeight = 19;
 topWallWidth = 18.2;
 
+topBearingTolerance = 0.2; // Add a little tolerance on the top bearing traps due to printing orientation differences
+topLineraRodTolerance = 0.1; // Add a little tolerance on the top linear rod traps due to printing orientation differences
+
 zIdlerSpacerInnerDiameter = 5.6;
 zIdlerSpacerOuterDiameter = 10;
 zIdlerSpacerHeight = 2;
@@ -105,8 +108,8 @@ zIdlerSpacerHeight = 2;
 // zAxisIdlerPulleySpacer(); // obsolete
 
 // These are probably the things you will want to print
-bearingFlange();
-// bottomLeftBase();
+// bearingFlange();
+bottomLeftBase();
 // bottomRightBase();
 // topLeftBase();
 // topRightBase();
@@ -351,7 +354,7 @@ module bottomLeftBase( includeEndHoles = 1 )
             {
                 translate( [-1 * distanceFromTower, distanceFromInside, pieceHeight - linearRodCutoutDepth - bearingHeight - bearingSpacerBufferHeight - bearingSpacerPlatformHeight] )
                 {
-                    retainerCutouts();
+                    retainerCutouts( includeEndHoles );
                 }
                 translate( [-1 * pieceDepth, -1 * railWidth - 0.1, -0.1] )
                 {
@@ -591,12 +594,12 @@ module supportWall()
 
 }
 
-module retainerCutouts()
+module retainerCutouts( isBottom = 0 )
 {
-    bearingRetainerCutout();
+    bearingRetainerCutout( isBottom );
     translate( [0, distanceBetweenRetainers, (bearingHeight + bearingSpacerBufferHeight + bearingSpacerPlatformHeight)] )
     {
-        linearRodCutout();
+        linearRodCutout( isBottom );
     }
 }
 
@@ -605,22 +608,37 @@ module railCutout( height = (pieceDepth + 0.2)  )
     cube( [height, railWidth + 0.2, (railWidth + 0.2)] );
 }
 
-module linearRodCutout()
+module linearRodCutout( isBottom = 0 )
 {
     // linearRodCutoutAdjustedDepth
     // linearRodCutoutDepth
     zAdjust = -1 * (linearRodCutoutAdjustedDepth - linearRodCutoutDepth);
     translate( [0, 0, zAdjust] )
     {
-        cylinder( d=linearRodCutoutDiameter, h=linearRodCutoutAdjustedDepth + 0.1 );
+        if( isBottom )
+        {
+            cylinder( d=linearRodCutoutDiameter, h=linearRodCutoutAdjustedDepth + 0.1 );
+        }
+        else
+        {
+            cylinder( d=linearRodCutoutDiameter + topLineraRodTolerance, h=linearRodCutoutAdjustedDepth + 0.1 );
+        }
     }
 }
 
-module bearingRetainerCutout()
+module bearingRetainerCutout( isBottom = 0 )
 {
     union()
     {
-        cylinder( d=bearingOuterDiameter, h=((bearingRetainerHeight * 2) + bearingSpacerBufferHeight + bearingSpacerPlatformHeight + 0.1) );
+        if( isBottom == 1 )
+        {
+            cylinder( d=bearingOuterDiameter, h=((bearingRetainerHeight * 2) + bearingSpacerBufferHeight + bearingSpacerPlatformHeight + 0.1) );
+        }
+        else
+        {
+            cylinder( d=bearingOuterDiameter + topBearingTolerance, h=((bearingRetainerHeight * 2) + bearingSpacerBufferHeight + bearingSpacerPlatformHeight + 0.1) );
+        }
+
         translate( [0, 0, -1 * bearingReliefInset] )
         {
             cylinder( d=bearingReliefDiameter, h=(bearingRetainerHeight + bearingReliefInset + 0.1) );

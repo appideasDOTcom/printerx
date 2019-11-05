@@ -18,9 +18,61 @@ m5HeadDiameter = 10;
 
 motorShaftCutoutDiameter = 25;
 
+wallthickness = 3;
 
-baseplate();
-extension();
+// baseplate();
+// extension();
+// sideSupport();
+
+module sideSupport()
+{
+    union()
+    {
+        {
+            hull()
+            {
+                {
+                    // cube( [wallthickness, wallthickness, pieceThickness] );
+                }
+                {
+                    union()
+                    {
+                        translate( [pieceWidth - wallthickness, -1 * wallthickness, 0] )
+                        {
+                            cube( [wallthickness, wallthickness, pieceThickness] );
+                        }
+
+                        translate( [-1 * (extraLength), -1 * wallthickness, 0] )
+                        {
+                            cube( [wallthickness, wallthickness, pieceThickness] );
+                        }
+
+                        translate( [-1 * (extraLength), -1 * wallthickness, extrusionHeight + pieceThickness] )
+                        {
+                            cube( [wallthickness, wallthickness, pieceThickness] );
+                        }
+
+                        translate( [-1 * (extraLength) + neckWidth - (cornerDiameter/2), 0, extrusionHeight + pieceThickness + (cornerDiameter/2)] )
+                        {
+                            rotate( [90, 0, 0] )
+                            {
+                                cylinder( d = cornerDiameter, h = wallthickness );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        {
+            translate( [-1 * (extraLength + extrusionHeight), -1 * wallthickness, extrusionHeight + pieceThickness] )
+            {
+                cube( [extrusionHeight, wallthickness, pieceThickness] );
+            }
+        }
+    }
+
+
+}
 
 
 module extension()
@@ -156,9 +208,13 @@ module baseplate()
                 {
                     union()
                     {
-                        translate( [pieceWidth - (cornerDiameter/2), (cornerDiameter/2), 0] )
+                        // #translate( [pieceWidth - (cornerDiameter/2), (cornerDiameter/2), 0] )
+                        // {
+                        //     cylinder( d = cornerDiameter, h = pieceThickness );
+                        // }
+                        translate( [pieceWidth - cornerDiameter, 0, 0] )
                         {
-                            cylinder( d = cornerDiameter, h = pieceThickness );
+                            cube( [cornerDiameter, cornerDiameter, pieceThickness] );
                         }
                         translate( [pieceWidth - (cornerDiameter/2), pieceWidth - (cornerDiameter/2), 0] )
                         {
