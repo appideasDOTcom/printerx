@@ -262,7 +262,7 @@ module topSideBracketConnector()
                 {
                     rotate( [90, 0, 0] )
                     {
-                        m5TroughHole( h = railWidth );
+                        m5ThroughHole( h = railWidth );
                         translate( [0, 0, -3.1] )
                         {
                             m5HeadCutout();
@@ -274,7 +274,7 @@ module topSideBracketConnector()
                 {
                     rotate( [90, 0, 0] )
                     {
-                        m5TroughHole( h = railWidth );
+                        m5ThroughHole( h = railWidth );
                         translate( [0, 0, -3.1] )
                         {
                             m5HeadCutout();
@@ -405,7 +405,7 @@ module baseThroughHoles( includeEndHoles = 1 )
     {
         rotate( [0, -90, 0] )
         {
-            m5TroughHole();
+            m5ThroughHole();
 
             translate( [0, 0, 4] )
             {
@@ -428,7 +428,7 @@ module baseThroughHoles( includeEndHoles = 1 )
     {
         rotate( [90, 0, 0] )
         {
-            m5TroughHole();
+            m5ThroughHole();
         }
     }
 
@@ -445,7 +445,7 @@ module baseThroughHoles( includeEndHoles = 1 )
     {
         rotate( [90, 0, 0] )
         {
-            m5TroughHole();
+            m5ThroughHole();
         }
     }
 
@@ -455,7 +455,7 @@ module baseThroughHoles( includeEndHoles = 1 )
         {
             rotate( [0, 0, 0] )
             {
-                m5TroughHole();
+                m5ThroughHole();
             }
 
             translate( [0, 0, 4] )
@@ -755,7 +755,7 @@ module leadScrewBearingAdapter()
     }
 }
 
-module m5TroughHole( h = 10 )
+module m5ThroughHole( h = 10 )
 {
     m5ThroughHoleDiameter = 5.6; // no press-fit for a bolt!
     cylinder( d=m5ThroughHoleDiameter, h=h );

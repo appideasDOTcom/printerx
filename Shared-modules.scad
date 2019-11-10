@@ -54,14 +54,14 @@ module m5Nut(  height = 3.9  )
     
 }
 
-module m5TroughHole( height = 10 )
+module m5ThroughHole( height = 10 )
 {
     cylinder( d = 5.6, h = height );
 }
 
 module m4Head( height = 3.9 )
 {
-    cylinder( h = height, d = 7.2 );
+    cylinder( h = height, d = 7.4 );
 }
 
 module m4Nut( height = 3.0 )
@@ -72,5 +72,23 @@ module m4Nut( height = 3.0 )
 module m4ThroughHole( height = 20 )
 {
     cylinder( d = 4.6, h=height, center=false );
+}
+
+module frameProfile( axis = "x", length = 20 )
+{
+	profileSize = 20;
+
+	if( axis == "x" )
+	{
+		cube( [length, profileSize, profileSize] );
+	}
+	else if( axis == "y" )
+	{
+		cube( [profileSize, length, profileSize] );
+	}
+	else if( axis == "z" )
+	{
+		cube( [profileSize, profileSize, length] );
+	}
 }
 
