@@ -109,11 +109,12 @@ zIdlerSpacerHeight = 2;
 
 // These are probably the things you will want to print
 // bearingFlange();
-bottomLeftBase();
+// bottomLeftBase();
 // bottomRightBase();
 // topLeftBase();
 // topRightBase();
 
+// This has been made obsolete with the printerx construction.scad file
 // constructedUnit();
 
 // These are helpers, and not necessarily useful as stand-alone prints
