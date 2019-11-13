@@ -5,6 +5,7 @@
 
 use <Shared-modules.scad>
 use <printerx construction.scad>
+use <Frame foot mount.scad>
 
 // Render quality settings
 $fa = 5;
@@ -41,7 +42,11 @@ if( renderFrame )
 {
     // color( "black" )
     {
-        %bottomFrame();
         %topFrame();
+        %bottomFrame();
+        %zAxisMountPieces();
+        %mountsInContext();
+        %zAxisFrameBraces();
+        // %yAxisMountPieces();
     }
 }

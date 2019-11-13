@@ -16,24 +16,28 @@ filamentBodyWidth = 40;
 filamentRimWidth = 4;
 filamentRimDiameter = (filamentBodyDiameter - (filamentRimWidth * 2));
 
-difference()
+// filamentGuide();
+
+module filamentGuide()
 {
+    difference()
     {
-        union()
         {
-            filamentBase();
-            filamentNeck();
-            filamentBody();
+            union()
+            {
+                filamentBase();
+                filamentNeck();
+                filamentBody();
+            }
+        }
+        {
+            filamentBaseCutout();
+            filamentThroughHoles();
+            // TODO: M5 through-holes
+
         }
     }
-    {
-        filamentBaseCutout();
-        filamentThroughHoles();
-        // TODO: M5 through-holes
-
-    }
 }
-
 
 module filamentBody()
 {

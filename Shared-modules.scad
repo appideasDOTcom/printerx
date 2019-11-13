@@ -69,7 +69,17 @@ module m4Nut( height = 3.0 )
     cylinder( h = height, d = 8.2, $fn=6 );
 }
 
+module m4Nut_sink( height = 3.3 )
+{
+    cylinder( h = height, d = 8.2, $fn=6 );
+}
+
 module m4ThroughHole( height = 20 )
+{
+    cylinder( d = 4.6, h=height, center=false );
+}
+
+module m4ThroughHole_duplicate( height = 20 )
 {
     cylinder( d = 4.6, h=height, center=false );
 }

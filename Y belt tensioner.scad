@@ -34,7 +34,7 @@ cornerLength = 5;
 rearShapeOffset = 4;
 
 // Construct the unit
-mainUnit();
+// mainUnit();
 
 // Construct the custom idler pulley arm
 // idlerPulleyArm();

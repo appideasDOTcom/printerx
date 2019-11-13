@@ -4,30 +4,35 @@ $fs = 0.1;
 extraHeight = 3;
 extraWidth = 2;
 
-difference()
+// sk8Bracket();
+
+module sk8Bracket()
 {
+    difference()
     {
-        union()
-        {
-            import( "thirdparty/rod_holder_sk8.STL" );
-            extraTop();
-            extraSide();
-        }
-    }
-    {
-        translate( [10.9, 29.65, 7] )
         {
             union()
             {
-                rotate( [0, 90, 0] )
-                {
-                    m4Nut();
-                }
-                translate( [14.3, 0, 0] )
+                import( "thirdparty/rod_holder_sk8.STL" );
+                extraTop();
+                extraSide();
+            }
+        }
+        {
+            translate( [10.9, 29.65, 7] )
+            {
+                union()
                 {
                     rotate( [0, 90, 0] )
                     {
-                        m4Head();
+                        m4Nut();
+                    }
+                    translate( [14.3, 0, 0] )
+                    {
+                        rotate( [0, 90, 0] )
+                        {
+                            m4Head();
+                        }
                     }
                 }
             }
