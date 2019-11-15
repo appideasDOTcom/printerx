@@ -102,3 +102,13 @@ module frameProfile( axis = "x", length = 20 )
 	}
 }
 
+module m3ThroughHole( height = 20 )
+{
+    cylinder( d = 3.6, h=height, center=false );
+}
+
+module m3Nut( height = 2.4 )
+{
+    cylinder( h = height, d = 6.5, $fn=6 );
+}
+
