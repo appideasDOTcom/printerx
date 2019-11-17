@@ -64,6 +64,11 @@ module m4Head( height = 3.9 )
     cylinder( h = height, d = 7.4 );
 }
 
+module m4Head_duplicate( height = 3.9 )
+{
+    cylinder( h = height, d = 7.4 );
+}
+
 module m4Nut( height = 3.0 )
 {
     cylinder( h = height, d = 8.2, $fn=6 );
