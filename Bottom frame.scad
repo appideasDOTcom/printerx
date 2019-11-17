@@ -368,10 +368,18 @@ module tftFrameMount()
                 rotate( [90, 0, 0] )
                 {
                     m5ThroughHole();
+                    translate( [0, 0, 4] )
+                    {
+                        m5Head();
+                    }
 
                     translate( [bftm_facePlateXDimension - profileSize, 0, 0] )
                     {
                         m5ThroughHole();
+                        translate( [0, 0, 4] )
+                        {
+                            m5Head();
+                        }
                     }
                 }
             }
@@ -411,10 +419,6 @@ module tftFaceplate()
         }
     }
 }
-
-// bftm_knobCutoutXZDimension = 12;
-// bftm_knobCutoutXOffset = 2.5;
-// bftm_knobCutoutZOffset = 20.85;
 
 module tftMountControlCutouts()
 {
@@ -969,6 +973,7 @@ module controllerFanMountCutouts()
 {
     translate( [-1 * bfc_fanXDimension, bfc_platformYDimension - bfc_fanYZDimension - bfc_yOutsideBuffer - 7, profileSize +  ((zAxisProfileLength - bfc_fanYZDimension)/2) + bfc_PlatformBottomBuffer ] )
     {
+        // The dimensions of a real fan for fit
         // %cube( [bfc_fanXDimension, bfc_fanYZDimension, bfc_fanYZDimension] );
 
         translate( [-2, (bfc_fanYZDimension/2), (bfc_fanYZDimension/2)] )
