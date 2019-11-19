@@ -67,12 +67,60 @@ bfps_mountBlockHeight = zAxisProfileLength - (bfps_mountBlockHeightOffset * 2);
 bfps_mountBlockWidth = 25;
 bfps_mountBlockDepth = profileSize + bfps_xInsideBuffer;
 
+
+
 renderFrame = true;
 
 controllerMount();
 psuMount();
 piMount();
 tftMount();
+coverPlates();
+
+// bfcp = Bottom Frame Cover Plate(s)
+bfcp_totalXDimension = xAxisProfileLength;
+bfcp_totalYDimension = yAxisProfileLength - (profileSize * 2);
+
+bfcp_plateXDimension = bfcp_totalXDimension/2 - 0.1;
+bfcp_plateYDimension = bfcp_totalYDimension/2 - 0.1;
+bfcp_plateZDimension = bf_wallThickness;
+
+echo( bfcp_plateXDimension );
+echo( bfcp_plateYDimension );
+
+// individual 3D printed pieces for the bottom frame cover.
+module coverPlates()
+{
+    translate( [profileSize, profileSize, zAxisProfileLength + profileSize] )
+    {
+        frontLeftCoverPlate();
+
+        translate( [xAxisProfileLength - bfcp_plateXDimension, 0, 0] )
+        {
+            frontRightCoverPlate();
+        }
+
+        translate( [0, yAxisProfileLength - bfcp_plateYDimension - (profileSize * 2), 0] )
+        {
+            rearLeftCoverPlate();
+        }
+    }
+}
+
+module frontLeftCoverPlate()
+{
+    #cube( [bfcp_plateXDimension, bfcp_plateYDimension, bfcp_plateZDimension] );
+}
+
+module frontRightCoverPlate()
+{
+    #cube( [bfcp_plateXDimension, bfcp_plateYDimension, bfcp_plateZDimension] );
+}
+
+module rearLeftCoverPlate()
+{
+    #cube( [bfcp_plateXDimension, bfcp_plateYDimension, bfcp_plateZDimension] );
+}
 
 module controllerMount()
 {
