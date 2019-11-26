@@ -8,8 +8,8 @@ include <printerx construction.scad>
 use <Frame foot mount.scad>
 
 // Render quality settings
-$fa = 5;
-$fs = 0.4;
+$fa = 1;
+$fs = 0.1;
 
 // bf = Bottom Frame
 bf_wallThickness = 3;
@@ -65,61 +65,607 @@ bfps_yBoltDistanceFromBottom = 12.5;
 bfps_mountBlockHeightOffset = 2;
 bfps_mountBlockHeight = zAxisProfileLength - (bfps_mountBlockHeightOffset * 2);
 bfps_mountBlockWidth = 25;
-bfps_mountBlockDepth = profileSize + bfps_xInsideBuffer;
+bfps_mountBlockDepth = profileSize + bfps_xInsideBuffer - 4;
 
+renderFrame = false;
 
+// rightPanel();
+// leftPanel();
+// frontPanel();
+backPanel();
+// psuMountBlock();
+// powerSwitchCutout();
+// psuMount(); // obsolete
+// controllerMount();
+// piMount();
+// tftMount();
+// coverPlate();
+// TODO: 1. Wire entry hole
+//       2. Y axis motor cutout, cutoutut for Y axis belt
+//       3. M5 through holes w/ heads
+//       4. Pi fan mount
+//       5. Remake side panels in wood
+//       6. Source wood for panels
 
-renderFrame = true;
-
-controllerMount();
-psuMount();
-piMount();
-tftMount();
-coverPlates();
-
-// bfcp = Bottom Frame Cover Plate(s)
-bfcp_totalXDimension = xAxisProfileLength;
+// bfcp = Bottom Frame Cover Plate
+bfcp_totalXDimension = xAxisProfileLength + (profileSize * 2);
 bfcp_totalYDimension = yAxisProfileLength - (profileSize * 2);
 
-bfcp_plateXDimension = bfcp_totalXDimension/2 - 0.1;
-bfcp_plateYDimension = bfcp_totalYDimension/2 - 0.1;
-bfcp_plateZDimension = bf_wallThickness;
+bfcp_plateZDimension = 12.8; // 0.5" = 12.7mm
+bfcp_plateZOffset = bfcp_plateZDimension - 3;
 
-echo( bfcp_plateXDimension );
-echo( bfcp_plateYDimension );
+bfcp_plateWingWidth = 60;
 
-// individual 3D printed pieces for the bottom frame cover.
-module coverPlates()
+// bffp = Bottom Frame Face Plates (faceplates and coverplates are the same thing - named at different times)
+bffp_thickness = 12.9;
+bffp_mountThickness = 3;
+
+// bfpw = Bottom Frame Power Switch
+bfpw_faceHeight = 58.7;
+bfpw_faceWidth = 30;
+bfpw_faceCenterWidth = 49.7;
+bfpw_faceDepth = 2.6;
+bfpw_cornerDiameter = 2;
+bfpw_distanceBetweenBolts = 40;
+
+bfpw_insertWidth = 30.4;
+bfpw_insertHeight = 49;
+
+// powerSwitchTest();
+
+module powerSwitchTest()
 {
-    translate( [profileSize, profileSize, zAxisProfileLength + profileSize] )
+    difference()
     {
-        frontLeftCoverPlate();
-
-        translate( [xAxisProfileLength - bfcp_plateXDimension, 0, 0] )
         {
-            frontRightCoverPlate();
+            translate( [-13, 0, -3] )
+            {
+                cube( [bfpw_faceCenterWidth + 6, 6, bfpw_faceHeight + 6] );
+            }
         }
-
-        translate( [0, yAxisProfileLength - bfcp_plateYDimension - (profileSize * 2), 0] )
         {
-            rearLeftCoverPlate();
+            powerSwitchCutout();
+        }
+    }
+
+}
+
+module powerSwitchCutout()
+{
+    union()
+    {
+        powerSwitchCutoutFace();
+        powerSwitchCutoutBack();
+        powerSwitchThroughHoles();
+    }
+}
+
+module powerSwitchThroughHoles()
+{
+    rotate( [90, 0, 0] )
+    {
+        translate( [-1 * ((bfpw_faceCenterWidth - bfpw_faceWidth)/4), (bfpw_faceHeight/2), -45] )
+        {
+            m4ThroughHole_duplicate( height = 50 );
+
+            translate( [bfpw_distanceBetweenBolts, 0, 0] )
+            {
+                m4ThroughHole_duplicate( height = 50 );
+            }
         }
     }
 }
 
-module frontLeftCoverPlate()
+module powerSwitchCutoutBack()
 {
-    #cube( [bfcp_plateXDimension, bfcp_plateYDimension, bfcp_plateZDimension] );
+    translate( [-0.2, bfpw_faceDepth, ((bfpw_faceHeight - bfpw_insertHeight)/2)] )
+    {
+        cube( [bfpw_insertWidth, 50, bfpw_insertHeight] );
+    }
 }
 
-module frontRightCoverPlate()
+module powerSwitchCutoutFace()
 {
-    #cube( [bfcp_plateXDimension, bfcp_plateYDimension, bfcp_plateZDimension] );
+    hull()
+    {
+        {
+            translate( [(bfpw_cornerDiameter/2), 0, (bfpw_cornerDiameter/2)] )
+            {
+                cube( [bfpw_faceWidth - bfpw_cornerDiameter, bfpw_faceDepth, bfpw_faceHeight - bfpw_cornerDiameter] );
+            }
+        }
+        {
+            union()
+            {
+                rotate( [90, 0, 0] )
+                {
+                    translate( [-1 * (bfpw_faceCenterWidth/2) + (bfpw_faceWidth/2) +  (bfpw_cornerDiameter/2), (bfpw_faceHeight/2), -1 * bfpw_faceDepth] )
+                    {
+                        cylinder( d = bfpw_cornerDiameter, h = bfpw_faceDepth );
+                    }
+
+                    translate( [bfpw_faceWidth + (bfpw_faceCenterWidth/2) - (bfpw_faceWidth/2) - (bfpw_cornerDiameter/2), (bfpw_faceHeight/2), -1 * bfpw_faceDepth] )
+                    {
+                        cylinder( d = bfpw_cornerDiameter, h = bfpw_faceDepth );
+                    }
+                }
+
+                rotate( [90, 0, 0] )
+                {
+                    translate( [(bfpw_cornerDiameter/2), (bfpw_cornerDiameter/2), -1 * bfpw_faceDepth] )
+                    {
+                        cylinder( d = bfpw_cornerDiameter, h = bfpw_faceDepth );
+
+                        translate( [0, bfpw_faceHeight - bfpw_cornerDiameter, 0] )
+                        {
+                            cylinder( d = bfpw_cornerDiameter, h = bfpw_faceDepth );
+                        }
+
+                        translate( [bfpw_faceWidth - bfpw_cornerDiameter, bfpw_faceHeight - bfpw_cornerDiameter, 0] )
+                        {
+                            cylinder( d = bfpw_cornerDiameter, h = bfpw_faceDepth );
+                        }
+
+                        translate( [bfpw_faceWidth - bfpw_cornerDiameter, 0, 0] )
+                        {
+                            cylinder( d = bfpw_cornerDiameter, h = bfpw_faceDepth );
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }
 
-module rearLeftCoverPlate()
+module frontPanel()
 {
-    #cube( [bfcp_plateXDimension, bfcp_plateYDimension, bfcp_plateZDimension] );
+    difference()
+    {
+        {
+            translate( [-3, -3, 0] )
+            {
+                cube( [xAxisProfileLength + (profileSize * 2) + 6, bffp_thickness, zAxisProfileLength + (profileSize * 2)] );
+            }
+        }
+        {
+            union()
+            {
+                translate( [xAxisProfileLength + profileSize - bftm_mountWidth - 5 - 0.5, -1 * bftm_mountThickness - 1, 16 + 0.1] )
+                {
+                    cube( [bftm_mountWidth + 1, 20, 74] );
+                }
+                translate( [0, 0, zAxisProfileLength + (profileSize)] )
+                {
+                    coverPlateFrameCutout( cutSides = 1 );
+                }
+                frontPanelThroughHoles();
+                
+                
+            }
+        }
+    }
+
+}
+
+module frontPanelThroughHoles()
+{
+    rotate( [90, 0, 0] )
+    {
+        translate( [(profileSize/2), ((profileSize * 2) + zAxisProfileLength)/2, -25] )
+        {
+            m5ThroughHole_duplicate( height = 30 );
+
+            translate( [xAxisProfileLength + profileSize, 0, 0] )
+            {
+                m5ThroughHole_duplicate( height = 30 );
+            }
+        }
+
+        translate( [(profileSize/2) + profileSize, zAxisProfileLength + profileSize + (profileSize/2), -25] )
+        {
+                m5ThroughHole_duplicate( height = 30 );
+
+                translate( [140, 0, 0] )
+                {
+                    m5ThroughHole_duplicate( height = 30 );
+                }
+        }
+    }
+}
+
+module rightPanel()
+{
+    translate( [xAxisProfileLength + (profileSize * 2) - (bffp_thickness - bffp_mountThickness), 0, 0] )
+    {
+        cube( [bffp_thickness, yAxisProfileLength, zAxisProfileLength + (profileSize * 2)] );
+    }
+}
+
+module leftPanel()
+{
+    difference()
+    {
+        {
+            union()
+            {
+                translate( [-1 * bffp_thickness + (bffp_thickness - bffp_mountThickness), 0, 0] )
+                {
+                    cube( [bffp_thickness, yAxisProfileLength, zAxisProfileLength + (profileSize * 2)] );
+                }
+
+                // psuMountBlocks();
+            }
+        }
+        {
+            union()
+            {
+                translate( [0, 0, zAxisProfileLength + (profileSize)] )
+                {
+                    coverPlateFrameCutout();
+                }
+
+                psuMountBlockCutouts();
+
+                translate( [-12, 0, 0] )
+                {
+                    psuInternalMountHoles();
+                }
+
+                psuZAxisMountCutout();
+                leftPanelframeMountThroughHoles();
+                
+            }
+        }
+    }
+
+}
+
+module backPanel()
+{
+    difference()
+    {
+        {
+            translate( [-3, yAxisProfileLength - bffp_thickness + 3, 0] )
+            {
+                cube( [xAxisProfileLength + (profileSize * 2) + 6, bffp_thickness, zAxisProfileLength + (profileSize * 2)] );
+            }
+        }
+        {
+            union()
+            {
+                translate( [0, 0, zAxisProfileLength + (profileSize)] )
+                {
+                    coverPlateFrameCutout( cutSides = 1 );
+
+                    translate( [xAxisProfileLength/2 + 10, yAxisProfileLength + 3.1, -60] )
+                    {
+                        rotate( [0, 0, 180] )
+                        {
+                            powerSwitchCutout();
+                        }
+                    }
+                }
+
+                translate( [(profileSize/2), yAxisProfileLength + 7, 10] )
+                {
+                    backPanelThroughHoles();
+                }
+            }
+
+
+            
+        }
+    }
+
+}
+
+module backPanelThroughHoles()
+{
+    rotate( [90, 0, 0] )
+    {
+        translate( [0, (zAxisProfileLength/2) + (profileSize/2), 0] )
+        {
+            m5ThroughHole_duplicate( height = 30 );
+        }
+
+        translate( [xAxisProfileLength + profileSize, (zAxisProfileLength/2) + (profileSize/2), 0] )
+        {
+            m5ThroughHole_duplicate( height = 30 );
+        }
+
+        translate( [profileSize, zAxisProfileLength + profileSize, 0] )
+        {
+            m5ThroughHole_duplicate( height = 30 );
+        }
+
+        translate( [xAxisProfileLength, zAxisProfileLength + profileSize, 0] )
+        {
+            m5ThroughHole_duplicate( height = 30 );
+        }
+
+        translate( [xAxisProfileLength - (xAxisProfileLength/3.5), zAxisProfileLength + profileSize, 0] )
+        {
+            m5ThroughHole_duplicate( height = 30 );
+        }
+
+        translate( [profileSize + (xAxisProfileLength/3.5), zAxisProfileLength + profileSize, 0] )
+        {
+            m5ThroughHole_duplicate( height = 30 );
+        }
+
+
+    }
+}
+
+
+
+module leftPanelframeMountThroughHoles()
+{
+    translate( [-10, 10, (profileSize/2)] )
+    {
+        rotate( [0, 90, 0] )
+        {
+            m5ThroughHole_duplicate( height = 35 );
+
+            translate( [-1 * zAxisProfileLength - profileSize, 0, 0] )
+            {
+                m5ThroughHole_duplicate( height = 35 );
+            }
+
+            translate( [-1 * zAxisProfileLength - profileSize, yAxisProfileLength - profileSize, 0] )
+            {
+                m5ThroughHole_duplicate( height = 35 );
+            }
+
+            translate( [0, yAxisProfileLength - profileSize, 0] )
+            {
+                m5ThroughHole_duplicate( height = 35 );
+            }
+
+            // Anchors at 1/3 and 2/3
+            // translate( [0, (yAxisProfileLength - profileSize) * (1/3), 0] )
+            // {
+            //     m5ThroughHole_duplicate( height = 35 );
+            // }
+
+            // translate( [0, (yAxisProfileLength - profileSize) * (2/3) - 10, 0] )
+            // {
+            //     m5ThroughHole_duplicate( height = 35 );
+            // }
+
+
+            // translate( [-1 * zAxisProfileLength - profileSize, (yAxisProfileLength - profileSize) * (1/3), 0] )
+            // {
+            //     m5ThroughHole_duplicate( height = 35 );
+            // }
+
+            // translate( [-1 * zAxisProfileLength - profileSize, (yAxisProfileLength - profileSize) * (2/3) - 10, 0] )
+            // {
+            //     m5ThroughHole_duplicate( height = 35 );
+            // }
+
+            // Anchors at 1/2
+            translate( [0, (yAxisProfileLength - profileSize) * (1/2), 0] )
+            {
+                m5ThroughHole_duplicate( height = 35 );
+            }
+
+            translate( [-1 * zAxisProfileLength - profileSize, (yAxisProfileLength - profileSize) * (1/2), 0] )
+            {
+                m5ThroughHole_duplicate( height = 35 );
+            }
+
+        }
+    }
+}
+
+module psuMountBlocks()
+{
+    translate( [4, yAxisProfileLength - (bfps_mountBlockWidth/2) - profileSize - bfps_yOutsideBuffer - bfps_yBoltDistanceFromEnd, profileSize + bfps_mountBlockHeightOffset] )
+    {
+        cube( [bfps_mountBlockDepth, bfps_mountBlockWidth, bfps_mountBlockHeight] );
+
+        translate( [0, -1 * bfps_actualYDimension + 52.6 + (bfps_mountBlockWidth/2), 0] )
+        {
+            cube( [bfps_mountBlockDepth, bfps_mountBlockWidth, bfps_mountBlockHeight] );
+        }
+    }
+}
+
+// single block for easier prep for printing
+module psuMountBlock()
+{
+    difference()
+    {
+        {
+            translate( [4, yAxisProfileLength - (bfps_mountBlockWidth/2) - profileSize - bfps_yOutsideBuffer - bfps_yBoltDistanceFromEnd, profileSize + bfps_mountBlockHeightOffset] )
+            {
+                cube( [bfps_mountBlockDepth, bfps_mountBlockWidth, bfps_mountBlockHeight] );
+            }
+        }
+        {
+            translate( [-12, 0, 0] )
+            {
+                psuInternalMountHoles();
+            }
+        }
+    }
+
+}
+
+module psuMountBlockCutouts()
+{
+    translate( [4, yAxisProfileLength - (bfps_mountBlockWidth/2) - profileSize - bfps_yOutsideBuffer - bfps_yBoltDistanceFromEnd - 0.2, profileSize + bfps_mountBlockHeightOffset - 0.2] )
+    {
+        cube( [bfps_mountBlockDepth, bfps_mountBlockWidth + 0.4, bfps_mountBlockHeight + 0.4] );
+
+        translate( [0, -1 * bfps_actualYDimension + 52.6 + (bfps_mountBlockWidth/2), 0] )
+        {
+            cube( [bfps_mountBlockDepth, bfps_mountBlockWidth + 0.4, bfps_mountBlockHeight + 0.4] );
+        }
+    }
+}
+
+// individual 3D printed pieces for the bottom frame cover.
+module coverPlate()
+{
+    difference()
+    {
+        {
+            translate( [0, profileSize, zAxisProfileLength + (profileSize * 2) - bfcp_plateZOffset] )
+            {
+                // main piece
+                cube( [bfcp_totalXDimension, bfcp_totalYDimension, bfcp_plateZDimension] );
+
+                // wings to connect to the X axis profile pieces
+                translate( [0, -1 * profileSize, 0] )
+                {
+                    cube( [bfcp_plateWingWidth, profileSize, bfcp_plateZDimension] );
+                }
+
+                translate( [xAxisProfileLength - profileSize, -1 * profileSize, 0] )
+                {
+                    cube( [bfcp_plateWingWidth, profileSize, bfcp_plateZDimension] );
+                }
+
+                translate( [0, yAxisProfileLength - (profileSize * 2), 0] )
+                {
+                    cube( [bfcp_plateWingWidth, profileSize, bfcp_plateZDimension] );
+                }
+
+                translate( [xAxisProfileLength - profileSize, yAxisProfileLength - (profileSize * 2), 0] )
+                {
+                    cube( [bfcp_plateWingWidth, profileSize, bfcp_plateZDimension] );
+                }
+            }
+        }
+        {
+            translate( [0, 0, zAxisProfileLength + (profileSize)] )
+            {
+                coverPlateFrameCutout();
+                coverPlateMidProfileCutout();
+                coverPlateEndProfileCutout();
+            }
+        }
+    }
+
+}
+
+module coverPlateEndProfileCutout()
+{
+    translate( [0, yAxisProfileLength - profileSize - 50, profileSize - 12] )
+    {
+        cube( [profileSize + 1.5, 50 + profileSize + 1, 20] );
+
+        translate( [xAxisProfileLength + profileSize - 1.5, 0, 0] )
+        {
+            cube( [profileSize + 1.5, 50 + profileSize + 1, 20] );
+        }
+    }
+}
+
+module coverPlateMidProfileCutout()
+{
+    translate( [-15.5, yAxisProfileLength - profileSize - 50 - (pieceDepth + 5), profileSize - 12] )
+    {
+        cube( [pieceWidth, pieceDepth + 10, profileSize - 0.8] );
+
+        translate( [xAxisProfileLength + profileSize + 9, 0, 0] )
+        {
+            cube( [pieceWidth, pieceDepth + 10, profileSize - 0.8] );
+        }
+    }
+}
+
+module coverPlateFrameCutout( cutSides = 0 )
+{
+    translate( [0, 0, -0.2] )
+    {
+        cutoutFrameProfile( axis = "x", length = xAxisProfileLength + (profileSize * 2) );
+    }
+
+    translate( [0, yAxisProfileLength - profileSize - 0.2, -0.2] )
+    {
+        cutoutFrameProfile( axis = "x", length = xAxisProfileLength + (profileSize * 2) );
+    }
+
+    // translate( [xAxisProfileLength - profileSize - 0.2, 0, 0] )
+    // {
+    //     cutoutFrameProfile( axis = "x", length = bfcp_plateWingWidth + 0.2 );
+    // }
+
+    // translate( [0, yAxisProfileLength - profileSize - 0.2, 0] )
+    // {
+    //     cutoutFrameProfile( axis = "x", length = bfcp_plateWingWidth + 0.2 );
+    // }
+
+    // translate( [xAxisProfileLength - profileSize - 0.2, yAxisProfileLength - profileSize - 0.2, 0] )
+    // {
+    //     cutoutFrameProfile( axis = "x", length = bfcp_plateWingWidth + 0.2 );
+    // }
+
+    translate( [0, 0, -0.2] )
+    {
+        cutoutFrameProfile( axis = "y", length = yAxisProfileLength );
+    }
+
+    translate( [xAxisProfileLength + profileSize - 0.2, 0, -0.2] )
+    {
+        cutoutFrameProfile( axis = "y", length = yAxisProfileLength );
+    }
+
+    translate( [0, 0, -1 * (zAxisProfileLength + profileSize)] )
+    {
+        cutoutFrameProfile( axis = "y", length = yAxisProfileLength );
+    }
+    translate( [xAxisProfileLength + profileSize - 0.2, 0, -1 * (zAxisProfileLength + profileSize)] )
+    {
+        cutoutFrameProfile( axis = "y", length = yAxisProfileLength );
+    }
+
+    translate( [0, 0, -1 * (zAxisProfileLength + profileSize)] )
+    {
+        cutoutFrameProfile( axis = "z", length = zAxisProfileLength + (profileSize * 2) );
+    }
+
+    translate( [0, yAxisProfileLength - profileSize - 0.2, -1 * (zAxisProfileLength + profileSize)] )
+    {
+        cutoutFrameProfile( axis = "z", length = zAxisProfileLength + (profileSize * 2) );
+    }
+
+    translate( [xAxisProfileLength + profileSize - 0.2, 0, -1 * (zAxisProfileLength + profileSize)] )
+    {
+        cutoutFrameProfile( axis = "z", length = zAxisProfileLength + (profileSize * 2) );
+    }
+
+    translate( [xAxisProfileLength + profileSize - 0.2, yAxisProfileLength - profileSize - 0.2, -1 * (zAxisProfileLength + profileSize)] )
+    {
+        cutoutFrameProfile( axis = "z", length = zAxisProfileLength + (profileSize * 2) );
+    }
+
+    if( cutSides == 1 )
+    {
+        translate( [-1 * profileSize, 0, -1 * (zAxisProfileLength + profileSize)] )
+        {
+            cutoutFrameProfile( axis = "z", length = zAxisProfileLength + (profileSize * 2) );
+        }
+
+        translate( [-1 * profileSize, yAxisProfileLength - profileSize - 0.2, -1 * (zAxisProfileLength + profileSize)] )
+        {
+            cutoutFrameProfile( axis = "z", length = zAxisProfileLength + (profileSize * 2) );
+        }
+
+        translate( [xAxisProfileLength + profileSize - 0.2 + profileSize, 0, -1 * (zAxisProfileLength + profileSize)] )
+        {
+            cutoutFrameProfile( axis = "z", length = zAxisProfileLength + (profileSize * 2) );
+        }
+
+        translate( [xAxisProfileLength + profileSize - 0.2 + profileSize, yAxisProfileLength - profileSize - 0.2, -1 * (zAxisProfileLength + profileSize)] )
+        {
+            cutoutFrameProfile( axis = "z", length = zAxisProfileLength + (profileSize * 2) );
+        }
+    }
 }
 
 module controllerMount()
@@ -150,10 +696,10 @@ module controllerMount()
 module psuMount()
 {
     // Mock PSU
-    // translate( [profileSize + bfps_xInsideBuffer, yAxisProfileLength - (bfps_actualYDimension + profileSize + bfps_yOutsideBuffer), profileSize - (bf_wallThickness + 0.4) - bfps_topBuffer] )
-    // {
-    //     %cube( [bfps_actualXDimension, bfps_actualYDimension, bfps_actualZDimension] );
-    // }
+    translate( [profileSize + bfps_xInsideBuffer, yAxisProfileLength - (bfps_actualYDimension + profileSize + bfps_yOutsideBuffer), profileSize - (bf_wallThickness + 0.4) - bfps_topBuffer] )
+    {
+        %cube( [bfps_actualXDimension, bfps_actualYDimension, bfps_actualZDimension] );
+    }
 
     difference()
     {
@@ -224,7 +770,6 @@ bftm_sdCutoutLength = 30;
 bftm_sdCutoutWidth = 5;
 bftm_sdCutoutYOffset = 9.2;
 bftm_sdCutoutZOffset = 44;
-
 
 module tftMount()
 {
@@ -909,9 +1454,10 @@ module controllerMountCutouts()
 
 module controllerMountZAxisMountCutout()
 {
-    translate( [-1, 0, bfc_yWallHeight - profileSize + 0.8] )
+    translate( [-1, -5, bfc_yWallHeight - profileSize + 0.8] )
     {
-        cube( [bf_wallThickness + 2, pieceDepth + 0.2, profileSize - 0.8] );
+        // give 5mm of extra space in each direction on the Y axis to allow the towers to move a little
+        cube( [bf_wallThickness + 30, pieceDepth + 10.2, profileSize - 0.8] );
     }
 }
 

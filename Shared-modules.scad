@@ -59,6 +59,11 @@ module m5ThroughHole( height = 10 )
     cylinder( d = 5.6, h = height );
 }
 
+module m5ThroughHole_duplicate( height = 10 )
+{
+    cylinder( d = 5.6, h = height );
+}
+
 module m4Head( height = 3.9 )
 {
     cylinder( h = height, d = 7.4 );
@@ -91,7 +96,7 @@ module m4ThroughHole_duplicate( height = 20 )
 
 module frameProfile( axis = "x", length = 20 )
 {
-	profileSize = 20;
+	// profileSize = 20;
 
 	if( axis == "x" )
 	{
@@ -104,6 +109,24 @@ module frameProfile( axis = "x", length = 20 )
 	else if( axis == "z" )
 	{
 		cube( [profileSize, profileSize, length] );
+	}
+}
+
+module cutoutFrameProfile( axis = "x", length = 20 )
+{
+  profileExtraCutoutAmount = 0.2;
+
+	if( axis == "x" )
+	{
+		cube( [length, profileSize + profileExtraCutoutAmount, profileSize + profileExtraCutoutAmount] );
+	}
+	else if( axis == "y" )
+	{
+		cube( [profileSize + profileExtraCutoutAmount, length, profileSize + profileExtraCutoutAmount] );
+	}
+	else if( axis == "z" )
+	{
+		cube( [profileSize + profileExtraCutoutAmount, profileSize + 0.2, length] );
 	}
 }
 
