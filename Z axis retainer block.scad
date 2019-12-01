@@ -96,6 +96,8 @@ zIdlerSpacerInnerDiameter = 5.6;
 zIdlerSpacerOuterDiameter = 10;
 zIdlerSpacerHeight = 2;
 
+extraBaseHeight = 20; // make the base taller to recover unused Z axis space
+
 
 // Build things
 
@@ -342,21 +344,39 @@ module rails()
     }
 }
 
-
 module bottomLeftBase( includeEndHoles = 1 )
 {
+
     difference()
     {
         {
-            base();
+            if( includeEndHoles == 1 )
+            {
+                base();
+            }
+            else
+            {
+                topBase();
+            }
         }
         {
             union()
             {
-                translate( [-1 * distanceFromTower, distanceFromInside, pieceHeight - linearRodCutoutDepth - bearingHeight - bearingSpacerBufferHeight - bearingSpacerPlatformHeight] )
+                if( includeEndHoles == 1 )
                 {
-                    retainerCutouts( includeEndHoles );
+                    translate( [-1 * distanceFromTower, distanceFromInside, pieceHeight - linearRodCutoutDepth - bearingHeight - bearingSpacerBufferHeight - bearingSpacerPlatformHeight + extraBaseHeight] )
+                    {
+                        retainerCutouts( includeEndHoles );
+                    }
                 }
+                else
+                {
+                    translate( [-1 * distanceFromTower, distanceFromInside, pieceHeight - linearRodCutoutDepth - bearingHeight - bearingSpacerBufferHeight - bearingSpacerPlatformHeight] )
+                    {
+                        retainerCutouts( includeEndHoles );
+                    }
+                }
+                
                 translate( [-1 * pieceDepth, -1 * railWidth - 0.1, -0.1] )
                 {
                     rails();
@@ -373,7 +393,7 @@ module bottomLeftBase( includeEndHoles = 1 )
                     cutoutHeight = (bearingHeight * 2) + bearingSpacerBufferHeight + bearingSpacerPlatformHeight;
                     cutoutAmount = 0.6; // Cut a few layers out of the circle when printed on edge to force a small bridge on the top and to make the requisite <layer height> flats be outside of the zero-tolerance shapes 
 
-                    translate( [-1 * distanceFromTower - (bearingOuterDiameter/2) - cutoutAmount, -1 * (bearingOuterDiameter/2) - 2.5, pieceHeight - cutoutHeight] )
+                    translate( [-1 * distanceFromTower - (bearingOuterDiameter/2) - cutoutAmount, -1 * (bearingOuterDiameter/2) - 2.5, pieceHeight - cutoutHeight + extraBaseHeight] )
                     {
                         cube( [5, bearingOuterDiameter/3, cutoutHeight + 0.1] );
                         translate( [bearingOuterDiameter - 4.4 + cutoutAmount, 0, 0] )
@@ -384,7 +404,7 @@ module bottomLeftBase( includeEndHoles = 1 )
 
                     smallCutoutAmount = 0.4;
 
-                    translate( [-1 * distanceFromTower - (linearRodCutoutDiameter/2) - smallCutoutAmount, -1 * (bearingOuterDiameter/2) + distanceBetweenRetainers - 0.2, pieceHeight - linearRodCutoutAdjustedDepth] )
+                    translate( [-1 * distanceFromTower - (linearRodCutoutDiameter/2) - smallCutoutAmount, -1 * (bearingOuterDiameter/2) + distanceBetweenRetainers - 0.2, pieceHeight - linearRodCutoutAdjustedDepth + extraBaseHeight] )
                     {
                         cube( [2, linearRodCutoutDiameter/3, linearRodCutoutAdjustedDepth + 0.1] );
 
@@ -402,15 +422,33 @@ module bottomLeftBase( includeEndHoles = 1 )
 
 module baseThroughHoles( includeEndHoles = 1 )
 {
-    translate( [0.1, -1 * railWidth/2, pieceHeight + wallHeight - 6] )
+    if( includeEndHoles == 1 )
     {
-        rotate( [0, -90, 0] )
+        translate( [0.1, -1 * railWidth/2, pieceHeight + wallHeight - 6 + extraBaseHeight] )
         {
-            m5ThroughHole();
-
-            translate( [0, 0, 4] )
+            rotate( [0, -90, 0] )
             {
-                m5HeadCutout();
+                m5ThroughHole();
+
+                translate( [0, 0, 4] )
+                {
+                    m5HeadCutout();
+                }
+            }
+        }
+    }
+    else
+    {
+        translate( [0.1, -1 * railWidth/2, pieceHeight + wallHeight - 6] )
+        {
+            rotate( [0, -90, 0] )
+            {
+                m5ThroughHole();
+
+                translate( [0, 0, 4] )
+                {
+                    m5HeadCutout();
+                }
             }
         }
     }
@@ -452,23 +490,25 @@ module baseThroughHoles( includeEndHoles = 1 )
 
     if( includeEndHoles == 1 )
     {
-        translate( [-1 * (pieceDepth) + topThroughHoleOffset, -1 * (railWidth/2), railWidth - 0.1])
+        translate( [-1 * (pieceDepth) + topThroughHoleOffset, -1 * (railWidth/2), railWidth - 0.1 + extraBaseHeight])
         {
-            rotate( [0, 0, 0] )
+            translate( [0, 0, -20] )
             {
-                m5ThroughHole();
+                rotate( [0, 0, 0] )
+                {
+                    m5ThroughHole( h = 40 );
+                }
             }
 
-            translate( [0, 0, 4] )
+            translate( [0, 0, 4 - 20] )
             {
-                m5HeadCutout();
+                m5HeadCutout( h = 40 );
             }
         }
     }
 }
 
-
-module base()
+module topBase()
 {
     hull()
     {
@@ -490,6 +530,48 @@ module base()
                 cylinder( d = cornerDiameter, h = pieceHeight);
             }
 
+            translate( [(-1 * pieceDepth) + (cornerDiameter/2), (-1 * (railWidth + insideWallDepth)) + (cornerDiameter/2), 0] )
+            {
+                cylinder( d = cornerDiameter, h = pieceHeight ); 
+            }
+
+            translate( [ -1 * (cornerDiameter/2), (-1 * (railWidth + insideWallDepth)) + (cornerDiameter/2), 0] )
+            {
+                cylinder( d = cornerDiameter, h = pieceHeight ); 
+            }
+
+        }
+    }
+    supportWallEssCurves();
+    
+    translate( [-1 * wallThickness, -1 * railWidth, pieceHeight] )
+    {
+        supportWall();
+    }
+}
+
+module base()
+{
+    hull()
+    {
+        {
+            translate( [-1 * (pieceDepth - (cornerDiameter/2)), -1 * railWidth + (cornerDiameter/2), 0] )
+            {
+                cube( [pieceDepth - cornerDiameter, pieceWidth - cornerDiameter, pieceHeight + extraBaseHeight] );
+                
+            }
+        }
+        {
+            translate( [-1 * (cornerDiameter/2), pieceWidth - railWidth - (cornerDiameter/2), 0])
+            {
+                cylinder( d = cornerDiameter, h = pieceHeight + extraBaseHeight);
+            }
+
+            translate( [-1 * (pieceDepth - cornerDiameter/2), pieceWidth - railWidth - (cornerDiameter/2), 0])
+            {
+                cylinder( d = cornerDiameter, h = pieceHeight + extraBaseHeight);
+            }
+
             // Use the commented hull to stop at the rail
             // translate( [-1 * cornerDiameter, -1 * railWidth, 0] )
             // {
@@ -503,23 +585,26 @@ module base()
 
             translate( [(-1 * pieceDepth) + (cornerDiameter/2), (-1 * (railWidth + insideWallDepth)) + (cornerDiameter/2), 0] )
             {
-                cylinder( d = cornerDiameter, h = pieceHeight ); 
+                cylinder( d = cornerDiameter, h = pieceHeight + extraBaseHeight ); 
             }
 
             translate( [ -1 * (cornerDiameter/2), (-1 * (railWidth + insideWallDepth)) + (cornerDiameter/2), 0] )
             {
-                cylinder( d = cornerDiameter, h = pieceHeight ); 
+                cylinder( d = cornerDiameter, h = pieceHeight + extraBaseHeight ); 
             }
 
         }
     }
 
 
-    supportWallEssCurves();
+    translate( [0, 0, extraBaseHeight] )
+    {
+        supportWallEssCurves();
+    }
 
 
 
-    translate( [-1 * wallThickness, -1 * railWidth, pieceHeight] )
+    translate( [-1 * wallThickness, -1 * railWidth, pieceHeight + extraBaseHeight] )
     {
         supportWall();
     }
@@ -762,10 +847,10 @@ module m5ThroughHole( h = 10 )
     cylinder( d=m5ThroughHoleDiameter, h=h );
 }
 
-module m5HeadCutout()
+module m5HeadCutout( h = 20 )
 {
     m5HeadDiameter = 9; // lots of extra room
-    m5HeadHeight = 20;
+    m5HeadHeight = h;
     cylinder( d=m5HeadDiameter, h=m5HeadHeight );
 }
 
