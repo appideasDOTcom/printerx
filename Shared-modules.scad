@@ -49,9 +49,9 @@ module m5Head( height = 20 )
     cylinder( d = 9, h = height );
 }
 
-module m5Nut(  height = 3.9  )
+module m5Nut(  height = 4.8  )
 {
-    
+    cylinder( h = height, d = 9.5, $fn=6 );
 }
 
 module m5ThroughHole( height = 10 )

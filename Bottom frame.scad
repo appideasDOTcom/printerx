@@ -11,6 +11,26 @@ use <Frame foot mount.scad>
 $fa = 1;
 $fs = 0.1;
 
+renderFrame = true;
+
+// Wood panels
+topPanels();
+rightPanel();
+leftPanel();
+frontPanel();
+backPanel();
+
+// 3D printed pieces
+// psuMountBlock();
+// controllerMount();
+// piMount();
+// tftMount();
+
+// Other
+// powerSwitchCutout(); // test
+// psuMount(); // obsolete
+// coverPlate(); // obsolete
+
 // bf = Bottom Frame
 bf_wallThickness = 3;
 bf_cornerRoundness = bf_wallThickness * 2;
@@ -31,7 +51,7 @@ bfc_PlatformRearBuffer = 2;
 bfc_yWallLength = profileSize + bfc_yDistanceBetweenBolts + (bfc_yOutsideBuffer + bfc_yInsideBuffer) + bfc_PlatformRearBuffer;
 bfc_yWallHeight = zAxisProfileLength + (profileSize * 2);
 
-bfc_platformXDimension = bfc_xOutsideBuffer + bfc_xDistanceBetweenBolts + bfc_xInsideBuffer;
+bfc_platformXDimension = 5 + bfc_xDistanceBetweenBolts + bfc_xInsideBuffer;
 bfc_platformYDimension = bfc_yWallLength - profileSize - bfc_PlatformRearBuffer;
 bfc_PlatformBottomBuffer = 2;
 
@@ -41,6 +61,8 @@ bfc_fanYZDimension = 40;
 bfc_fanXDimension = 10;
 bfc_fanThroughholeDiameter = 3.7;
 bfc_fanThroughholeOffset = ((bfc_fanYZDimension - bfc_fanDistanceBetweenBolts)/2);
+
+bfc_fanCutoutYZ = bfc_fanYZDimension + 1;
 
 bfc_airFlowCutoutDiameter = 8;
 bfc_airFlowCutoutLength = 34;
@@ -69,22 +91,6 @@ bfps_mountBlockDepth = profileSize + bfps_xInsideBuffer - 4;
 
 bfps_yEndOffset = 50;
 
-renderFrame = false;
-
-// rightPanel();
-// leftPanel();
-// frontPanel();
-backPanel();
-// psuMountBlock();
-// powerSwitchCutout();
-// psuMount(); // obsolete
-// controllerMount();
-// piMount();
-// tftMount();
-// coverPlate();
-// TODO: 1. Wire entry hole
-//       2. Y axis motor cutout, cutoutut for Y axis belt
-
 // bfcp = Bottom Frame Cover Plate
 bfcp_totalXDimension = xAxisProfileLength + (profileSize * 2);
 bfcp_totalYDimension = yAxisProfileLength - (profileSize * 2);
@@ -110,6 +116,271 @@ bfpw_insertWidth = 30.4;
 bfpw_insertHeight = 49;
 
 // powerSwitchTest();
+
+module topPanels()
+{
+    union()
+    {
+        topFrontPanel();
+        topRearPanel();
+    }
+}
+
+bffp_frontXDimension = 352;
+bffp_frontYDimension = 289;
+bffp_frontZDimension = 19.2;
+
+bffp_rearXDimension = bffp_frontXDimension;
+bffp_rearYDimension = 141;
+bffp_rearZDimension = 12.9;
+
+bffp_topOverhang = 6;
+
+bffp_frontCutoutXDimension = 240;
+bffp_frontCutoutYDimension = 27.4;
+bffp_frontCutoutZDimension = bffp_frontZDimension + 2;
+
+bffp_middleCutoutXDimension = 30;
+bffp_middleCutoutYDimension = yAxisProfileLength + 2;
+bffp_middleCutoutZDimension = 9.1;
+
+bffp_middleConnectorCutoutXDimension = xAxisProfileLength + (profileSize * 2) + (bffp_topOverhang * 2) + 2;
+bffp_middleConnectorCutoutYDimension = 12.5;
+bffp_middleConnectorCutoutZDimension = 6.2;
+
+bffp_rearCutoutXDimension = 85;
+bffp_rearCutoutYDimension = 60;
+bffp_rearCutoutZDimension = 13;
+
+module topFrontPanel()
+{
+    translate( [-1 * bffp_topOverhang, -1 * bffp_topOverhang, zAxisProfileLength + profileSize + bffp_topOverhang] )
+    {
+        difference()
+        {
+            {
+                cube( [bffp_frontXDimension, bffp_frontYDimension, bffp_frontZDimension] );
+            }
+            {
+                topPlateCutouts( isFront = 1 );
+
+                translate( [bffp_topOverhang, bffp_topOverhang, -1 * bffp_topOverhang] )
+                {
+                    coverPlateFrameCutout();
+                }
+            }
+        }
+    }
+}
+
+module topRearPanel()
+{
+    translate( [-1 * bffp_topOverhang, yAxisProfileLength - bffp_rearYDimension + bffp_topOverhang, zAxisProfileLength + (profileSize * 2) - bffp_rearZDimension + bffp_topOverhang] )
+    {
+        difference()
+        {
+            {
+                translate( [0, 0, -0.9] )
+                {
+                    cube( [bffp_rearXDimension, bffp_rearYDimension, bffp_rearZDimension] );
+                }
+            }
+            {
+                union()
+                {
+                   
+                    translate( [0, -1 * (bffp_frontYDimension) + profileSize - 2, -1 * profileSize + bffp_topOverhang + 0.9] )
+                    {
+                        coverPlateFrameCutout();
+                        translate( [0, -6, bffp_topOverhang] )
+                        {
+                            topPlateCutouts( isFront = 0 );
+                        }
+
+                        translate( [-1.0, yAxisProfileLength - (pieceDepth + 3.2), 0.1] )
+                        {
+                            cube( [bf_wallThickness + 31, pieceDepth + 10.2, profileSize + 6] );
+                            translate( [xAxisProfileLength + profileSize, 0, 0] )
+                            {
+                                cube( [bf_wallThickness + 31, pieceDepth + 10.2, profileSize + 6] );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+}
+
+module topPlateCutouts( isFront = 1 )
+{
+    union()
+    {
+
+        translate( [xAxisProfileLength - (profileSize * 2) + bffp_topOverhang - 105, yAxisProfileLength + bffp_topOverhang - bffp_rearCutoutYDimension - profileSize, bffp_topOverhang - 0.8] )
+        {
+            cube( [bffp_rearCutoutXDimension, bffp_rearCutoutYDimension, bffp_rearCutoutZDimension + 1] );
+        }
+
+        translate( [(bffp_frontXDimension/2) - (bffp_frontCutoutXDimension/2), -1, -1] )
+        {
+            cube( [bffp_frontCutoutXDimension, bffp_frontCutoutYDimension, bffp_frontCutoutZDimension] );
+
+            translate( [0, yAxisProfileLength - profileSize + bffp_topOverhang, 0] )
+            {
+                cube( [bffp_frontCutoutXDimension, bffp_frontCutoutYDimension, bffp_frontCutoutZDimension] );
+            }
+        }
+
+        translate( [ xAxisProfileLength + profileSize - 1 - 15, yAxisProfileLength - profileSize - 7, -5] )
+        {
+            hull()
+            {
+                {
+
+                }
+                {
+                    union()
+                    {
+                        cylinder( d =  8, h = 30 );
+
+                        translate( [0, -33, 0] )
+                        {
+                            cylinder( d =  8, h = 30 );
+                        }
+
+                        translate( [16, -4, 0] )
+                        {
+                            cube( [8, 8, 30] );
+                        }
+
+                        translate( [16, -37, 0] )
+                        {
+                            cube( [8, 8, 30] );
+                        }
+                    }
+                }
+            }
+        }
+
+        translate( [ -1, yAxisProfileLength - zAxisTowerDistanceFromEnd - 89.2, -5.9] )
+        {
+            cube( [bf_wallThickness + 31, pieceDepth + 10.2, profileSize + 6] );
+
+            translate( [ xAxisProfileLength + profileSize, 0, 0] )
+            {
+                cube( [bf_wallThickness + 31, pieceDepth + 10.2, profileSize + 6] );
+            }
+        }
+
+        translate( [-1, yAxisProfileLength + bffp_topOverhang, -1 * bffp_topOverhang + 0.2] )
+        {
+            cutoutFrameProfile( axis = "x", length = xAxisProfileLength + (profileSize * 2) + (bffp_topOverhang * 2) + 2 );
+        }
+        translate( [-1, -1 * profileSize + bffp_topOverhang, -1 * bffp_topOverhang + 0.2] )
+        {
+            cutoutFrameProfile( axis = "x", length = xAxisProfileLength + (profileSize * 2) + (bffp_topOverhang * 2) + 2 );
+        }
+
+        translate( [bffp_topOverhang - profileSize, -1 * profileSize + bffp_topOverhang - 1, -1 * bffp_topOverhang + 0.2] )
+        {
+            cutoutFrameProfile( axis = "y", length = yAxisProfileLength + (profileSize * 2) + 2 );
+        }
+
+        translate( [bffp_topOverhang + xAxisProfileLength + (profileSize * 2), -1 * profileSize + bffp_topOverhang - 1, -1 * bffp_topOverhang + 0.2] )
+        {
+            cutoutFrameProfile( axis = "y", length = yAxisProfileLength + (profileSize * 2) + 2 );
+        }
+
+        translate( [(xAxisProfileLength/2) + (bffp_middleCutoutXDimension/2) - 4, 0, profileSize - 9.8] )
+        {
+            cube( [bffp_middleCutoutXDimension, bffp_middleCutoutYDimension, bffp_middleCutoutZDimension] );
+        }
+
+        translate( [xAxisProfileLength - profileSize, bffp_topOverhang + profileSize + 30, -4] )
+        {
+            cube( [profileSize + bffp_topOverhang + 20, 10, 24] );
+            translate( [0, 5, 0] )
+            {
+                cylinder( d = 10, h = 24 );
+            }
+        }
+
+        if( isFront == 1 )
+        {
+            translate( [-1, bffp_frontYDimension - bffp_middleConnectorCutoutYDimension + 0.1, 13.1] )
+            {
+                cube( [bffp_middleConnectorCutoutXDimension, bffp_middleConnectorCutoutYDimension, bffp_middleConnectorCutoutZDimension] );
+            }
+        }
+        else
+        {
+            translate( [-1, bffp_frontYDimension - bffp_middleConnectorCutoutYDimension, 13.1 - bffp_middleConnectorCutoutZDimension - 2] )
+            {
+                cube( [bffp_middleConnectorCutoutXDimension, bffp_middleConnectorCutoutYDimension, bffp_middleConnectorCutoutZDimension + 2] );
+            }
+        }
+
+        topFrameMountThroughHoles( isFront );
+
+    }
+}
+
+
+module topFrameMountThroughHoles( isFront = 1 )
+{
+    translate( [bffp_topOverhang + (profileSize/2), bffp_topOverhang + (profileSize/2), -10] )
+    {
+        translate( [profileSize + 8, 0, 0] ) m5ThroughHole_duplicate( height = 40 );
+        translate( [profileSize + 8, yAxisProfileLength - 7.2 - (5.6/2) - (profileSize/2), 0] ) m5ThroughHole_duplicate( height = 40 );
+
+         translate( [xAxisProfileLength - 8, 0, 0] ) m5ThroughHole_duplicate( height = 40 );
+         translate( [xAxisProfileLength - 8, yAxisProfileLength - 7.2 - (5.6/2) - (profileSize/2), 0] ) m5ThroughHole_duplicate( height = 40 );
+
+         translate( [0, profileSize, 0] ) m5ThroughHole_duplicate( height = 40 );
+         translate( [xAxisProfileLength + profileSize, profileSize, 0] ) m5ThroughHole_duplicate( height = 40 );
+
+         translate( [0, (yAxisProfileLength/2) + 30, 0] ) m5ThroughHole_duplicate( height = 40 );
+         translate( [xAxisProfileLength + profileSize, (yAxisProfileLength/2) + 30, 0] ) m5ThroughHole_duplicate( height = 40 );
+
+        translate( [(bffp_frontYDimension/2) + (bffp_middleCutoutXDimension/2) - 30, bffp_frontYDimension - profileSize - 2, 0] )
+        {
+            m5ThroughHole_duplicate( height = 40 );
+            translate( [0, 0, 5.2 + 4.7] )
+            {
+                m5Nut();
+            }
+        }
+        translate( [(bffp_frontYDimension/2) + (bffp_middleCutoutXDimension/2) + 30, bffp_frontYDimension - profileSize - 2, 0] )
+        {
+            m5ThroughHole_duplicate( height = 40 );
+            translate( [0, 0, 5.2 + 4.7] )
+            {
+                m5Nut();
+            }
+        }
+
+        translate( [(bffp_frontYDimension/2) + (bffp_middleCutoutXDimension/2) - 125, bffp_frontYDimension - profileSize - 2, 0] )
+        {
+            m5ThroughHole_duplicate( height = 40 );
+            translate( [0, 0, 5.2 + 4.7] )
+            {
+                m5Nut();
+            }
+        }
+        translate( [(bffp_frontYDimension/2) + (bffp_middleCutoutXDimension/2) + 125, bffp_frontYDimension - profileSize - 2, 0] )
+        {
+            m5ThroughHole_duplicate( height = 40 );
+            translate( [0, 0, 5.2 + 4.7] )
+            {
+                m5Nut();
+            }
+        }
+    }
+}
+
+
 
 module powerSwitchTest()
 {
@@ -175,7 +446,7 @@ module powerSwitchCutoutFace()
         {
             union()
             {
-                #rotate( [90, 0, 0] )
+                rotate( [90, 0, 0] )
                 {
                     translate( [-1 * (bfpw_faceCenterWidth/2) + (bfpw_faceWidth/2) +  (bfpw_cornerDiameter/2), (bfpw_faceHeight/2), -1 * bfpw_faceDepth] )
                     {
@@ -288,9 +559,135 @@ module frontPanelThroughHoles()
 
 module rightPanel()
 {
-    translate( [xAxisProfileLength + (profileSize * 2) - (bffp_thickness - bffp_mountThickness), 0, 0] )
+    difference()
     {
-        cube( [bffp_thickness, yAxisProfileLength, zAxisProfileLength + (profileSize * 2)] );
+        {
+            translate( [xAxisProfileLength + (profileSize * 2) - (bffp_thickness - bffp_mountThickness), 0, 0] )
+            {
+                cube( [bffp_thickness, yAxisProfileLength, zAxisProfileLength + (profileSize * 2)] );
+            }
+        }
+        {
+            union()
+            {
+                piMountFaceCutout();
+                translate([xAxisProfileLength + (profileSize * 2) - bfpi_actualXDimension + 3, bfpi_platformFrontOffset, profileSize] )
+                translate( [bfpi_actualXDimension - 2.1 - bfpi_externalMountBlockDepth - 0.5, bfpi_platformYDimension - 43.8, 5] )
+                {
+                    cube( [bfpi_externalMountBlockDepth, bfpi_externalMountBlockWidth + 20, bfpi_externalMountBlockHeight - 2.5] );
+                }
+                piMountBlockCutouts();
+
+                translate([xAxisProfileLength + (profileSize * 2) - bfpi_actualXDimension + 3, bfpi_platformFrontOffset, profileSize + (2)] )
+                piMountThroughHoles( includeNut = 0 );
+
+                translate( [xAxisProfileLength + (profileSize * 2), yAxisProfileLength - bfc_yWallLength, 0] )
+                {
+                    controllerMountThroughHoles( includeNut = 0 );
+                    controllerMountMountingCutout();
+
+                    controllerFanMountCutouts();
+                    translate( [-11, 0, 0] )
+                    {
+                        controllerMountZAxisMountCutout();
+                    }
+
+                    translate( [-10, -195, 40] )
+                    {
+                        rotate( [0, 90, 0] )
+                        {
+                            cylinder( d = bfpi_externalUsbCutoutDiameter, h = 20 );
+                        }
+                    }
+
+                    translate( [-10, -165, 60] )
+                    {
+                        
+                        rotate( [0, 90, 0] )
+                        {
+                            piCameraCableCutout();
+
+                            translate( [30, -65, 0] )
+                            {
+                                rotate( [0, 0, 90] )
+                                {
+                                    piCameraCableCutout();
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                rightPanelFrameMountThroughHoles();
+
+                translate( [0, 0, zAxisProfileLength +profileSize] )
+                {
+                    coverPlateFrameCutout();
+                }
+
+                
+                
+            }
+        }
+    }
+
+}
+
+module piCameraCableCutout()
+{
+    hull()
+    {
+        {
+
+        }
+        {
+            union()
+            {
+                cylinder( d = 6, h = 20 );
+
+                translate( [0, 20, 0] )
+                {
+                    cylinder( d = 6, h = 20 );
+                }
+            }
+        }
+    }
+}
+
+module rightPanelFrameMountThroughHoles()
+{
+    translate( [xAxisProfileLength + profileSize + 7, (profileSize/2), (profileSize / 2)] )
+    {
+        rotate( [0, 90, 0] )
+        {
+            m4ThroughHole_duplicate( height = 20 );
+
+            translate( [-1 * zAxisProfileLength - profileSize, 0, 0] )
+            {
+                m4ThroughHole_duplicate( height = 20 );
+            }
+
+            translate( [0, yAxisProfileLength - profileSize, 0] )
+            {
+                m4ThroughHole_duplicate( height = 20 );
+            }
+
+            translate( [-1 * zAxisProfileLength - profileSize, yAxisProfileLength - profileSize, 0] )
+            {
+                m4ThroughHole_duplicate( height = 20 );
+            }
+
+
+            translate( [0, (yAxisProfileLength - profileSize)/2, 0] )
+            {
+                m4ThroughHole_duplicate( height = 20 );
+            }
+
+            translate( [-1 * zAxisProfileLength - profileSize, (yAxisProfileLength - profileSize)/2, 0] )
+            {
+                m4ThroughHole_duplicate( height = 20 );
+            }
+        }
     }
 }
 
@@ -489,16 +886,17 @@ module psuMountBlocks()
 // single block for easier prep for printing
 module psuMountBlock()
 {
+    translate( [0, -49.5, 0.5] )
     difference()
     {
         {
             translate( [4, yAxisProfileLength - (bfps_mountBlockWidth/2) - profileSize - bfps_yOutsideBuffer - bfps_yBoltDistanceFromEnd, profileSize + bfps_mountBlockHeightOffset] )
             {
-                cube( [bfps_mountBlockDepth, bfps_mountBlockWidth, bfps_mountBlockHeight] );
+                cube( [bfps_mountBlockDepth, bfps_mountBlockWidth - 1, bfps_mountBlockHeight - 1] );
             }
         }
         {
-            translate( [-12, bfps_yEndOffset, 0] )
+            translate( [-12, bfps_yEndOffset - 0.5, -0.5] )
             {
                 psuInternalMountHoles();
             }
@@ -692,6 +1090,7 @@ module controllerMount()
                 {
                     controllerMountWalls();
                     controllerMountPosts();
+                    controllerExternalMountBlocks( includeNut = 1 );
                 }
             }
             {
@@ -702,7 +1101,57 @@ module controllerMount()
     }
 }
 
+module controllerExternalMountBlocks( includeNut = 1 )
+{
+    difference()
+    {
+        {
+            translate( [-7.5, 0.5, profileSize + bfc_PlatformBottomBuffer] )
+            {
+                cube( [bfpi_externalMountBlockDepth, bfpi_externalMountBlockWidth, bfpi_externalMountBlockHeight] );
 
+                translate( [0, bfc_yWallLength - profileSize - bfpi_externalMountBlockWidth - 3, 0] )
+                {
+                    cube( [bfpi_externalMountBlockDepth, bfpi_externalMountBlockWidth, bfpi_externalMountBlockHeight] );
+                }
+            }
+        }
+        {
+            controllerMountThroughHoles( includeNut = 1 );            
+        }
+    }
+
+}
+
+module controllerMountThroughHoles( includeNut = 1 )
+{
+    translate( [-10, 0.5 + (bfpi_externalMountBlockWidth/2), profileSize + bfc_PlatformBottomBuffer + (bfpi_externalMountBlockHeight/2)] )
+    {
+        rotate( [0, 90, 0] )
+        {
+            m4ThroughHole_duplicate( height = 20 );
+            if( includeNut == 1 )
+            {
+                translate( [0, 0, 2.4] )
+                {
+                    m4Nut();
+                }
+            }
+
+                translate( [0, bfc_yWallLength - 35, 0] )
+                {
+                m4ThroughHole_duplicate( height = 20 );
+                if( includeNut == 1 )
+                {
+                    translate( [0, 0, 2.4] )
+                    {
+                        m4Nut();
+                    }
+                }
+                }
+        }
+    }
+}
 
 module psuMount()
 {
@@ -1051,7 +1500,7 @@ module tftFaceplate()
 
 module tftMountControlCutouts()
 {
-    #translate( [bftm_facePlateActualXDimension - bftm_resetCutoutXOffset, 9, bftm_resetCutoutZOffset] )
+    translate( [bftm_facePlateActualXDimension - bftm_resetCutoutXOffset, 9, bftm_resetCutoutZOffset] )
     {
         rotate( [90, 0, 0] )
         {
@@ -1104,6 +1553,14 @@ bfpi_airFlowCutoutLength = 33;
 
 bfpi_cableTieCutoutLength = 33;
 
+bfpi_externalMountBlockWidth = 12;
+bfpi_externalMountBlockHeight = 20;
+bfpi_externalMountBlockDepth = 7.9;
+bfpi_externalMountBlockFaceOffset = 5;
+
+bfpi_externalWallYDimension = 87;
+bfpi_externalWallZDimension = 20;
+
 bfpi_renderUsbCutout = true;
 
 
@@ -1111,27 +1568,41 @@ module piMount()
 {
     // TODO: Add pi cooling fan
 
-    translate([xAxisProfileLength + (profileSize * 2) - bfpi_actualXDimension, bfpi_platformFrontOffset, profileSize] )
+    translate([xAxisProfileLength + (profileSize * 2) - bfpi_actualXDimension + 3, bfpi_platformFrontOffset, profileSize] )
     {
         difference()
         {
             {
                 translate( [0, 0, bfpi_platformBottomBuffer] )
                 {
-                    translate( [-1 * bfpi_platformInsideXExtension, 0, 0] )
+                    difference()
                     {
-                        cube( [bfpi_platformXDimension, bfpi_platformYDimension, bfpi_platformZDimension] );
+                        {
+                            translate( [-1 * bfpi_platformInsideXExtension, 0, 0] )
+                            {
+                                cube( [bfpi_platformXDimension, bfpi_platformYDimension, bfpi_platformZDimension] );
+                            }
+                        }
+                        {
+                            translate( [bfpi_actualXDimension - 13.5 + bfpi_platformZDimension, bfpi_externalWallYDimension, -0.1] )
+                            {
+                                cube( [13.5, bfpi_externalMountBlockWidth + 30, bfpi_externalMountBlockHeight] );
+                            }
+                        }
                     }
+
 
                     translate( [bfpi_postOffset, bfpi_postOffset + bfpi_platformFrontYExtension, bfpi_platformZDimension] )
                     {
                         piMountPosts();
                     }
                     
-                    translate( [bfpi_actualXDimension, 0, -1 * profileSize - bfpi_platformBottomBuffer] )
+                    translate( [bfpi_actualXDimension, 0, 0] )
                     {
                         piMountWalls();
                     }
+
+                    piExternalMountBlocks();
                 }
 
                 // translate( [187.7, 145.5 + bfpi_platformFrontYExtension, 3] )
@@ -1149,12 +1620,63 @@ module piMount()
                     cube( [bfpi_platformZDimension, bfpi_platformYDimension, zAxisProfileLength + (profileSize * 2)] );
                 }
 
-                piMountFrameThroughHoles();
+                // piMountThroughHoles();
                 piMountAirFlowCutouts();
-
             }
         }
 
+    }
+}
+
+module piMountBlockCutouts()
+{
+    translate([xAxisProfileLength + (profileSize * 2) - bfpi_actualXDimension + 3, bfpi_platformFrontOffset, profileSize + bfpi_platformBottomBuffer] )
+    {
+        translate( [bfpi_actualXDimension - 2.1 - bfpi_externalMountBlockDepth - 0.5, -1 * bfpi_externalMountBlockWidth - 0.5, -0.5] )
+        {
+            cube( [bfpi_externalMountBlockDepth + 0.5, bfpi_externalMountBlockWidth + 1, bfpi_externalMountBlockHeight + 1] );
+        }
+
+        translate( [bfpi_actualXDimension - 2.1 - bfpi_externalMountBlockDepth - 0.5, bfpi_platformYDimension - bfpi_externalMountBlockWidth - 0.5, -0.5] )
+        {
+            cube( [bfpi_externalMountBlockDepth + 0.5, bfpi_externalMountBlockWidth + 1, bfpi_externalMountBlockHeight + 1] );
+        }
+    }
+}
+
+module piExternalMountBlocks()
+{
+    difference()
+    {
+        {
+            union()
+            {
+                translate( [bfpi_actualXDimension - 2.1 - bfpi_externalMountBlockDepth - 0.5, -1 * bfpi_externalMountBlockWidth, 0] )
+                {
+                    cube( [bfpi_externalMountBlockDepth, bfpi_externalMountBlockWidth, bfpi_externalMountBlockHeight] );
+                }
+
+                translate( [bfpi_actualXDimension - 2.1 - bfpi_externalMountBlockDepth - 0.5, bfpi_platformYDimension - bfpi_externalMountBlockWidth, 0] )
+                {
+                    cube( [bfpi_externalMountBlockDepth, bfpi_externalMountBlockWidth, bfpi_externalMountBlockHeight] );
+                }
+            }
+        }
+        {
+            piMountThroughHoles();
+        }
+    }
+
+}
+
+module piMountFaceCutout()
+{
+    translate([xAxisProfileLength + (profileSize * 2) - bfpi_actualXDimension + 3, bfpi_platformFrontOffset, profileSize] )
+    {
+        translate( [bfpi_actualXDimension - 16, -0.5, bfpi_platformBottomBuffer - 0.5] )
+        {
+            cube( [20, bfpi_externalWallYDimension + 1, bfpi_externalWallZDimension + 1] );
+        }
     }
 }
 
@@ -1190,22 +1712,27 @@ module piMountAirFlowCutouts()
         piMountAirFlowCutout();
     }
 
-    translate( [13, 83, 1] )
+    // translate( [13, 83, 1] )
+    // {
+    //     piMountCableTieFlowCutout();
+    // }
+
+    // translate( [13, 92, 1] )
+    // {
+    //     piMountCableTieFlowCutout();
+    // }
+
+    // translate( [13, 101, 1] )
+    // {
+    //     piMountCableTieFlowCutout();
+    // }
+
+    translate( [5, 110, 1] )
     {
         piMountCableTieFlowCutout();
     }
 
-    translate( [13, 92, 1] )
-    {
-        piMountCableTieFlowCutout();
-    }
-
-    translate( [13, 101, 1] )
-    {
-        piMountCableTieFlowCutout();
-    }
-
-    translate( [13, 110, 1] )
+    translate( [5, 119, 1] )
     {
         piMountCableTieFlowCutout();
     }
@@ -1255,7 +1782,7 @@ module piMountAirFlowCutout()
 
 module piMountWalls()
 {
-    cube( [bfpi_platformZDimension, bfpi_platformYDimension, zAxisProfileLength + (profileSize * 2)] );
+    cube( [bfpi_platformZDimension, bfpi_externalWallYDimension, bfpi_externalWallZDimension] );
 }
 
 module piMountExternalCutouts()
@@ -1297,41 +1824,46 @@ module piMountExternalCutouts()
             }
         }
 
-        if( bfpi_renderUsbCutout )
-        {
-            translate( [0, 85, 15] )
-            {
-                rotate( [0, 90, 0] )
-                {
-                    cylinder( d = bfpi_externalUsbCutoutDiameter, h = 10 );
-                }
-            }
-        }
+        // External USB cutout
+        // if( bfpi_renderUsbCutout )
+        // {
+        //     translate( [0, 85, 15] )
+        //     {
+        //         rotate( [0, 90, 0] )
+        //         {
+        //             cylinder( d = bfpi_externalUsbCutoutDiameter, h = 10 );
+        //         }
+        //     }
+        // }
 
     }
 }
 
-module piMountFrameThroughHoles()
+module piMountThroughHoles( includeNut = 1 )
 {
-    translate( [bfpi_actualXDimension - 1, 10, -1 * (profileSize/2)] )
+    translate( [bfpi_actualXDimension - 2.1 - bfpi_externalMountBlockDepth - 0.5 - 5, -1 * (bfpi_externalMountBlockWidth/2), (bfpi_externalMountBlockHeight/2)] )
     {
         rotate( [0, 90, 0] )
         {
-            m5ThroughHole();
-
-            translate( [-1 * zAxisProfileLength - profileSize, 0, 0] )
+            m4ThroughHole_duplicate( height = 20 );
+            if( includeNut == 1 )
             {
-                m5ThroughHole();
+                translate( [0, 0, 4.9] )
+                {
+                    m4Nut();
+                }
             }
 
-            translate( [0, bfpi_platformYDimension - 20, 0] )
+            translate( [0, bfpi_platformYDimension, 0] )
             {
-                m5ThroughHole();
-            }
-
-            translate( [-1 * zAxisProfileLength - profileSize, bfpi_platformYDimension - 20, 0] )
-            {
-                m5ThroughHole();
+                m4ThroughHole_duplicate(  height = 20  );
+                if( includeNut == 1 )
+                {
+                    translate( [0, 0, 4.9] )
+                    {
+                        m4Nut();
+                    }
+                }
             }
         }
     }
@@ -1371,13 +1903,13 @@ module piMountPost()
                     cylinder( d = bfpi_postDiameter, h = bfpi_postHeight );
                 }
                 {
-                    translate( [2.5, 0, -1] )
-                    {
-                        scale( [1.8, 1, 1] )
-                        {
-                            cylinder( d = bfpi_postDiameter, h = 1 );
-                        }
-                    }
+                    // translate( [2.5, 0, -1] )
+                    // {
+                    //     scale( [1.8, 1, 1] )
+                    //     {
+                    //         cylinder( d = bfpi_postDiameter, h = 1 );
+                    //     }
+                    // }
                 }
             }
         }
@@ -1477,13 +2009,24 @@ module controllerMountCutouts()
 {
     union()
     {
-        controllerFanMountCutouts();
         controllerMountAirFlowCutouts();
         controllerMountFrameConnectorCutouts();
-        controllerMountZAxisMountCutout();
         controllerMountMountingHoles();
     }
     
+}
+
+module controllerMountMountingCutout()
+{
+    translate( [-7.5, 0, profileSize + bfc_PlatformBottomBuffer - 0.5] )
+    {
+        cube( [bfpi_externalMountBlockDepth + 0.5, bfpi_externalMountBlockWidth + 1, bfpi_externalMountBlockHeight + 1] );
+
+        translate( [0, bfc_yWallLength - profileSize - bfpi_externalMountBlockWidth - 3, 0] )
+        {
+            cube( [bfpi_externalMountBlockDepth + 0.5, bfpi_externalMountBlockWidth + 1, bfpi_externalMountBlockHeight + 1] );
+        }
+    }
 }
 
 module controllerMountZAxisMountCutout()
@@ -1548,13 +2091,16 @@ module controllerMountAirFlowCutouts()
         }
     }
 
-    for( i = [0:1:3] )
-    {
-        translate( [-1 * bfc_xInsideBuffer - ((bfc_airFlowCutoutLength * 2) + 20), 7.5 + bfc_yInsideBuffer + bfc_airFlowCutoutDiameter + (i * bfc_airFlowYDistance), profileSize + bfc_PlatformBottomBuffer - 1] )
+    // for( i = [0:1:3] )
+    // {
+        translate( [-1 * bfc_xInsideBuffer - ((bfc_airFlowCutoutLength * 2) + 30), 30 + bfc_yInsideBuffer + bfc_airFlowCutoutDiameter + (1 * bfc_airFlowYDistance), profileSize + bfc_PlatformBottomBuffer - 1] )
         {
-            controllerMountAirFlowCutout();
+            rotate( [0, 0, 90] )
+            {
+                controllerMountAirFlowCutout();
+            }
         }
-    }
+    // }
 
     for( i = [0:1:2] )
     {
@@ -1602,7 +2148,10 @@ module controllerFanMountCutouts()
     translate( [-1 * bfc_fanXDimension, bfc_platformYDimension - bfc_fanYZDimension - bfc_yOutsideBuffer - 7, profileSize +  ((zAxisProfileLength - bfc_fanYZDimension)/2) + bfc_PlatformBottomBuffer ] )
     {
         // The dimensions of a real fan for fit
-        // %cube( [bfc_fanXDimension, bfc_fanYZDimension, bfc_fanYZDimension] );
+        translate( [-0.5 -0.5, -0.5] )
+        {
+            cube( [bfc_fanXDimension, bfc_fanCutoutYZ, bfc_fanCutoutYZ] );
+        }
 
         translate( [-2, (bfc_fanYZDimension/2), (bfc_fanYZDimension/2)] )
         {
@@ -1654,13 +2203,13 @@ module controllerMountPost()
             cylinder( d = bfc_mountPostDiamter, h = bfc_mountPostHeight );
         }
         {
-            translate( [2.6, 0, -1] )
-            {
-                scale( [1.65, 1, 1] )
-                {
-                    cylinder( d = bfc_mountPostDiamter, h = 1 );
-                }
-            }
+            // translate( [2.6, 0, -1] )
+            // {
+            //     scale( [1.65, 1, 1] )
+            //     {
+            //         cylinder( d = bfc_mountPostDiamter, h = 1 );
+            //     }
+            // }
         }
     }
 }
@@ -1717,17 +2266,17 @@ module controllerMountWalls()
     union()
     {
         // Y axis outside wall
-        cube( [bf_wallThickness, bfc_yWallLength, bfc_yWallHeight] );
+        // cube( [bf_wallThickness, bfc_yWallLength, bfc_yWallHeight] );
         
-        translate( [-1 * bfc_platformXDimension, 0, profileSize + bfc_PlatformBottomBuffer] )
+        translate( [-1 * bfc_platformXDimension, 0.5, profileSize + bfc_PlatformBottomBuffer] )
         {
             // floor
-            cube( [bfc_platformXDimension, bfc_platformYDimension, bf_wallThickness] );
+            cube( [bfc_platformXDimension - 7.5, bfc_platformYDimension - 1, bf_wallThickness] );
             // X axis outside wall
-            translate( [0, bfc_platformYDimension - bf_wallThickness, 0] )
-            {
-                cube( [bfc_platformXDimension, bf_wallThickness, bfc_yWallHeight - (profileSize * 2) - (bf_wallThickness + 0.4) - bfc_PlatformBottomBuffer] );
-            }
+            // translate( [0, bfc_platformYDimension - bf_wallThickness, 0] )
+            // {
+            //     cube( [bfc_platformXDimension, bf_wallThickness, bfc_yWallHeight - (profileSize * 2) - (bf_wallThickness + 0.4) - bfc_PlatformBottomBuffer] );
+            // }
         }
     }
 
