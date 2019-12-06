@@ -14,16 +14,17 @@ $fs = 0.1;
 renderFrame = true;
 
 // Wood panels
-topPanels();
-rightPanel();
-leftPanel();
-frontPanel();
-backPanel();
+// topPanels();
+// rightPanel();
+// leftPanel();
+// frontPanel();
+// backPanel();
 
 // 3D printed pieces
 // psuMountBlock();
 // controllerMount();
 // piMount();
+// piFanMount();
 // tftMount();
 
 // Other
@@ -505,9 +506,9 @@ module frontPanel()
                     cube( [bftm_mountWidth + bffp_mountThickness - 2, 20, 76] );
 
                     rotate( [0, 0, 10.5] )
-                    translate( [-31.5, 1.9, -14.1 + 25] )
+                    translate( [-31.5, 1.9, 0] )
                     {
-                        cube( [33, 6, 40] );
+                        cube( [33, 6, 45] );
                     }
                 }
                 translate( [0, 0, zAxisProfileLength + (profileSize)] )
@@ -625,6 +626,25 @@ module rightPanel()
                     coverPlateFrameCutout();
                 }
 
+                translate([xAxisProfileLength + (profileSize * 2) - bfpi_actualXDimension + 3, bfpi_platformFrontOffset, profileSize] )
+                {
+                    translate( [bfpi_fanPlatformXYDimension, (bfpi_fanPlatformXYDimension/2) - (bfpi_externalMountBlockWidth/2), 0] )
+                    {
+                        translate( [-1 * (bfpi_fanMainCutoutDiameter/2) + 29.2, 25.75 - 0.5, 25 - 0.5] )
+                        {
+                            cube( [bfpi_externalMountBlockDepth + 0.5, bfpi_externalMountBlockWidth + 1, bfpi_externalMountBlockHeight + 1] );
+
+                            translate( [-10, 0.5 + (bfpi_externalMountBlockWidth/2), 0.5 + (bfpi_externalMountBlockHeight/2)] )
+                            {
+                                rotate( [0, 90, 0] )
+                                {
+                                    m4ThroughHole_duplicate( height = 30 );
+                                }
+                            }
+                        }
+                    }
+                }
+
                 
                 
             }
@@ -660,32 +680,32 @@ module rightPanelFrameMountThroughHoles()
     {
         rotate( [0, 90, 0] )
         {
-            m4ThroughHole_duplicate( height = 20 );
+            m5ThroughHole_duplicate( height = 20 );
 
             translate( [-1 * zAxisProfileLength - profileSize, 0, 0] )
             {
-                m4ThroughHole_duplicate( height = 20 );
+                m5ThroughHole_duplicate( height = 20 );
             }
 
             translate( [0, yAxisProfileLength - profileSize, 0] )
             {
-                m4ThroughHole_duplicate( height = 20 );
+                m5ThroughHole_duplicate( height = 20 );
             }
 
             translate( [-1 * zAxisProfileLength - profileSize, yAxisProfileLength - profileSize, 0] )
             {
-                m4ThroughHole_duplicate( height = 20 );
+                m5ThroughHole_duplicate( height = 20 );
             }
 
 
             translate( [0, (yAxisProfileLength - profileSize)/2, 0] )
             {
-                m4ThroughHole_duplicate( height = 20 );
+                m5ThroughHole_duplicate( height = 20 );
             }
 
             translate( [-1 * zAxisProfileLength - profileSize, (yAxisProfileLength - profileSize)/2, 0] )
             {
-                m4ThroughHole_duplicate( height = 20 );
+                m5ThroughHole_duplicate( height = 20 );
             }
         }
     }
@@ -732,7 +752,6 @@ module leftPanel()
 
 module backPanel()
 {
-    // TODO: Make the cutout taller and wider
     difference()
     {
         {
@@ -1563,11 +1582,88 @@ bfpi_externalWallZDimension = 20;
 
 bfpi_renderUsbCutout = true;
 
+bfpi_fanDistanceBetweenBolts = 23.8;
+bfpi_fanPlatformXYDimension = 31;
+bfpi_fanMainCutoutDiameter = 29;
+bfpi_fanPlatformZDimension = bf_wallThickness;
+bfpi_fanCornerDiameter = 2;
+
+module piFanMount()
+{
+    difference()
+    {
+        {
+            union()
+            {
+                hull()
+                {
+                    {
+                        translate( [(bfpi_fanCornerDiameter/2), (bfpi_fanCornerDiameter/2), 0] ) cube( [bfpi_fanPlatformXYDimension - bfpi_fanCornerDiameter, bfpi_fanPlatformXYDimension - bfpi_fanCornerDiameter, bfpi_fanPlatformZDimension] );
+                    }
+                    {
+                        union()
+                        {
+                            translate( [(bfpi_fanCornerDiameter/2), (bfpi_fanCornerDiameter/2), 0] ) cylinder( d = bfpi_fanCornerDiameter, h = bfpi_fanPlatformZDimension);
+                            translate( [bfpi_fanPlatformXYDimension - (bfpi_fanCornerDiameter/2), (bfpi_fanCornerDiameter/2), 0] ) cylinder( d = bfpi_fanCornerDiameter, h = bfpi_fanPlatformZDimension);
+                            translate( [(bfpi_fanCornerDiameter/2), bfpi_fanPlatformXYDimension - (bfpi_fanCornerDiameter/2), 0] ) cylinder( d = bfpi_fanCornerDiameter, h = bfpi_fanPlatformZDimension);
+                            translate( [bfpi_fanPlatformXYDimension - (bfpi_fanCornerDiameter/2), bfpi_fanPlatformXYDimension - (bfpi_fanCornerDiameter/2), 0] ) cylinder( d = bfpi_fanCornerDiameter, h = bfpi_fanPlatformZDimension);
+                        }
+                    }
+                }
+
+                translate( [bfpi_fanPlatformXYDimension, (bfpi_fanPlatformXYDimension/2) - (bfpi_externalMountBlockWidth/2), 0] )
+                {
+                    cube( [12.6, bfpi_externalMountBlockWidth, bfpi_fanPlatformZDimension] );
+
+                    translate( [12.2, 0, 0] )
+                    {
+                        cube( [bfpi_externalMountBlockDepth, bfpi_externalMountBlockWidth, bfpi_externalMountBlockHeight] );
+                    }
+                }
+            }
+
+        }
+        {
+            piFanMountThroughHoles();
+        }
+    }
+    
+}
+
+module piFanMountThroughHoles()
+{
+    union()
+    {
+        translate( [((bfpi_fanPlatformXYDimension - bfpi_fanDistanceBetweenBolts)/2), ((bfpi_fanPlatformXYDimension - bfpi_fanDistanceBetweenBolts)/2), -1] )
+        {
+            m3ThroughHole();
+            translate( [bfpi_fanDistanceBetweenBolts, 0, 0] ) m3ThroughHole();
+            translate( [0, bfpi_fanDistanceBetweenBolts, 0] ) m3ThroughHole();
+            translate( [bfpi_fanDistanceBetweenBolts, bfpi_fanDistanceBetweenBolts, 0] ) m3ThroughHole();
+        }
+
+        translate( [(bfpi_fanPlatformXYDimension/2), (bfpi_fanPlatformXYDimension/2), -1] )
+        {
+            cylinder( d = bfpi_fanMainCutoutDiameter, h = bfpi_fanPlatformZDimension + 2 );
+        }
+
+        translate( [40, (bfpi_fanPlatformXYDimension/2), (bfpi_externalMountBlockHeight/2)] )
+        {
+            rotate( [0, 90, 0] )
+            {
+                m4ThroughHole_duplicate( height = 30 );
+                translate( [0, 0, 3.1] )
+                {
+                    m4Nut();
+                }
+            }
+        }
+    }
+
+}
 
 module piMount()
 {
-    // TODO: Add pi cooling fan
-
     translate([xAxisProfileLength + (profileSize * 2) - bfpi_actualXDimension + 3, bfpi_platformFrontOffset, profileSize] )
     {
         difference()
@@ -1603,6 +1699,12 @@ module piMount()
                     }
 
                     piExternalMountBlocks();
+
+                    // Fan mount in-place
+                    // translate( [-1 * (bfpi_fanMainCutoutDiameter/2) + 17, 25.75, 23] )
+                    // {
+                    //     piFanMount();
+                    // }
                 }
 
                 // translate( [187.7, 145.5 + bfpi_platformFrontYExtension, 3] )
@@ -1612,16 +1714,19 @@ module piMount()
                 // piMountPlatformExtensions();
             }
             {
-                // color( "blue" )
-                piMountExternalCutouts();
-
-                translate( [bfpi_actualXDimension + bfpi_platformZDimension, 0, -1 * profileSize] )
+                union()
                 {
-                    cube( [bfpi_platformZDimension, bfpi_platformYDimension, zAxisProfileLength + (profileSize * 2)] );
-                }
+                    // color( "blue" )
+                    piMountExternalCutouts();
 
-                // piMountThroughHoles();
-                piMountAirFlowCutouts();
+                    translate( [bfpi_actualXDimension + bfpi_platformZDimension, 0, -1 * profileSize] )
+                    {
+                        cube( [bfpi_platformZDimension, bfpi_platformYDimension, zAxisProfileLength + (profileSize * 2)] );
+                    }
+
+                    // piMountThroughHoles();
+                    piMountAirFlowCutouts();
+                }
             }
         }
 
