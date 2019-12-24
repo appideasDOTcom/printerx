@@ -4,8 +4,8 @@
 
 include <Shared-modules.scad>
 include <Z axis retainer block.scad>
-include <thirdparty/prusa/Original-Prusa-i3/Printed-Parts/scad/x-end-idler.scad>
-include <thirdparty/prusa/Original-Prusa-i3/Printed-Parts/scad/x-end-motor.scad>
+// include <thirdparty/prusa/Original-Prusa-i3/Printed-Parts/scad/x-end-idler.scad>
+// include <thirdparty/prusa/Original-Prusa-i3/Printed-Parts/scad/x-end-motor.scad>
 include <2020 SK8 Bracket.scad>
 include <Y belt tensioner.scad>
 include <Filament guide.scad>

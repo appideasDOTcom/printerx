@@ -74,6 +74,80 @@ module sideSupport()
 
 }
 
+module idlerFrontSupport( frontLength = true )
+{
+    supportWidth = 27.5;
+    
+    sideSupportWidth = 39;
+
+    union()
+    {
+        {
+            hull()
+            {
+                {
+                    // cube( [wallthickness, wallthickness, pieceThickness] );
+                }
+                {
+                    union()
+                    {
+                        translate( [pieceWidth - wallthickness, -1 * wallthickness, 0] )
+                        {
+                            cube( [wallthickness, wallthickness, pieceThickness] );
+                        }
+
+                        if( frontLength )
+                        {
+                            translate( [pieceWidth - wallthickness - supportWidth, -1 * wallthickness, 0] )
+                            {
+                                cube( [wallthickness, wallthickness, pieceThickness] );
+                            }
+
+                            translate( [pieceWidth - wallthickness - supportWidth, -1 * wallthickness, extrusionHeight + pieceThickness] )
+                            {
+                                cube( [wallthickness, wallthickness, pieceThickness] );
+                            }
+
+                            translate( [pieceWidth - wallthickness - supportWidth + neckWidth - (cornerDiameter/2), 0, extrusionHeight + pieceThickness + (cornerDiameter/2)] )
+                            {
+                                rotate( [90, 0, 0] )
+                                {
+                                    cylinder( d = cornerDiameter, h = wallthickness );
+                                }
+                            }
+                        }
+                        else
+                        {
+                            translate( [pieceWidth - wallthickness - sideSupportWidth, -1 * wallthickness, 0] )
+                            {
+                                cube( [wallthickness, wallthickness, pieceThickness] );
+                            }
+
+                            translate( [pieceWidth - wallthickness - sideSupportWidth, -1 * wallthickness, extrusionHeight + pieceThickness] )
+                            {
+                                cube( [wallthickness, wallthickness, pieceThickness] );
+                            }
+
+                            translate( [pieceWidth - wallthickness - sideSupportWidth + neckWidth - (cornerDiameter/2), 0, extrusionHeight + pieceThickness + (cornerDiameter/2)] )
+                            {
+                                rotate( [90, 0, 0] )
+                                {
+                                    cylinder( d = cornerDiameter, h = wallthickness );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        {
+
+        }
+    }
+
+
+}
+
 
 module extension()
 {

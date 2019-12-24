@@ -11,10 +11,10 @@ use <Frame foot mount.scad>
 $fa = 1;
 $fs = 0.1;
 
-renderFrame = true;
+renderFrame = false;
 
 // Wood panels
-// topPanels();
+topPanels();
 // rightPanel();
 // leftPanel();
 // frontPanel();
@@ -22,10 +22,13 @@ renderFrame = true;
 
 // 3D printed pieces
 // psuMountBlock();
-// controllerMount();
-// piMount();
-// piFanMount();
-// tftMount();
+// color( "blue" )
+// {
+//     controllerMount();
+//     piMount();
+//     // piFanMount();
+//     tftMount();
+// }
 
 // Other
 // powerSwitchCutout(); // test
@@ -123,7 +126,7 @@ module topPanels()
     union()
     {
         topFrontPanel();
-        topRearPanel();
+        // topRearPanel();
     }
 }
 
@@ -132,8 +135,8 @@ bffp_frontYDimension = 289;
 bffp_frontZDimension = 19.2;
 
 bffp_rearXDimension = bffp_frontXDimension;
-bffp_rearYDimension = 141;
-bffp_rearZDimension = 12.9;
+bffp_rearYDimension = 150;
+bffp_rearZDimension = bffp_frontZDimension;
 
 bffp_topOverhang = 6;
 
@@ -146,12 +149,12 @@ bffp_middleCutoutYDimension = yAxisProfileLength + 2;
 bffp_middleCutoutZDimension = 9.1;
 
 bffp_middleConnectorCutoutXDimension = xAxisProfileLength + (profileSize * 2) + (bffp_topOverhang * 2) + 2;
-bffp_middleConnectorCutoutYDimension = 12.5;
-bffp_middleConnectorCutoutZDimension = 6.2;
+bffp_middleConnectorCutoutYDimension = 21.5;
+bffp_middleConnectorCutoutZDimension = 8.2;
 
 bffp_rearCutoutXDimension = 85;
 bffp_rearCutoutYDimension = 60;
-bffp_rearCutoutZDimension = 13;
+bffp_rearCutoutZDimension = 20;
 
 module topFrontPanel()
 {
@@ -165,7 +168,7 @@ module topFrontPanel()
             {
                 topPlateCutouts( isFront = 1 );
 
-                translate( [bffp_topOverhang, bffp_topOverhang, -1 * bffp_topOverhang] )
+                translate( [bffp_topOverhang, bffp_topOverhang, -1 * bffp_topOverhang + 0.4] )
                 {
                     coverPlateFrameCutout();
                 }
@@ -190,22 +193,25 @@ module topRearPanel()
                 union()
                 {
                    
-                    translate( [0, -1 * (bffp_frontYDimension) + profileSize - 2, -1 * profileSize + bffp_topOverhang + 0.9] )
+                    translate( [bffp_topOverhang, -1 * (bffp_frontYDimension) + profileSize + 7, -1 * profileSize + bffp_topOverhang + 0.9] )
                     {
-                        coverPlateFrameCutout();
-                        translate( [0, -6, bffp_topOverhang] )
+                        translate( [0, 0, 6.7] )
+                        {
+                            coverPlateFrameCutout();
+                        }
+                        translate( [-1 * bffp_topOverhang, -1 * bffp_topOverhang, bffp_topOverhang + 6.3] )
                         {
                             topPlateCutouts( isFront = 0 );
                         }
 
-                        translate( [-1.0, yAxisProfileLength - (pieceDepth + 3.2), 0.1] )
-                        {
-                            cube( [bf_wallThickness + 31, pieceDepth + 10.2, profileSize + 6] );
-                            translate( [xAxisProfileLength + profileSize, 0, 0] )
-                            {
-                                cube( [bf_wallThickness + 31, pieceDepth + 10.2, profileSize + 6] );
-                            }
-                        }
+                        // #translate( [-1.0, yAxisProfileLength - (pieceDepth + 3.2), 0.1] )
+                        // {
+                        //     cube( [bf_wallThickness + 31, pieceDepth + 10.2, profileSize + 6] );
+                        //     translate( [xAxisProfileLength + profileSize, 0, 0] )
+                        //     {
+                        //         cube( [bf_wallThickness + 31, pieceDepth + 10.2, profileSize + 6] );
+                        //     }
+                        // }
                     }
                 }
             }
@@ -219,16 +225,16 @@ module topPlateCutouts( isFront = 1 )
     union()
     {
 
-        translate( [xAxisProfileLength - (profileSize * 2) + bffp_topOverhang - 105, yAxisProfileLength + bffp_topOverhang - bffp_rearCutoutYDimension - profileSize, bffp_topOverhang - 0.8] )
+        translate( [xAxisProfileLength - (profileSize * 2) + bffp_topOverhang - 105, yAxisProfileLength + bffp_topOverhang - bffp_rearCutoutYDimension - profileSize, bffp_topOverhang - 6.8] )
         {
             cube( [bffp_rearCutoutXDimension, bffp_rearCutoutYDimension, bffp_rearCutoutZDimension + 1] );
         }
 
         translate( [(bffp_frontXDimension/2) - (bffp_frontCutoutXDimension/2), -1, -1] )
         {
-            cube( [bffp_frontCutoutXDimension, bffp_frontCutoutYDimension, bffp_frontCutoutZDimension] );
+            cube( [bffp_frontCutoutXDimension, bffp_frontCutoutYDimension - 0.2, bffp_frontCutoutZDimension] );
 
-            translate( [0, yAxisProfileLength - profileSize + bffp_topOverhang, 0] )
+            translate( [0, yAxisProfileLength - profileSize + bffp_topOverhang + 0.8, 0] )
             {
                 cube( [bffp_frontCutoutXDimension, bffp_frontCutoutYDimension, bffp_frontCutoutZDimension] );
             }
@@ -236,46 +242,37 @@ module topPlateCutouts( isFront = 1 )
 
         translate( [ xAxisProfileLength + profileSize - 1 - 15, yAxisProfileLength - profileSize - 7, -5] )
         {
-            hull()
+            topPanelWireEntryShape();
+
+            translate( [-1 * xAxisProfileLength + 30 + 16, -33, 0] )
             {
-                {
-
-                }
-                {
-                    union()
-                    {
-                        cylinder( d =  8, h = 30 );
-
-                        translate( [0, -33, 0] )
-                        {
-                            cylinder( d =  8, h = 30 );
-                        }
-
-                        translate( [16, -4, 0] )
-                        {
-                            cube( [8, 8, 30] );
-                        }
-
-                        translate( [16, -37, 0] )
-                        {
-                            cube( [8, 8, 30] );
-                        }
-                    }
-                }
+                rotate( [0, 0, 180] ) topPanelWireEntryShape();;
             }
         }
 
-        translate( [ -1, yAxisProfileLength - zAxisTowerDistanceFromEnd - 89.2, -5.9] )
+
+        translate( [ -1, yAxisProfileLength - zAxisTowerDistanceFromEnd - 129.2, -5.9] )
         {
-            cube( [bf_wallThickness + 31, pieceDepth + 10.2, profileSize + 6] );
+            translate( [0, 40, 0] ) cube( [bf_wallThickness + 31, pieceDepth + 82.2, profileSize + 6] );
 
-            translate( [ xAxisProfileLength + profileSize, 0, 0] )
+            translate( [ xAxisProfileLength + profileSize, 40, 0] )
             {
-                cube( [bf_wallThickness + 31, pieceDepth + 10.2, profileSize + 6] );
+                cube( [bf_wallThickness + 31, pieceDepth + 82.2, profileSize + 6] );
             }
+
+            translate( [-5, 40, 0] )
+            {
+                cube( [bf_wallThickness + 31, pieceDepth + 82.2, profileSize + 6] );
+
+                translate( [ xAxisProfileLength + profileSize + 10, 0, 0] )
+                {
+                    cube( [bf_wallThickness + 31, pieceDepth + 82.2, profileSize + 6] );
+                }
+            }
+
         }
 
-        translate( [-1, yAxisProfileLength + bffp_topOverhang, -1 * bffp_topOverhang + 0.2] )
+        translate( [-1, yAxisProfileLength + bffp_topOverhang - 1, -1 * bffp_topOverhang + 0.2] )
         {
             cutoutFrameProfile( axis = "x", length = xAxisProfileLength + (profileSize * 2) + (bffp_topOverhang * 2) + 2 );
         }
@@ -310,21 +307,55 @@ module topPlateCutouts( isFront = 1 )
 
         if( isFront == 1 )
         {
-            translate( [-1, bffp_frontYDimension - bffp_middleConnectorCutoutYDimension + 0.1, 13.1] )
+            translate( [-1, bffp_frontYDimension - bffp_middleConnectorCutoutYDimension + 0.1, 11.1] )
             {
                 cube( [bffp_middleConnectorCutoutXDimension, bffp_middleConnectorCutoutYDimension, bffp_middleConnectorCutoutZDimension] );
             }
         }
         else
         {
-            translate( [-1, bffp_frontYDimension - bffp_middleConnectorCutoutYDimension, 13.1 - bffp_middleConnectorCutoutZDimension - 2] )
+            translate( [-1, bffp_frontYDimension - bffp_middleConnectorCutoutYDimension, 11.1 - bffp_middleConnectorCutoutZDimension - 3.1] )
             {
-                cube( [bffp_middleConnectorCutoutXDimension, bffp_middleConnectorCutoutYDimension, bffp_middleConnectorCutoutZDimension + 2] );
+                cube( [bffp_middleConnectorCutoutXDimension, bffp_middleConnectorCutoutYDimension, bffp_middleConnectorCutoutZDimension + 3.1] );
             }
         }
 
         topFrameMountThroughHoles( isFront );
 
+    }
+}
+
+module topPanelWireEntryShape()
+{
+    hull()
+    {
+        {
+
+        }
+        {
+            union()
+            {
+                translate( [-3, -5, 0] )
+                {
+                    cylinder( d =  8, h = 30 );
+                }
+
+                translate( [-3, -28, 0] )
+                {
+                    cylinder( d =  8, h = 30 );
+                }
+
+                translate( [16, -9, 0] )
+                {
+                    cube( [8, 8, 30] );
+                }
+
+                translate( [16, -32, 0] )
+                {
+                    cube( [8, 8, 30] );
+                }
+            }
+        }
     }
 }
 
@@ -345,7 +376,7 @@ module topFrameMountThroughHoles( isFront = 1 )
          translate( [0, (yAxisProfileLength/2) + 30, 0] ) m5ThroughHole_duplicate( height = 40 );
          translate( [xAxisProfileLength + profileSize, (yAxisProfileLength/2) + 30, 0] ) m5ThroughHole_duplicate( height = 40 );
 
-        translate( [(bffp_frontYDimension/2) + (bffp_middleCutoutXDimension/2) - 30, bffp_frontYDimension - profileSize - 2, 0] )
+        translate( [(bffp_frontYDimension/2) + (bffp_middleCutoutXDimension/2) - 30, bffp_frontYDimension - profileSize - 6, 0] )
         {
             m5ThroughHole_duplicate( height = 40 );
             translate( [0, 0, 5.2 + 4.7] )
@@ -353,7 +384,7 @@ module topFrameMountThroughHoles( isFront = 1 )
                 m5Nut();
             }
         }
-        translate( [(bffp_frontYDimension/2) + (bffp_middleCutoutXDimension/2) + 30, bffp_frontYDimension - profileSize - 2, 0] )
+        translate( [(bffp_frontYDimension/2) + (bffp_middleCutoutXDimension/2) + 30, bffp_frontYDimension - profileSize - 6, 0] )
         {
             m5ThroughHole_duplicate( height = 40 );
             translate( [0, 0, 5.2 + 4.7] )
@@ -362,7 +393,7 @@ module topFrameMountThroughHoles( isFront = 1 )
             }
         }
 
-        translate( [(bffp_frontYDimension/2) + (bffp_middleCutoutXDimension/2) - 125, bffp_frontYDimension - profileSize - 2, 0] )
+        translate( [(bffp_frontYDimension/2) + (bffp_middleCutoutXDimension/2) - 125, bffp_frontYDimension - profileSize - 6, 0] )
         {
             m5ThroughHole_duplicate( height = 40 );
             translate( [0, 0, 5.2 + 4.7] )
@@ -370,7 +401,7 @@ module topFrameMountThroughHoles( isFront = 1 )
                 m5Nut();
             }
         }
-        translate( [(bffp_frontYDimension/2) + (bffp_middleCutoutXDimension/2) + 125, bffp_frontYDimension - profileSize - 2, 0] )
+        translate( [(bffp_frontYDimension/2) + (bffp_middleCutoutXDimension/2) + 125, bffp_frontYDimension - profileSize - 6, 0] )
         {
             m5ThroughHole_duplicate( height = 40 );
             translate( [0, 0, 5.2 + 4.7] )

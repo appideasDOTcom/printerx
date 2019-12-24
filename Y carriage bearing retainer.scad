@@ -18,7 +18,7 @@ bearingOuterDiameter = 15.0;
 retainerShell = 2.5;
 shellDiameter = bearingOuterDiameter + (retainerShell * 2);
 
-// bearingLength = 23.9; // The manufacturer's documentation lies about this measurement. It's actually 23.7, not 24.0. Adding a little for tolerance.
+rj4jpLength = 24; // The manufacturer's documentation lies about this measurement. It's actually 23.7, not 24.0. Adding a little for tolerance.
 
 xDistanceBetweenBolts = 24;
 yDistanceBetweenBolts = 18;
@@ -34,9 +34,8 @@ baseZDimension = 13; // The height of the base
 
 // This is the thing that's always wrong in other models. You gotta clamp these things the proper amount
 distanceBetweenTrapRings = 15.3;
-// This is the thing that's always wrong in other models. You gotta clamp these bearings a little.
-trapRingDepth = 0.4; // 0.325 is the documented measurement, We want to clamp a little
-trapRingWidth = 1; // 1.1mm is the documented measurement
+trapRingDepth = 0.4; // 0.325 is the documented measurement. We want to clamp a little
+trapRingWidth = 0.8; // 1.1mm is the documented measurement. We want to make sure to fit all the way into the retainer grooves.
 
 cutoutDistanceToEnd = (((baseYDimension - distanceBetweenTrapRings)/2) + 1) - trapRingWidth;
 
@@ -45,24 +44,30 @@ retainerReliefAmount = 3.5;// cut a slot into the top of the retainer
 cornerDiameter = 4;
 nutDepth = 3;
 
-difference()
-{
-    {
-        union()
-        {
-            base();
-            // This originally sat above the base, but that's not necessary
-            translate( [0, 0, -1 * retainerShell] )
-            {
-                bearingRetainer();
-            }
+// renderModel();
 
+module renderModel()
+{
+    difference()
+    {
+        {
+            union()
+            {
+                base();
+                // This originally sat above the base, but that's not necessary
+                translate( [0, 0, -1 * retainerShell] )
+                {
+                    bearingRetainer();
+                }
+
+            }
+        }
+        {
+            cutouts();
         }
     }
-    {
-        cutouts();
-    }
 }
+
 
 // bearingCutout();
 
