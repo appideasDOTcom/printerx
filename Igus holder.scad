@@ -1,3 +1,4 @@
+// THIS PART IS NOW OBSOLETE
 /**
  * Modified a part from this: https://www.thingiverse.com/thing:2791727 (NOTE: This URL improperly lists a "CC non-commercial license," but that piece 
  *   is derived from Prusa's GPL'd code and model. Derivative works of GPL'd material cannot add a "non-commercial" restriction.)
