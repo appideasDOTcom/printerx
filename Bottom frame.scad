@@ -1262,7 +1262,7 @@ bftm_resetCutoutZOffset = 3.69;
 
 bftm_speakerCutoutDiameter = 10;
 bftm_speakerCutoutXOffset = 7.81;
-bftm_speakerCutoutZOffset = 6.09;
+bftm_speakerCutoutZOffset = 5.69;
 
 bftm_knobCutoutXZDimension = 13;
 bftm_knobCutoutXOffset = 2.0;
@@ -1387,21 +1387,82 @@ module tftMountPosts()
     {
         rotate( [90, 0, 0] )
         {
-            cylinder( d = bftm_mountPostDiameter, h = bftm_mountPostHeight );
+            // cylinder( d = bftm_mountPostDiameter, h = bftm_mountPostHeight );
+
+            hull()
+            {
+                {
+                    cylinder( d = bftm_mountPostDiameter, h = bftm_mountPostHeight );
+                }
+                {
+                    translate( [0, -2.5, 4] )
+                    {
+                        scale( [1, 1.8, 1] )
+                        {
+                            cylinder( d = bftm_mountPostDiameter, h = 1 );
+                        }
+                    }
+                }
+            }
 
             translate( [0, bftm_zDistanceBetweenBolts, 0] )
             {
-                cylinder( d = bftm_mountPostDiameter, h = bftm_mountPostHeight );
+                // cylinder( d = bftm_mountPostDiameter, h = bftm_mountPostHeight );
+                hull()
+                {
+                    {
+                        cylinder( d = bftm_mountPostDiameter, h = bftm_mountPostHeight );
+                    }
+                    {
+                        translate( [0, -2.5, 4] )
+                        {
+                            scale( [1, 1.8, 1] )
+                            {
+                                cylinder( d = bftm_mountPostDiameter, h = 1 );
+                            }
+                        }
+                    }
+                }
             }
 
             translate( [bftm_xDistanceBetweenBolts, 0, 0] )
             {
-                cylinder( d = bftm_mountPostDiameter, h = bftm_mountPostHeight );
+                // cylinder( d = bftm_mountPostDiameter, h = bftm_mountPostHeight );
+                hull()
+                {
+                    {
+                        cylinder( d = bftm_mountPostDiameter, h = bftm_mountPostHeight );
+                    }
+                    {
+                        translate( [0, -2.5, 4] )
+                        {
+                            scale( [1, 1.8, 1] )
+                            {
+                                cylinder( d = bftm_mountPostDiameter, h = 1 );
+                            }
+                        }
+                    }
+                }
             }
 
             translate( [bftm_xDistanceBetweenBolts, bftm_zDistanceBetweenBolts, 0] )
             {
-                cylinder( d = bftm_mountPostDiameter, h = bftm_mountPostHeight );
+                // cylinder( d = bftm_mountPostDiameter, h = bftm_mountPostHeight );
+                hull()
+                {
+                    {
+                        cylinder( d = bftm_mountPostDiameter, h = bftm_mountPostHeight );
+                    }
+                    {
+                        translate( [0, -2.5, 4] )
+                        {
+                            scale( [1, 1.8, 1] )
+                            {
+                                cylinder( d = bftm_mountPostDiameter, h = 1 );
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -1566,9 +1627,9 @@ module tftMountControlCutouts()
         }
     }
 
-    translate( [bftm_facePlateActualXDimension - bftm_knobCutoutXZDimension - bftm_knobCutoutXOffset, -5, bftm_facePlateActualZDimension - bftm_knobCutoutXZDimension - bftm_knobCutoutZOffset] )
+    translate( [bftm_facePlateActualXDimension - bftm_knobCutoutXZDimension - bftm_knobCutoutXOffset - 0.4, -5, bftm_facePlateActualZDimension - bftm_knobCutoutXZDimension - bftm_knobCutoutZOffset] )
     {
-        cube( [bftm_knobCutoutXZDimension, 10, bftm_knobCutoutXZDimension] );
+        cube( [bftm_knobCutoutXZDimension + 0.4, 10, bftm_knobCutoutXZDimension] );
     }
 
     
