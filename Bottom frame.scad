@@ -8,13 +8,13 @@ include <printerx construction.scad>
 use <Frame foot mount.scad>
 
 // Render quality settings
-$fa = 1;
-$fs = 0.1;
+$fa = 5;
+$fs = 0.4;
 
 renderFrame = false;
 
 // Wood panels
-topPanels();
+// topPanels();
 // rightPanel();
 // leftPanel();
 // frontPanel();
@@ -24,10 +24,10 @@ topPanels();
 // psuMountBlock();
 // color( "blue" )
 // {
-//     controllerMount();
-//     piMount();
+    // controllerMount();
+    // piMount();
 //     // piFanMount();
-//     tftMount();
+    tftMount();
 // }
 
 // Other
@@ -41,7 +41,7 @@ bf_cornerRoundness = bf_wallThickness * 2;
 
 // bfc = Bottom Frame Controller
 bfc_xDistanceBetweenBolts = 101.85;
-bfc_yDistanceBetweenBolts = 76.1;
+bfc_yDistanceBetweenBolts = 76.3;
 bfc_mountPostDiamter = 8;
 bfc_mountPostHeight = 6;
 
@@ -126,7 +126,7 @@ module topPanels()
     union()
     {
         topFrontPanel();
-        // topRearPanel();
+        topRearPanel();
     }
 }
 
@@ -1607,6 +1607,7 @@ bfpi_externalMountBlockWidth = 12;
 bfpi_externalMountBlockHeight = 20;
 bfpi_externalMountBlockDepth = 7.9;
 bfpi_externalMountBlockFaceOffset = 5;
+bfpi_cornerDiameter = bfpw_cornerDiameter;
 
 bfpi_externalWallYDimension = 87;
 bfpi_externalWallZDimension = 20;
@@ -1618,6 +1619,9 @@ bfpi_fanPlatformXYDimension = 31;
 bfpi_fanMainCutoutDiameter = 29;
 bfpi_fanPlatformZDimension = bf_wallThickness;
 bfpi_fanCornerDiameter = 2;
+
+// extra length added to this wall so that there's room for the USB ports and we don't need to make super-thin wood on the case
+bfpi_extraExternalWallLength = 26;
 
 module piFanMount()
 {
@@ -1711,7 +1715,7 @@ module piMount()
                             }
                         }
                         {
-                            translate( [bfpi_actualXDimension - 13.5 + bfpi_platformZDimension, bfpi_externalWallYDimension, -0.1] )
+                            translate( [bfpi_actualXDimension - 13.5 + bfpi_platformZDimension, bfpi_externalWallYDimension + bfpi_extraExternalWallLength, -0.1] )
                             {
                                 cube( [13.5, bfpi_externalMountBlockWidth + 30, bfpi_externalMountBlockHeight] );
                             }
@@ -1757,6 +1761,38 @@ module piMount()
 
                     // piMountThroughHoles();
                     piMountAirFlowCutouts();
+
+                    // SD card access cutout
+
+                    bfpi_sdCutoutWidth = 34;
+                    bfpi_sdCutoutDepth = 15;
+                    translate( [(bfpi_platformXDimension/2) - (bfpi_sdCutoutWidth/2) - 3, -1.1, 0] )
+                    {
+                        // #cube( [bfpi_sdCutoutWidth, bfpi_sdCutoutDepth, 10] );
+                        
+                        hull()
+                        {
+                            {
+
+                            }
+                            {
+                                union()
+                                {
+                                    cylinder( d = bfpi_cornerDiameter, h = 10);
+                                    translate( [bfpi_sdCutoutWidth, 0, 0] ) cylinder( d = bfpi_cornerDiameter, h = 10);
+                                    translate( [5, bfpi_sdCutoutDepth, 0] ) cylinder( d = bfpi_cornerDiameter, h = 10);
+                                    translate( [bfpi_sdCutoutWidth - 5, bfpi_sdCutoutDepth, 0] ) cylinder( d = bfpi_cornerDiameter, h = 10);
+                                }
+                            }
+                        }
+
+                    }
+
+                    translate( [bfpi_postOffset, bfpi_postOffset + bfpi_platformFrontYExtension, bfpi_platformZDimension] )
+                    {
+                        piMountPostHoles();
+                    }
+                    
                 }
             }
         }
@@ -1816,52 +1852,45 @@ module piMountFaceCutout()
     }
 }
 
+module piMountPlasticSavingCutout()
+{
+    hull()
+    {
+        {}
+        {
+            union()
+            {
+                cylinder( d = bfpi_airFlowCutoutDiameter, h = bfpi_platformZDimension + 2);
+
+                translate( [19, 0, 0] ) cylinder( d = bfpi_airFlowCutoutDiameter, h = bfpi_platformZDimension + 2);
+                translate( [0, 15, 0] ) cylinder( d = bfpi_airFlowCutoutDiameter, h = bfpi_platformZDimension + 2);
+                translate( [17, 13, 0] ) cylinder( d = bfpi_airFlowCutoutDiameter, h = bfpi_platformZDimension + 2);
+            }
+        }
+    }
+}
+
 module piMountAirFlowCutouts()
 {
-    translate( [13, 19.5, 1] )
-    {
-        piMountAirFlowCutout();
-    }
-
-    translate( [13, 28.5, 1] )
-    {
-        piMountAirFlowCutout();
-    }
-
-    translate( [13, 37.5, 1] )
-    {
-        piMountAirFlowCutout();
-    }
-
-    translate( [13, 46.5, 1] )
-    {
-        piMountAirFlowCutout();
-    }
-
-    translate( [13, 55.5, 1] )
-    {
-        piMountAirFlowCutout();
-    }
-
-    translate( [13, 64.5, 1] )
-    {
-        piMountAirFlowCutout();
-    }
-
-    // translate( [13, 83, 1] )
+    // translate( [13, 19.5, 1] )
     // {
-    //     piMountCableTieFlowCutout();
+    //     piMountAirFlowCutout();
     // }
 
-    // translate( [13, 92, 1] )
-    // {
-    //     piMountCableTieFlowCutout();
-    // }
+    translate( [2, 23, 1] )
+    {
+        
+        piMountPlasticSavingCutout();
+        translate( [48, 0, bfpi_platformZDimension + 2] ) rotate( [0, 180, 0] ) piMountPlasticSavingCutout();
+        translate( [0, 40, bfpi_platformZDimension + 2] ) rotate( [180, 0, 0] ) piMountPlasticSavingCutout();
+        translate( [48, 40, 0] ) rotate( [180, 180, 0] ) piMountPlasticSavingCutout();
 
-    // translate( [13, 101, 1] )
-    // {
-    //     piMountCableTieFlowCutout();
-    // }
+
+        translate( [0, 55, 0] ) scale( [1, 0.6, 1] ) piMountPlasticSavingCutout();
+        translate( [0, 80, bfpi_platformZDimension + 2] ) scale( [1, 0.6, 1] ) rotate( [180, 0, 0] ) piMountPlasticSavingCutout();
+        translate( [48, 55, bfpi_platformZDimension + 2] ) scale( [1, 0.6, 1] ) rotate( [0, 180, 0] ) piMountPlasticSavingCutout();
+        translate( [48, 80, 0] ) scale( [1, 0.6, 1] ) rotate( [180, 180, 0] ) piMountPlasticSavingCutout();
+    }
 
     translate( [5, 110, 1] )
     {
@@ -1918,14 +1947,14 @@ module piMountAirFlowCutout()
 
 module piMountWalls()
 {
-    cube( [bfpi_platformZDimension, bfpi_externalWallYDimension, bfpi_externalWallZDimension] );
+    cube( [bfpi_platformZDimension, bfpi_externalWallYDimension + bfpi_extraExternalWallLength, bfpi_externalWallZDimension] );
 }
 
 module piMountExternalCutouts()
 {
     translate( [bfpi_actualXDimension - 6, 5.7 + bfpi_platformFrontYExtension, 10] )
     {
-        cube( [10, 10, 3.4] );
+        cube( [10, 10, 3.6] );
 
         translate( [7.6, -1.5, -1.5] )
         {
@@ -1934,7 +1963,7 @@ module piMountExternalCutouts()
 
         translate( [0, 15.55, 0] )
         {
-            cube( [10, 8.5, 3.2] );
+            cube( [10, 8.5, 3.4] );
 
             translate( [7.6, -2.5, -3] )
             {
@@ -1944,7 +1973,7 @@ module piMountExternalCutouts()
 
         translate( [0, 29.05, 0] )
         {
-            cube( [10, 8.5, 3.2] );
+            cube( [10, 8.5, 3.4] );
         }
 
         translate( [0, 47.8, 3.5] )
@@ -2028,6 +2057,29 @@ module piMountPosts()
     }
 }
 
+module piMountPostHoles()
+{
+    union()
+    {
+        translate( [0, 0, -5] ) cylinder( d1 = 2, d2 = 2.5, h = 10 );
+
+        translate( [bfpi_xDistanceBetweenBolts, 0, -5] )
+        {
+            cylinder( d1 = 2, d2 = 2.5, h = 10 );
+        }
+
+        translate( [0, bfpi_yDistanceBetweenBolts, -5] )
+        {
+            cylinder( d1 = 2, d2 = 2.5, h = 10 );
+        }
+
+        translate( [bfpi_xDistanceBetweenBolts, bfpi_yDistanceBetweenBolts, -5] )
+        {
+            cylinder( d1 = 2, d2 = 2.5, h = 10 );
+        }
+    }
+}
+
 module piMountPost()
 {
     difference()
@@ -2050,9 +2102,9 @@ module piMountPost()
             }
         }
         {
-            translate( [0, 0, 01.] )
+            translate( [0, 0, -5] )
             {
-                cylinder( d1 = 2, d2 = 2.5, h = 4 );
+                cylinder( d1 = 2, d2 = 2.5, h = 10 );
             }
         }
     }
@@ -2214,18 +2266,18 @@ module controllerMountAirFlowCutouts()
         controllerMountAirFlowCutout();
     }
 
-    for( i = [0:1:4] )
-    {
-        translate( [-1 * bfc_xInsideBuffer + 6, bfc_yInsideBuffer + bfc_airFlowCutoutDiameter + (i * bfc_airFlowYDistance), profileSize + bfc_PlatformBottomBuffer - 1] )
-        {
-            controllerMountAirFlowCutout();
-        }
+    // for( i = [0:1:4] )
+    // {
+    //     translate( [-1 * bfc_xInsideBuffer + 6, bfc_yInsideBuffer + bfc_airFlowCutoutDiameter + (i * bfc_airFlowYDistance), profileSize + bfc_PlatformBottomBuffer - 1] )
+    //     {
+    //         controllerMountAirFlowCutout();
+    //     }
 
-        translate( [-1 * bfc_xInsideBuffer + 6 - (bfc_airFlowCutoutLength + 12), bfc_yInsideBuffer + bfc_airFlowCutoutDiameter + (i * bfc_airFlowYDistance), profileSize + bfc_PlatformBottomBuffer - 1] )
-        {
-            controllerMountAirFlowCutout();
-        }
-    }
+    //     translate( [-1 * bfc_xInsideBuffer + 6 - (bfc_airFlowCutoutLength + 12), bfc_yInsideBuffer + bfc_airFlowCutoutDiameter + (i * bfc_airFlowYDistance), profileSize + bfc_PlatformBottomBuffer - 1] )
+    //     {
+    //         controllerMountAirFlowCutout();
+    //     }
+    // }
 
     // for( i = [0:1:3] )
     // {
@@ -2234,6 +2286,15 @@ module controllerMountAirFlowCutouts()
             rotate( [0, 0, 90] )
             {
                 controllerMountAirFlowCutout();
+            }
+
+            translate( [13, -42, -1] )
+            {
+                controllerMountPlasticSavingCutout();
+                translate( [0, 54, 10] ) rotate( [180, 0, 0] ) controllerMountPlasticSavingCutout();
+
+                translate( [112, 0, 10] ) rotate( [0, 180, 0] ) controllerMountPlasticSavingCutout();
+                translate( [112, 54, 0] ) rotate( [180, 180, 0] ) controllerMountPlasticSavingCutout();
             }
         }
     // }
@@ -2253,6 +2314,24 @@ module controllerMountAirFlowCutouts()
             rotate( [90, 0, 0] )
             {
                 controllerMountAirFlowCutout();
+            }
+        }
+    }
+}
+
+module controllerMountPlasticSavingCutout()
+{
+    hull()
+    {
+        {}
+        {
+            union()
+            {
+                cylinder( d = bfc_airFlowCutoutDiameter, h = bfcp_plateZDimension + 2);
+                translate( [0, 20, 0] ) cylinder( d = bfc_airFlowCutoutDiameter, h = bfcp_plateZDimension + 2);
+
+                translate( [50, 0, 0] ) cylinder( d = bfc_airFlowCutoutDiameter, h = bfcp_plateZDimension + 2);
+                translate( [46, 17, 0] ) cylinder( d = bfc_airFlowCutoutDiameter, h = bfcp_plateZDimension + 2);
             }
         }
     }
@@ -2403,16 +2482,38 @@ module controllerMountWalls()
     {
         // Y axis outside wall
         // cube( [bf_wallThickness, bfc_yWallLength, bfc_yWallHeight] );
+
+        controllerLeftCutoffAmount = 20;
         
-        translate( [-1 * bfc_platformXDimension, 0.5, profileSize + bfc_PlatformBottomBuffer] )
+        translate( [-1 * bfc_platformXDimension + controllerLeftCutoffAmount, 0.5, profileSize + bfc_PlatformBottomBuffer] )
         {
             // floor
-            cube( [bfc_platformXDimension - 7.5, bfc_platformYDimension - 1, bf_wallThickness] );
+            
             // X axis outside wall
             // translate( [0, bfc_platformYDimension - bf_wallThickness, 0] )
             // {
             //     cube( [bfc_platformXDimension, bf_wallThickness, bfc_yWallHeight - (profileSize * 2) - (bf_wallThickness + 0.4) - bfc_PlatformBottomBuffer] );
             // }
+
+            hull()
+            {
+                {
+                    cube( [bfc_platformXDimension - 7.5 - controllerLeftCutoffAmount, bfc_platformYDimension - 1, bf_wallThickness] );
+                }
+                {
+                    union()
+                    {
+                        translate( [(bfc_airFlowCutoutDiameter/2) - controllerLeftCutoffAmount, 30, 0] ) cylinder( d = bfc_airFlowCutoutDiameter, h = bf_wallThickness );
+                        translate( [(bfc_airFlowCutoutDiameter/2) - controllerLeftCutoffAmount, bfc_platformYDimension - 33, 0] ) cylinder( d = bfc_airFlowCutoutDiameter, h = bf_wallThickness );
+
+                        translate( [0, (bfc_airFlowCutoutDiameter/2), 0] ) cylinder( d = bfc_airFlowCutoutDiameter, h = bf_wallThickness );
+                        translate( [0, bfc_platformYDimension - (bfc_airFlowCutoutDiameter/2) - 1, 0] ) cylinder( d = bfc_airFlowCutoutDiameter, h = bf_wallThickness );
+                    }
+                }
+            }
+
+
+
         }
     }
 

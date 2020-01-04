@@ -14,8 +14,8 @@ use <Shared-modules.scad>
 $fa = 1;
 $fs = 0.1;
 
-bearingOuterDiameter = 15.0;
-retainerShell = 2.5;
+bearingOuterDiameter = 15.1;
+retainerShell = 3;
 shellDiameter = bearingOuterDiameter + (retainerShell * 2);
 
 rj4jpLength = 24; // The manufacturer's documentation lies about this measurement. It's actually 23.7, not 24.0. Adding a little for tolerance.
@@ -34,8 +34,8 @@ baseZDimension = 13; // The height of the base
 
 // This is the thing that's always wrong in other models. You gotta clamp these things the proper amount
 distanceBetweenTrapRings = 15.3;
-trapRingDepth = 0.4; // 0.325 is the documented measurement. We want to clamp a little
-trapRingWidth = 0.8; // 1.1mm is the documented measurement. We want to make sure to fit all the way into the retainer grooves.
+trapRingDepth = 0.2; // 0.325 is the documented measurement. If we go that tight, we'll end up clamping too much
+trapRingWidth = 0.6; // 1.1mm is the documented measurement. We want to make sure to fit all the way into the retainer grooves.
 
 cutoutDistanceToEnd = (((baseYDimension - distanceBetweenTrapRings)/2) + 1) - trapRingWidth;
 
@@ -44,7 +44,7 @@ retainerReliefAmount = 3.5;// cut a slot into the top of the retainer
 cornerDiameter = 4;
 nutDepth = 3;
 
-// renderModel();
+renderModel();
 
 module renderModel()
 {
@@ -55,7 +55,7 @@ module renderModel()
             {
                 base();
                 // This originally sat above the base, but that's not necessary
-                translate( [0, 0, -1 * retainerShell] )
+                translate( [-0, 0, -1 * retainerShell] )
                 {
                     bearingRetainer();
                 }
@@ -100,22 +100,22 @@ module bearingBody()
             {
                 union()
                 {
-                    translate( [ (bearingOuterDiameter/2), -1 * (cornerDiameter/2), -1 * (bearingOuterDiameter/2) - 3 ] )
+                    translate( [ (bearingOuterDiameter/2) + (cornerDiameter/2), -1 * (cornerDiameter/2), -1 * (bearingOuterDiameter/2) - 3 ] )
                     {
                         cylinder( d = cornerDiameter, h = 5 );
                     }
 
-                    translate( [ -1 * (bearingOuterDiameter/2), -1 * (cornerDiameter/2), -1 * (bearingOuterDiameter/2) - 3 ] )
+                    translate( [ -1 * (bearingOuterDiameter/2) - (cornerDiameter/2), -1 * (cornerDiameter/2), -1 * (bearingOuterDiameter/2) - 3 ] )
                     {
                         cylinder( d = cornerDiameter, h = 5 );
                     }
 
-                    translate( [ (bearingOuterDiameter/2), -1 * baseYDimension + (cornerDiameter/2), -1 * (bearingOuterDiameter/2) - 3 ] )
+                    translate( [ (bearingOuterDiameter/2) + (cornerDiameter/2), -1 * baseYDimension + (cornerDiameter/2), -1 * (bearingOuterDiameter/2) - 3 ] )
                     {
                         cylinder( d = cornerDiameter, h = 5 );
                     }
 
-                    translate( [ -1 * (bearingOuterDiameter/2), -1 * baseYDimension + (cornerDiameter/2), -1 * (bearingOuterDiameter/2) - 3 ] )
+                    translate( [ -1 * (bearingOuterDiameter/2) - (cornerDiameter/2), -1 * baseYDimension + (cornerDiameter/2), -1 * (bearingOuterDiameter/2) - 3 ] )
                     {
                         cylinder( d = cornerDiameter, h = 5 );
                     }
@@ -129,8 +129,8 @@ module bearingCutout()
 {
     union()
     {
-        // The base cutout. Runs the hole distance of the piece and is trapRingDepth less in diameter than the main part that gets cutout
-        translate( [(pieceMargin/2) + (bearingOuterDiameter/2) + (retainerShell/2) + 0.75, baseYDimension - pieceMargin + 1, baseZDimension + (bearingOuterDiameter/2) + (retainerShell/1)] )
+        // The base cutout. Runs the whole distance of the piece and is trapRingDepth less in diameter than the main part that gets cutout
+        translate( [(pieceMargin/2) + (bearingOuterDiameter/2) + (retainerShell/2) + 0.2, baseYDimension - pieceMargin + 1, baseZDimension + (bearingOuterDiameter/2) + (retainerShell/1)] )
         {
             rotate( [90, 0, 0] )
             {

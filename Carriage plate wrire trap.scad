@@ -4,7 +4,6 @@
 $fa = 1;
 $fs = 0.1;
 
-
 buildPlateXY = 219;
 buildPlateZ = 3.3; // A little bigger than reality to add a little tolerance
 
@@ -74,15 +73,19 @@ module shelf()
 {
     translate( [-1 * (pieceWidth/2), elbowThickness, -1 * bottomThickness] )
     {
-        cube( [shelfNeckWidth, shelfNeckLength, shelfNeckThickness] );
-
-        translate( [0, (cornerDiameter/2), shelfNeckThickness + (cornerDiameter/2)] )
+        translate( [pieceWidth - shelfNeckWidth, 0, 0] )
         {
-            rotate( [90, 0, 90] )
+            cube( [shelfNeckWidth, shelfNeckLength, shelfNeckThickness] );
+
+            translate( [0, (cornerDiameter/2), shelfNeckThickness + (cornerDiameter/2)] )
             {
-                essCurve( d = cornerDiameter, h = shelfNeckWidth );
+                rotate( [90, 0, 90] )
+                {
+                    essCurve( d = cornerDiameter, h = shelfNeckWidth );
+                }
             }
         }
+
         
         rotate( [0, 0, 180] )
         {
@@ -146,9 +149,15 @@ module shelf()
 module tieCutout()
 {
     // "+7" on the Z brings it to the top of the shelf.
-    translate( [1 * (shelfLength - (2 * tiedownWidth) - 3), shelfWidth/2 - 1, (-1 * bottomThickness) + 7 - 4.0] )
+    translate( [1 * (shelfLength - (2 * tiedownWidth) - 3), shelfWidth/2 - 1, (-1 * bottomThickness) + 7 - 4.9] )
     {
         cube( [tiedownWidth, shelfWidth + (shelfCutouEdgeDiameter) +  0.2, shelfCutouEdgeDiameter - 2] );
+    }
+
+zipTieWidth = 5;
+    translate( [1 * (shelfLength - (2 * tiedownWidth) - 3) - 22.5, shelfWidth/2 - 1, (-1 * bottomThickness) + 7 - 4.9] )
+    {
+        cube( [zipTieWidth, shelfWidth + (shelfCutouEdgeDiameter) +  0.2, shelfCutouEdgeDiameter - 2] );
     }
 }
 
