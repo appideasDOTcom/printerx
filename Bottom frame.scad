@@ -14,7 +14,7 @@ $fs = 0.1;
 renderFrame = false;
 
 // Wood panels
-topPanels();
+// topPanels();
 // rightPanel();
 // leftPanel();
 // frontPanel();
@@ -26,7 +26,7 @@ color( "blue" )
 {
     // controllerMount();
     // piMount();
-//     // piFanMount();
+    piFanMount();
     // tftMount();
 }
 
@@ -1720,25 +1720,28 @@ module piFanMount()
         {
             union()
             {
-                hull()
+                translate( [5, 0, 0] )
                 {
+                    hull()
                     {
-                        translate( [(bfpi_fanCornerDiameter/2), (bfpi_fanCornerDiameter/2), 0] ) cube( [bfpi_fanPlatformXYDimension - bfpi_fanCornerDiameter, bfpi_fanPlatformXYDimension - bfpi_fanCornerDiameter, bfpi_fanPlatformZDimension] );
-                    }
-                    {
-                        union()
                         {
-                            translate( [(bfpi_fanCornerDiameter/2), (bfpi_fanCornerDiameter/2), 0] ) cylinder( d = bfpi_fanCornerDiameter, h = bfpi_fanPlatformZDimension);
-                            translate( [bfpi_fanPlatformXYDimension - (bfpi_fanCornerDiameter/2), (bfpi_fanCornerDiameter/2), 0] ) cylinder( d = bfpi_fanCornerDiameter, h = bfpi_fanPlatformZDimension);
-                            translate( [(bfpi_fanCornerDiameter/2), bfpi_fanPlatformXYDimension - (bfpi_fanCornerDiameter/2), 0] ) cylinder( d = bfpi_fanCornerDiameter, h = bfpi_fanPlatformZDimension);
-                            translate( [bfpi_fanPlatformXYDimension - (bfpi_fanCornerDiameter/2), bfpi_fanPlatformXYDimension - (bfpi_fanCornerDiameter/2), 0] ) cylinder( d = bfpi_fanCornerDiameter, h = bfpi_fanPlatformZDimension);
+                            translate( [(bfpi_fanCornerDiameter/2), (bfpi_fanCornerDiameter/2), 0] ) cube( [bfpi_fanPlatformXYDimension - bfpi_fanCornerDiameter, bfpi_fanPlatformXYDimension - bfpi_fanCornerDiameter, bfpi_fanPlatformZDimension] );
+                        }
+                        {
+                            union()
+                            {
+                                translate( [(bfpi_fanCornerDiameter/2), (bfpi_fanCornerDiameter/2), 0] ) cylinder( d = bfpi_fanCornerDiameter, h = bfpi_fanPlatformZDimension);
+                                translate( [bfpi_fanPlatformXYDimension - (bfpi_fanCornerDiameter/2), (bfpi_fanCornerDiameter/2), 0] ) cylinder( d = bfpi_fanCornerDiameter, h = bfpi_fanPlatformZDimension);
+                                translate( [(bfpi_fanCornerDiameter/2), bfpi_fanPlatformXYDimension - (bfpi_fanCornerDiameter/2), 0] ) cylinder( d = bfpi_fanCornerDiameter, h = bfpi_fanPlatformZDimension);
+                                translate( [bfpi_fanPlatformXYDimension - (bfpi_fanCornerDiameter/2), bfpi_fanPlatformXYDimension - (bfpi_fanCornerDiameter/2), 0] ) cylinder( d = bfpi_fanCornerDiameter, h = bfpi_fanPlatformZDimension);
+                            }
                         }
                     }
                 }
 
                 translate( [bfpi_fanPlatformXYDimension, (bfpi_fanPlatformXYDimension/2) - (bfpi_externalMountBlockWidth/2), 0] )
                 {
-                    cube( [12.6, bfpi_externalMountBlockWidth, bfpi_fanPlatformZDimension] );
+                    translate( [5, 0, 0] ) cube( [12.6, bfpi_externalMountBlockWidth, bfpi_fanPlatformZDimension] );
 
                     translate( [12.2, 0, 0] )
                     {
@@ -1749,7 +1752,7 @@ module piFanMount()
 
         }
         {
-            piFanMountThroughHoles();
+            translate( [5, 0, 0] ) piFanMountThroughHoles();
         }
     }
     
