@@ -8,7 +8,7 @@ include <Z axis retainer block.scad>
 // include <thirdparty/prusa/Original-Prusa-i3/Printed-Parts/scad/x-end-motor.scad>
 include <2020 SK8 Bracket.scad>
 include <Y belt tensioner.scad>
-include <Filament guide.scad>
+// include <Filament guide.scad>
 use <Frame foot mount.scad>
 
 yAxisProfileLength = 406;
@@ -17,7 +17,7 @@ zAxisProfileLength = 50;
 profileSize = 20;
 
 zAxisTowerHeight = 374;
-zAxisTowerDistanceFromEnd = 50;
+zAxisTowerDistanceFromEnd = 80;
 
 zAxisLeadScrewDiameter = 8;
 zAxisLeadScrewLength = 350;
