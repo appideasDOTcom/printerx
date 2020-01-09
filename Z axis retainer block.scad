@@ -90,7 +90,7 @@ topPieceHeight = 19;
 topWallWidth = 18.2;
 
 topBearingTolerance = 0.2; // Add a little tolerance on the top bearing traps due to printing orientation differences
-topLineraRodTolerance = 0.1; // Add a little tolerance on the top linear rod traps due to printing orientation differences
+topLineraRodTolerance = 0.2; // Add a little tolerance on the top linear rod traps due to printing orientation differences
 
 zIdlerSpacerInnerDiameter = 5.6;
 zIdlerSpacerOuterDiameter = 10;

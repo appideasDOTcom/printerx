@@ -44,7 +44,7 @@ retainerReliefAmount = 3.5;// cut a slot into the top of the retainer
 cornerDiameter = 4;
 nutDepth = 3;
 
-renderModel();
+// renderModel();
 
 module renderModel()
 {

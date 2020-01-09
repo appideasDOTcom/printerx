@@ -1779,8 +1779,8 @@ module piFanMountThroughHoles()
         {
             rotate( [0, 90, 0] )
             {
-                m4ThroughHole_duplicate( height = 30 );
-                translate( [0, 0, 3.1] )
+                translate( [0, 0, -1.9] ) m4ThroughHole_duplicate( height = 30 );
+                translate( [0, 0, -1.9] )
                 {
                     m4Nut();
                 }

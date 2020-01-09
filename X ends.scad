@@ -8,8 +8,8 @@ $fa = 1;
 $fs = 0.1;
 /* END Render quality variables */
 
-renderMotorMount();
-// renderIdlerMount();
+// renderMotorMount();
+renderIdlerMount();
 
 module renderMotorMount()
 {
