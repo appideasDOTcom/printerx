@@ -6,7 +6,6 @@ use <Shared-modules.scad>
 include <Y carriage bearing retainer.scad>
 include <Z axis motor mount.scad>
 
-
 /* Render quality variables */
 $fa = 1;
 $fs = 0.1;
@@ -14,7 +13,11 @@ $fs = 0.1;
 xac_distanceBetweenThroughHoles = 31;
 
 xac_neckWidth = 15;
-xac_neckHeight = 5.8;
+
+xac_neckCoutoutHeight = 5.8;
+xac_neckCoutoutDiameter = 17;
+
+xac_neckHeight = 12;
 xac_neckOpeningDiameter = 12.0;
 xac_neckClampWidth = 0.4;
 xac_neckDistanceFromBody = 22;
@@ -35,21 +38,192 @@ xac_shellDiameter = shellDiameter + 1.9;
 xac_baseThickness = 6.2;
 
 // import( "thirdParty/X-Carriage-mod.stl" );
-constructedXAxisCarriage();
-// constructedHotendMount();
+// constructedXAxisCarriage();
+#constructedHotendMount( false );
 
-module constructedHotendMount()
+// xac_neck( orientForPrinting = false );
+fanDuct();
+
+// translate( [-40.55, 21, -53.5] )
+//  rotate( [-67.75, 180, 0] )
+//  {
+//      rotate( [0, 180, 0] )
+//      {
+//         %import( "thirdparty/Radial_Fan_Fang_5015.stl" );
+//      }
+//  }
+
+
+module fanDuct()
+{
+    translate( [0, -39, -21] )
+    {
+        rotate( [0, 270, 0] )
+        {
+            import( "thirdparty/V6.6_Duct.stl" );
+        }
+    }
+
+
+    difference()
+    {
+        {
+            union()
+            {
+                translate( [11.2, -38, -30] )
+                {
+                    fanDuctConnectorWall();
+                }
+
+                translate( [-14.0, -38, -30] )
+                {
+                    fanDuctConnectorWall();
+                }
+            }
+        }
+        {
+            translate( [-15, -19, -8] ) rotate( [0, 90, 0] ) m3ThroughHole( height = 30 );
+            translate( [-15, -33, -8] ) rotate( [0, 90, 0] ) m3ThroughHole( height = 30 );
+        }
+    }
+}
+
+
+
+// never used
+module fanDuctConnectorWall()
+{
+    hull()
+    {
+        {
+
+        }
+        {
+            union()
+            {
+                translate( [1, 1, 0] ) cylinder( d = 2, h = 25.6 );
+                translate( [1.8, 1, 0] ) cylinder( d = 2, h = 25.6 );
+                translate( [1, 23, 0] ) cylinder( d = 2, h = 25.6 );
+                translate( [1.8, 23, 0] ) cylinder( d = 2, h = 25.6 );
+
+                // translate( [1.4, 1.4, 26] ) sphere( d = 2.8 );
+                // translate( [1.4, 22.6, 26] ) sphere( d = 2.8 );
+            }
+        }
+    }
+}
+
+xac_clipWidth = 16.0;
+xac_clipHeight = 0.8;
+xac_clipDiameter = 5.5;
+xac_clipDepth = 8;
+xac_wallDepth = 2.4;
+xac_wallHeight = 4.6;
+
+// never used
+module fanStabilizer()
+{
+    translate( [-1 * (xac_clipWidth/2), -1 * xac_clipDepth + 1, -1 * (xac_neckHeight) - 10] )
+    {
+        difference()
+        {
+            {
+                union()
+                {
+                    // Clip-in piece
+                    cube( [xac_clipWidth, xac_clipHeight, xac_clipDepth] );
+
+                    // Clip-in walls
+                    cube( [xac_wallDepth, xac_wallHeight, xac_clipDepth] );
+                    translate( [xac_clipWidth - xac_wallDepth, 0, 0] ) cube( [xac_wallDepth, xac_wallHeight, xac_clipDepth] );
+                    translate( [0, 0, xac_clipDepth - xac_wallDepth + 0.5] ) cube( [xac_clipWidth, xac_wallHeight, xac_wallDepth - 0.5] );
+
+                    fanStabilizerNeckConnector();
+                }
+                    
+            }
+            {
+                // cutout
+                translate( [(xac_clipWidth/2), 10, 1] )
+                {
+                    rotate( [90, 0, 0] ) cylinder( d = xac_clipDiameter, h = 20 );
+
+                    // %rotate( [90, 0, 0] ) cylinder( d = 10, h = 20 );
+                }
+            }
+        }
+    }
+}
+
+// never used
+module fanStabilizerNeckConnector()
+{
+    // extend the walls to the fan duct
+    hull()
+    {
+        {
+
+        }
+        {
+            union()
+            {
+                translate( [0, xac_wallHeight, xac_clipDepth - (xac_cornerDiameter/2)] ) rotate([90, 0, 0] ) cylinder( d = xac_cornerDiameter, h = xac_wallHeight );
+                translate( [-6, xac_wallHeight, xac_clipDepth - (xac_cornerDiameter/2) - 5] ) rotate([90, 0, 0] ) cylinder( d = xac_cornerDiameter, h = xac_wallHeight );
+                translate( [-6, xac_wallHeight, xac_clipDepth - (xac_cornerDiameter/2) - 23.7] ) rotate([90, 0, 0] ) cylinder( d = xac_cornerDiameter, h = xac_wallHeight );
+                //#translate( [(xac_cornerDiameter/2), xac_wallHeight, -1 * (xac_cornerDiameter/2)] ) rotate( [90, 90, 0] ) essCurve( d = xac_cornerDiameter, h = xac_wallHeight );
+                translate( [6.5, xac_wallHeight, xac_clipDepth - (xac_cornerDiameter/2) - 25.6] ) rotate([90, 0, 0] ) cylinder( d = xac_cornerDiameter, h = xac_wallHeight );
+
+            }
+        }
+    }
+
+    hull()
+    {
+        {
+
+        }
+        {
+            union()
+            {
+                translate( [xac_clipWidth, xac_wallHeight, xac_clipDepth - (xac_cornerDiameter/2)] ) rotate([90, 0, 0] ) cylinder( d = xac_cornerDiameter, h = xac_wallHeight );
+                translate( [xac_clipWidth + 6, xac_wallHeight, xac_clipDepth - (xac_cornerDiameter/2) - 5] ) rotate([90, 0, 0] ) cylinder( d = xac_cornerDiameter, h = xac_wallHeight );
+                translate( [xac_clipWidth + 6, xac_wallHeight, xac_clipDepth - (xac_cornerDiameter/2) - 23.7] ) rotate([90, 0, 0] ) cylinder( d = xac_cornerDiameter, h = xac_wallHeight );
+                translate( [xac_clipWidth - 6.5, xac_wallHeight, xac_clipDepth - (xac_cornerDiameter/2) - 25.6] ) rotate([90, 0, 0] ) cylinder( d = xac_cornerDiameter, h = xac_wallHeight );
+
+            }
+        }
+    }
+
+    // make the bottom of the shaoe a nicer curve
+    hull()
+    {
+        {
+
+        }
+        {
+            union()
+            {
+                translate( [8, xac_wallHeight, xac_clipDepth - (xac_cornerDiameter/2) - 25.8] ) rotate([90, 0, 0] ) cylinder( d = xac_cornerDiameter, h = xac_wallHeight );
+                translate( [10, xac_wallHeight, xac_clipDepth - (xac_cornerDiameter/2) - 25.5] ) rotate([90, 0, 0] ) cylinder( d = xac_cornerDiameter, h = xac_wallHeight );
+                translate( [6, xac_wallHeight, xac_clipDepth - (xac_cornerDiameter/2) - 25.5] ) rotate([90, 0, 0] ) cylinder( d = xac_cornerDiameter, h = xac_wallHeight );
+            }
+        }
+    }
+}
+
+
+module constructedHotendMount( orientForPrinting = true )
 {
     union()
     {
-        translate( [-1 * (xac_neckWidth/2), 0, 0] ) rotate( [-90, 0, 0] ) xac_neck( orientForPrinting = true );
+        translate( [-1 * (xac_neckWidth/2), -6, 0] ) rotate( [-90, 0, 0] ) xac_neck( orientForPrinting = orientForPrinting );
 
         translate( [-16, -11.5, -1 * xac_neckPlateThickness] )
         {
             xac_neckBaseplate();
 
-            translate( [(xac_neckWidth/2) + 1, 11.5 - (xac_cornerDiameter/2), -1 * (xac_cornerDiameter/2)] ) rotate( [270, 0, -90] ) essCurve( d = xac_cornerDiameter, h = xac_neckWidth );
-            translate( [ xac_neckWidth * 1.5 + 1, 11.5  + (xac_cornerDiameter/2) + xac_neckHeight, -1 * (xac_cornerDiameter/2)] ) rotate( [270, 0, 90] ) essCurve( d = xac_cornerDiameter, h = xac_neckWidth );
+            translate( [(xac_neckWidth/2) + 1, 11.5 - (xac_cornerDiameter/2) - 6, -1 * (xac_cornerDiameter/2)] ) rotate( [270, 0, -90] ) essCurve( d = xac_cornerDiameter, h = xac_neckWidth );
+            translate( [ xac_neckWidth * 1.5 + 1, 11.5  + (xac_cornerDiameter/2) + xac_neckHeight - 6, -1 * (xac_cornerDiameter/2)] ) rotate( [270, 0, 90] ) essCurve( d = xac_cornerDiameter, h = xac_neckWidth );
         } 
     }
 }
@@ -321,7 +495,7 @@ module xac_neck( orientForPrinting = false )
                 }
                 else
                 {
-                    translate( [0, xac_neckHeight, 21.5] ) rotate( [90, 0, 0] ) xac_endOfNeck();
+                    translate( [0, xac_neckHeight, 25.5] ) rotate( [90, 0, 0] ) xac_endOfNeck();
                 }
             }
         }
@@ -351,6 +525,15 @@ module xac_neck( orientForPrinting = false )
                             translate( [0, 0, 16] ) m3Nut();
                         }
                     }
+
+                    //translate( [xac_neckWidth - (xac_neckConnectorXDimension/1) + 0.5, xac_neckHeight + (xac_neckCoutoutDiameter/2) + 1.5, (-1 * xac_neckHeight) + xac_cornerDiameter - xac_neckCoutoutHeight] )
+                    translate( [(xac_neckCoutoutDiameter/2) - 1, xac_neckHeight + (xac_neckCoutoutDiameter/2) + 1, xac_neckCoutoutHeight] )
+                    {
+                        cylinder( d = xac_neckCoutoutDiameter, h = 20 );
+                    }
+
+// xac_neckCoutoutHeight = 5.8;
+// xac_neckCoutoutDiameter = 17;
                 }
             // }
             if( orientForPrinting == true )
@@ -359,7 +542,7 @@ module xac_neck( orientForPrinting = false )
                 rotate( [90, 0, 0] ) 
                 union()
                 {
-                    translate( [(xac_neckWidth/2), xac_neckDistanceFromBody, -1] )
+                    translate( [(xac_neckWidth/2), xac_neckDistanceFromBody + 10 - 6, -1] )
                     {
                         cylinder( d = xac_neckOpeningDiameter, h = xac_neckHeight + 2 );
                     }
@@ -368,7 +551,7 @@ module xac_neck( orientForPrinting = false )
                     {
                         rotate( [90, 0, 0] )
                         {
-                            m3ThroughHole( height = 20 );
+                            translate( [0, 0, -10] ) m3ThroughHole( height = 20 );
                             translate( [0, 0, 16] ) m3Nut();
                         }
                     }
@@ -376,8 +559,13 @@ module xac_neck( orientForPrinting = false )
                     {
                         rotate( [90, 0, 0] )
                         {
-                            m3ThroughHole( height = 20 );
+                            translate( [0, 0, -10] ) m3ThroughHole( height = 20 );
                             translate( [0, 0, 16] ) m3Nut();
+                        }
+
+                        translate( [-1 * ((xac_neckWidth + xac_neckConnectorXDimension)/2) - 1, -6, -26 + xac_neckCoutoutHeight] )
+                        {
+                            cylinder( d = xac_neckCoutoutDiameter, h = 20 );
                         }
                     }
                 }

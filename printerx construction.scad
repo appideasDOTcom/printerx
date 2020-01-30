@@ -1,5 +1,6 @@
 /**
 * Constructed printer models
+* This is out of date since the latest Z axis resize
 */ 
 
 include <Shared-modules.scad>

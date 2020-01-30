@@ -79,9 +79,9 @@ module m4Nut( height = 3.0 )
     cylinder( h = height, d = 8.2, $fn=6 );
 }
 
-module m4Nut_sink( height = 3.3 )
+module m4Nut_sink( height = 3.3, diameter = 8.2 )
 {
-    cylinder( h = height, d = 8.2, $fn=6 );
+    cylinder( h = height, d = diameter, $fn=6 );
 }
 
 module m4ThroughHole( height = 20 )

@@ -1,1 +1,0 @@
-thirdparty/Handle_for_2020_extrusion,_OpenBuilds_V-slot/V-Slot_Handle.scad

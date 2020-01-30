@@ -6,8 +6,8 @@ use <Shared-modules.scad>
 include <printerx construction.scad>
 
 // Render quality settings
-$fa = 5;
-$fs = 0.4;
+$fa = 1;
+$fs = 0.1;
 
 renderFrame = false;
 
@@ -66,18 +66,25 @@ module constructedFootMount()
             union()
             {
                 footMountFrameMountCutouts();
-                footMountAdjustmentCutout();
+                footMountAdjustmentCutout( coveredNutTrap = true );
             }
         }
     }
 }
 
-module footMountAdjustmentCutout()
+module footMountAdjustmentCutout( coveredNutTrap = false )
 {
     translate( [(footMountWidth/2), (footMountLength/2), -9.3 + 3.2] )
     {
         m4ThroughHole_duplicate( height = 20 );
-        m4Nut_sink();
+		if( !coveredNutTrap )
+		{
+	        m4Nut_sink();
+		}
+		else
+		{
+			translate( [0, 0, 2] ) m4Nut_sink( height = 3.4, diameter = 8.3 );
+		}
     }
 }
 

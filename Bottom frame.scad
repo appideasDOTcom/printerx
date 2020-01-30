@@ -24,9 +24,9 @@ renderFrame = false;
 // psuMountBlock();
 color( "blue" )
 {
-    // controllerMount();
+    controllerMount();
     // piMount();
-    piFanMount();
+    // piFanMount();
     // tftMount();
 }
 
@@ -41,7 +41,7 @@ bf_cornerRoundness = bf_wallThickness * 2;
 
 // bfc = Bottom Frame Controller
 bfc_xDistanceBetweenBolts = 101.85;
-bfc_yDistanceBetweenBolts = 76.3;
+bfc_yDistanceBetweenBolts = 76.1; // SKR V1.3 = 76.1, SKR V1.4 = 76.3
 bfc_mountPostDiamter = 8;
 bfc_mountPostHeight = 6;
 
@@ -125,13 +125,13 @@ module topPanels()
 {
     union()
     {
-        // topFrontPanel();
-        topRearPanel();
+        topFrontPanel();
+        // topRearPanel(); // Now obsolete
     }
 }
 
 bffp_frontXDimension = 352;
-bffp_frontYDimension = 289;
+bffp_frontYDimension = 392;
 bffp_frontZDimension = 19.2;
 
 bffp_rearXDimension = bffp_frontXDimension;
@@ -177,6 +177,7 @@ module topFrontPanel()
     }
 }
 
+// obsolete
 module topRearPanel()
 {
     translate( [-1 * bffp_topOverhang, yAxisProfileLength - bffp_rearYDimension + bffp_topOverhang, zAxisProfileLength + (profileSize * 2) - bffp_rearZDimension + bffp_topOverhang] )
@@ -253,11 +254,11 @@ module topPlateCutouts( isFront = 1 )
 
         translate( [ -1, yAxisProfileLength - zAxisTowerDistanceFromEnd - 129.2, -5.9] )
         {
-            translate( [0, 40, 0] ) cube( [bf_wallThickness + 31, pieceDepth + 82.2, profileSize + 6] );
+            translate( [0, 40, 0] ) cube( [bf_wallThickness + 31, pieceDepth + 100, profileSize + 6] );
 
             translate( [ xAxisProfileLength + profileSize, 40, 0] )
             {
-                cube( [bf_wallThickness + 31, pieceDepth + 82.2, profileSize + 6] );
+                cube( [bf_wallThickness + 31, pieceDepth + 100, profileSize + 6] );
             }
 
             translate( [-5, 40, 0] )
@@ -307,20 +308,20 @@ module topPlateCutouts( isFront = 1 )
 
         if( isFront == 1 )
         {
-            translate( [-1, bffp_frontYDimension - bffp_middleConnectorCutoutYDimension + 0.1 - 0.5, 11.1] )
-            {
-                cube( [bffp_middleConnectorCutoutXDimension, bffp_middleConnectorCutoutYDimension + 0.5, bffp_middleConnectorCutoutZDimension] );
-            }
+            // translate( [-1, bffp_frontYDimension - bffp_middleConnectorCutoutYDimension + 0.1 - 0.5, 11.1] )
+            // {
+            //     cube( [bffp_middleConnectorCutoutXDimension, bffp_middleConnectorCutoutYDimension + 0.5, bffp_middleConnectorCutoutZDimension] );
+            // }
         }
         else
         {
-            translate( [-1, bffp_frontYDimension - bffp_middleConnectorCutoutYDimension, 11.1 - bffp_middleConnectorCutoutZDimension - 3.1] )
-            {
-                cube( [bffp_middleConnectorCutoutXDimension, bffp_middleConnectorCutoutYDimension + 0.5, bffp_middleConnectorCutoutZDimension + 3.1] );
-            }
+            // translate( [-1, bffp_frontYDimension - bffp_middleConnectorCutoutYDimension, 11.1 - bffp_middleConnectorCutoutZDimension - 3.1] )
+            // {
+            //     cube( [bffp_middleConnectorCutoutXDimension, bffp_middleConnectorCutoutYDimension + 0.5, bffp_middleConnectorCutoutZDimension + 3.1] );
+            // }
         }
 
-        translate( [21, bffp_frontYDimension - 49, 11.1 - bffp_middleConnectorCutoutZDimension - 3.1 - 19.8 + 12] )
+        translate( [21, bffp_frontYDimension - 152, 11.1 - bffp_middleConnectorCutoutZDimension - 3.1 - 19.8 + 12] )
         {
             cube( [profileSize, 74, profileSize] );
             translate( [xAxisProfileLength - 10, 0, 0] ) cube( [profileSize, 74, profileSize] );
@@ -382,39 +383,39 @@ module topFrameMountThroughHoles( isFront = 1 )
          translate( [0, (yAxisProfileLength/2) + 0, 0] ) m5ThroughHole_duplicate( height = 40 );
          translate( [xAxisProfileLength + profileSize, (yAxisProfileLength/2) + 0, 0] ) m5ThroughHole_duplicate( height = 40 );
 
-        translate( [(bffp_frontYDimension/2) + (bffp_middleCutoutXDimension/2) - 30, bffp_frontYDimension - profileSize - 6, 0] )
-        {
-            m5ThroughHole_duplicate( height = 40 );
-            translate( [0, 0, 5.2 + 4.7] )
-            {
-                m5Nut();
-            }
-        }
-        translate( [(bffp_frontYDimension/2) + (bffp_middleCutoutXDimension/2) + 30, bffp_frontYDimension - profileSize - 6, 0] )
-        {
-            m5ThroughHole_duplicate( height = 40 );
-            translate( [0, 0, 5.2 + 4.7] )
-            {
-                m5Nut();
-            }
-        }
+        // translate( [(bffp_frontYDimension/2) + (bffp_middleCutoutXDimension/2) - 30, bffp_frontYDimension - profileSize - 6, 0] )
+        // {
+        //     m5ThroughHole_duplicate( height = 40 );
+        //     translate( [0, 0, 5.2 + 4.7] )
+        //     {
+        //         m5Nut();
+        //     }
+        // }
+        // translate( [(bffp_frontYDimension/2) + (bffp_middleCutoutXDimension/2) + 30, bffp_frontYDimension - profileSize - 6, 0] )
+        // {
+        //     m5ThroughHole_duplicate( height = 40 );
+        //     translate( [0, 0, 5.2 + 4.7] )
+        //     {
+        //         m5Nut();
+        //     }
+        // }
 
-        translate( [(bffp_frontYDimension/2) + (bffp_middleCutoutXDimension/2) - 125, bffp_frontYDimension - profileSize - 6, 0] )
-        {
-            m5ThroughHole_duplicate( height = 40 );
-            translate( [0, 0, 5.2 + 4.7] )
-            {
-                m5Nut();
-            }
-        }
-        translate( [(bffp_frontYDimension/2) + (bffp_middleCutoutXDimension/2) + 125, bffp_frontYDimension - profileSize - 6, 0] )
-        {
-            m5ThroughHole_duplicate( height = 40 );
-            translate( [0, 0, 5.2 + 4.7] )
-            {
-                m5Nut();
-            }
-        }
+        // translate( [(bffp_frontYDimension/2) + (bffp_middleCutoutXDimension/2) - 125, bffp_frontYDimension - profileSize - 6, 0] )
+        // {
+        //     m5ThroughHole_duplicate( height = 40 );
+        //     translate( [0, 0, 5.2 + 4.7] )
+        //     {
+        //         m5Nut();
+        //     }
+        // }
+        // translate( [(bffp_frontYDimension/2) + (bffp_middleCutoutXDimension/2) + 125, bffp_frontYDimension - profileSize - 6, 0] )
+        // {
+        //     m5ThroughHole_duplicate( height = 40 );
+        //     translate( [0, 0, 5.2 + 4.7] )
+        //     {
+        //         m5Nut();
+        //     }
+        // }
     }
 }
 
@@ -615,7 +616,34 @@ module rightPanel()
                     {
                         translate( [bfpi_actualXDimension - 2.1 - bfpi_externalMountBlockDepth - 0.5, bfpi_platformYDimension - bfpi_externalMountBlockWidth, 0.4] )
                         {
-                            translate( [0.5, -38, bfpi_externalMountBlockHeight] ) cube( [bfpi_usbReliefThickness, bfpi_usbReliefWidth, bfpi_usbReliefHeight] );
+                            translate( [0.5, -38, bfpi_externalMountBlockHeight] )
+							{
+								cube( [bfpi_usbReliefThickness, bfpi_usbReliefWidth, bfpi_usbReliefHeight] );
+
+								translate( [bfpi_usbReliefThickness - 1, bfpi_usbReliefWidth - 1, 0] )
+								{
+									hull()
+									{
+										{
+
+										}
+										{
+											union()
+											{
+												cube( [1, 1, 1] );
+												translate( [0, 0, bfpi_usbReliefHeight - 1] ) cube( [1, 1, 1] );
+
+												translate( [-1 * bfpi_usbReliefThickness + 1, 0, bfpi_usbReliefHeight - 1] ) cube( [1, 1, 1] );
+												translate( [-1 * bfpi_usbReliefThickness + 1, 0, 0] ) cube( [1, 1, 1] );
+
+												translate( [-1 * bfpi_usbReliefThickness + 0.1, 17, bfpi_usbReliefHeight - 0.1] ) cube( [0.1, 0.1, 0.1] );
+												translate( [-1 * bfpi_usbReliefThickness + 0.1, 17, 0] ) cube( [0.1, 0.1, 0.1] );
+											}
+										}
+									}
+
+								}
+							}
                         }
                     }
                 }
@@ -1695,7 +1723,7 @@ bfpi_externalMountBlockDepth = 7.9;
 bfpi_externalMountBlockFaceOffset = 5;
 bfpi_cornerDiameter = bfpw_cornerDiameter;
 
-bfpi_usbReliefThickness = bffp_thickness - 4.2;
+bfpi_usbReliefThickness = bffp_thickness - 2.7;
 bfpi_usbReliefHeight = 15;
 bfpi_usbReliefWidth = bfpi_externalMountBlockWidth * 2 + 43;
 
@@ -2456,7 +2484,7 @@ module controllerFanMountCutouts()
     translate( [-1 * bfc_fanXDimension, bfc_platformYDimension - bfc_fanYZDimension - bfc_yOutsideBuffer - 7, profileSize +  ((zAxisProfileLength - bfc_fanYZDimension)/2) + bfc_PlatformBottomBuffer ] )
     {
         // The dimensions of a real fan for fit
-        translate( [-0.5 -0.5, -0.5] )
+        translate( [-0.5 + 2, -0.5, -0.5] )
         {
             cube( [bfc_fanXDimension, bfc_fanCutoutYZ, bfc_fanCutoutYZ] );
         }
