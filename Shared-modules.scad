@@ -140,3 +140,8 @@ module m3Nut( height = 2.4 )
     cylinder( h = height, d = 6.5, $fn=6 );
 }
 
+module buriedM3Nut( diameter = 6.8, height = 2.6 )
+{
+	cylinder( h = height, d = diameter, $fn=6 );
+}
+
