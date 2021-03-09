@@ -4,9 +4,9 @@
 */
 
 // Minimum render angle
-$fa = 4;
+$fa = 1;
 // Minimum render size
-$fs = 1;
+$fs = 0.1;
 
 wallThickness = 3;
 cornerRadius = 2;
@@ -57,12 +57,14 @@ lensCableWidth = lensCutoutXY + lensCableOffsetX;
 
 faceCoverDepth = 8;
 
+passthroughGap = 18; // distance between passthrough holes
+
 // Printable pieces
 // ballJoint();
 // body();
-face();
+// face();
 // armReach();
-// armLift();
+armLift();
 // screw();
 
 // Fully-articulated pieces
@@ -295,20 +297,8 @@ module armLift() {
 				}
 
 				translate( [5.2, -1 * (armCornerDiameter/2) + armThickness, cableOpeningBottom] ) {
-					hull()
-					{
-						{
-
-						}
-						{
-							union() 
-							{
-								translate( [(cableOpeningWidth/2), 0, 0] ) rotate( [90, 0, 0] ) cylinder( d = cableOpeningStructureHeight, h = armThickness );
-								translate( [-1 * (cableOpeningWidth/2), 0, 0] ) rotate( [90, 0, 0] ) cylinder( d = cableOpeningStructureHeight, h = armThickness );
-							}
-						}
-					}
-
+					cablePassthroughShape();
+					translate( [0, 0, passthroughGap] ) cablePassthroughShape();
 				}
 
 			}
@@ -321,24 +311,48 @@ module armLift() {
 			}
 
 			translate( [5.2, -1 * (armCornerDiameter/2) + armThickness + 0.1, cableOpeningBottom] ) {
-				hull()
-				{
-					{
 
-					}
-					{
-						union() 
-						{
-							translate( [(cableOpeningWidth/2), 0, 0] ) rotate( [90, 0, 0] ) cylinder( d = cableOpeningHeight, h = armThickness + 0.2 );
-							translate( [-1 * (cableOpeningWidth/2), 0, 0] ) rotate( [90, 0, 0] ) cylinder( d = cableOpeningHeight, h = armThickness + 0.2 );
-						}
-					}
-				}
-
-				// Uncomment to insert a small cable insertion cutout
-				// translate( [6.4, -1 * armThickness - 0.2, 0.5] ) rotate( [0, 30, 0] ) cube( [1.2, armThickness + 0.2, 5 ] );
+				// HERE
+				cablePassthroughCutout();
+				translate( [0, 0, passthroughGap] ) cablePassthroughCutout();
 			}
 
+		}
+	}
+}
+
+module cablePassthroughShape()
+{
+
+	hull()
+	{
+		{
+
+		}
+		{
+			union() 
+			{
+				translate( [(cableOpeningWidth/2), 0, 0] ) rotate( [90, 0, 0] ) cylinder( d = cableOpeningStructureHeight, h = armThickness );
+				translate( [-1 * (cableOpeningWidth/2), 0, 0] ) rotate( [90, 0, 0] ) cylinder( d = cableOpeningStructureHeight, h = armThickness );
+			}
+		}
+	}
+	
+
+}
+
+module cablePassthroughCutout() {
+	hull()
+	{
+		{
+
+		}
+		{
+			union() 
+			{
+				translate( [(cableOpeningWidth/2), 0, 0] ) rotate( [90, 0, 0] ) cylinder( d = cableOpeningHeight, h = armThickness + 0.2 );
+				translate( [-1 * (cableOpeningWidth/2), 0, 0] ) rotate( [90, 0, 0] ) cylinder( d = cableOpeningHeight, h = armThickness + 0.2 );
+			}
 		}
 	}
 }
