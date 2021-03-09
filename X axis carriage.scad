@@ -41,51 +41,31 @@ xac_baseThickness = 6.2;
 // constructedXAxisCarriage();
 constructedHotendMount( true );
 
+// xac_neck( orientForPrinting = false, buryNutTraps = true );
+// fanDuct();
+
 
 module supportPillar()
 {
-	difference()
+	hull()
 	{
 		{
-			union()
-			{
-				polyhedron(
-				points=[ 
-					[2,6,0],[2,-6,0],[-4.5,-6,0],[-4.5,6,0], // the four points at base
-					[0,0,13]  ],                                 // the apex point 
-				faces=[ 
-					[0,1,4],[1,2,4],[2,3,4],[3,0,4],              // each triangle side
-					[1,0,3],[2,1,3] ]                         // two triangles for square base
-				);
 
-				for( y = [2 : -4 : -14] )
-				{
-					translate( [4, y, -0.2] ) rotate( [0, 0, 45] ) cube( [0.45, 15, 0.2] );
-				}
-				for( y = [4 : -4 : -14] )
-				{
-					translate( [-6, y, -0.4] ) rotate( [0, 0, -45] ) cube( [0.45, 15, 0.2] );
-				}
-
-				translate( [2 - 0.45, -6, -0.4] ) cube( [0.45, 12, 0.4] );
-				translate( [-4.95 + 0.45, -6, -0.4] ) cube( [0.45, 12, 0.4] );
-			}
 		}
 		{
 			union()
 			{
-				translate( [2, -15, -1] ) cube( [5, 30, 2] );
-				translate( [-9.5, -15, -1] ) cube( [5, 30, 2] );
-
-				translate( [-6, 6, -1] ) cube( [10, 6, 2] );
-				translate( [-6, -14, -1] ) cube( [10, 8, 2] );
+				cylinder( d = xac_cornerDiameter, h = xac_neckHeight );
+				translate( [0, -1 * xac_neckConnectorYDimension, 0] ) cylinder( d = xac_cornerDiameter, h = xac_neckHeight + 0);
+				translate( [1.5, 2, -2] ) rotate( [90, 0, 0] ) cylinder( d = xac_cornerDiameter, h = xac_neckHeight );
 			}
 		}
+
+		
 	}
 }
 
-// xac_neck( orientForPrinting = false, buryNutTraps = true );
-// fanDuct();
+
 
 // The customized part cooling fan duct
 // rotate( [0, 22.5, 0] ) import( "thirdparty/v6_Hotend_Fan_Shroud_and_5015_+_40_Fang_Combo/files/Fang_5015_40mm_fan.stl" );
@@ -122,20 +102,24 @@ module fanDuct()
         {
             union()
             {
-                translate( [11.2, -38, -30] )
+                translate( [11.2, -39, -30] )
                 {
-                    fanDuctConnectorWall();
+                    fanDuctConnectorWall( side = "left" );
                 }
 
-                translate( [-14.0, -38, -30] )
+                translate( [-14.0, -39, -30] )
                 {
-                    fanDuctConnectorWall();
+                    fanDuctConnectorWall( side = "right" );
                 }
             }
         }
         {
-            translate( [-15, -19, -8] ) rotate( [0, 90, 0] ) m3ThroughHole( height = 30 );
-            translate( [-15, -33, -8] ) rotate( [0, 90, 0] ) m3ThroughHole( height = 30 );
+			union()
+			{
+	            translate( [-15, -19, -8] ) rotate( [0, 90, 0] ) m3ThroughHole( height = 30 );
+    	        translate( [-15, -33, -8] ) rotate( [0, 90, 0] ) m3ThroughHole( height = 30 );
+				translate( [0, -24.2, -36] )sphere( d = 28 );
+			}
         }
     }
 }
@@ -143,26 +127,42 @@ module fanDuct()
 
 
 // never used
-module fanDuctConnectorWall()
+module fanDuctConnectorWall( side = "right" )
 {
-    hull()
-    {
-        {
+	difference()
+	{
+		{
+			hull()
+			{
+				{
 
-        }
-        {
-            union()
-            {
-                translate( [1, 1, 0] ) cylinder( d = 2, h = 25.6 );
-                translate( [1.8, 1, 0] ) cylinder( d = 2, h = 25.6 );
-                translate( [1, 23, 0] ) cylinder( d = 2, h = 25.6 );
-                translate( [1.8, 23, 0] ) cylinder( d = 2, h = 25.6 );
+				}
+				{
+					union()
+					{
+						translate( [1, 1, -6] ) cylinder( d = 2, h = 31.6 );
+						translate( [1.8, 1, -6] ) cylinder( d = 2, h = 31.6 );
+						translate( [1, 25, 0] ) cylinder( d = 2, h = 25.6 );
+						translate( [1.8, 25, 0] ) cylinder( d = 2, h = 25.6 );
 
-                // translate( [1.4, 1.4, 26] ) sphere( d = 2.8 );
-                // translate( [1.4, 22.6, 26] ) sphere( d = 2.8 );
-            }
-        }
-    }
+						// translate( [1.4, 1.4, 26] ) sphere( d = 2.8 );
+						// translate( [1.4, 22.6, 26] ) sphere( d = 2.8 );
+					}
+				}
+			}
+		}
+		{
+			if( side == "right" )
+			{
+				translate( [2, 3, -6] ) cylinder( d = 2.7, h = 8 );
+			}
+			else
+			{
+				translate( [0.8, 3, -6] ) cylinder( d = 2.7, h = 8 );
+			}
+		}
+	}
+
 }
 
 xac_clipWidth = 16.0;
@@ -554,10 +554,10 @@ module xac_neck( orientForPrinting = false, buryNutTraps = false )
 				// comment the translate line to make the built-in support removable
 				translate( [(xac_neckWidth/2),0, 6] ) rotate( [90, 0, 0] ) 
 				{
-					translate( [0, 0, -0.4] )
+					translate( [0.06, 0, -2] )
 					{
-						translate( [14, 0, -13.4] ) supportPillar();
-						translate( [-14, 0, -13.4] ) rotate( [0, 0, 180] ) supportPillar();
+						translate( [15.88, 4, -13.4] ) supportPillar();
+						translate( [-16, -4, -13.4] ) rotate( [0, 0, 180] ) supportPillar();
 					}
 				}
             }
@@ -583,7 +583,7 @@ module xac_neck( orientForPrinting = false, buryNutTraps = false )
 							}
 							else
 							{
-								translate( [0, 0, 15.8 - 2.5] ) buriedM3Nut();
+								translate( [0, 0, 15.8 - 2.5] ) buriedM3Nut( diameter = 6.9, height = 2.6 );
 							}
                             
                         }
@@ -599,7 +599,7 @@ module xac_neck( orientForPrinting = false, buryNutTraps = false )
 							}
 							else
 							{
-								translate( [0, 0, 15.8 - 2.5] ) buriedM3Nut();
+								translate( [0, 0, 15.8 - 2.5] ) buriedM3Nut( diameter = 6.9, height = 2.6 );
 							}
                         }
                     }

@@ -5,11 +5,11 @@
 
 include <Shared-modules.scad>
 include <Z axis retainer block.scad>
-// include <thirdparty/prusa/Original-Prusa-i3/Printed-Parts/scad/x-end-idler.scad>
-// include <thirdparty/prusa/Original-Prusa-i3/Printed-Parts/scad/x-end-motor.scad>
-include <2020 SK8 Bracket.scad>
+include <thirdparty/prusa/Original-Prusa-i3/Printed-Parts/scad/x-end-idler.scad>
+include <thirdparty/prusa/Original-Prusa-i3/Printed-Parts/scad/x-end-motor.scad>
+// include <2020 SK8 Bracket.scad>
+include <SK8 Tower.scad>
 include <Y belt tensioner.scad>
-// include <Filament guide.scad>
 use <Frame foot mount.scad>
 
 yAxisProfileLength = 406;
@@ -39,7 +39,9 @@ sk8SideLength = 14;
 
 sk8SideOffset = (profileSize - sk8SideLength)/2;
 
-// fulConstruction();
+fulConstruction();
+
+
 
 module fulConstruction()
 {
@@ -50,20 +52,19 @@ module fulConstruction()
 
         color( "blue" ) zAxisMountPieces();
         color( "silver" ) zAxisRods();
-        color( "lightgray" ) zAxisBearings();
-        color( "blue" ) zAxisMotorMount();
-        color( "blue" ) zAxisFrameBraces();
-        color( "blue" ) constructedFilamentGuide();
-        color( "blue" ) handle();
+        // color( "lightgray" ) zAxisBearings();
+        // color( "blue" ) zAxisMotorMount();
+        // color( "blue" ) zAxisFrameBraces();
+        // color( "blue" ) handle();
 
-        color( "blue" ) mountsInContext();
+        // color( "blue" ) mountsInContext();
 
         color( "blue" ) xAxisCarriagePieces();
         color( "blue" ) constructedXAxisCarriage();
         color( "silver" ) xAxisRods();
 
-        color( "blue" ) yAxisMountPieces();
-        color( "silver" ) yAxisRods();
+        // color( "blue" ) yAxisMountPieces();
+        // color( "silver" ) yAxisRods();
     }
 }
 
@@ -111,21 +112,6 @@ module handle()
         rotate( [-90, 0, 0] )
         {
             import( "output/V-Slot_Handle.stl" );
-        }
-    }
-}
-
-module constructedFilamentGuide()
-{
-    translate( [57 + (xAxisProfileLength/2) - (31/2), yAxisProfileLength + profileSize - zAxisTowerDistanceFromEnd + 2, zAxisProfileLength + profileSize + zAxisTowerHeight - 4] )
-    {
-
-        translate( [0, 0, 0] )
-        {
-            rotate( [0, 0, 90] )
-            {
-                filamentGuide();
-            }
         }
     }
 }
@@ -399,7 +385,7 @@ module yAxisMountPieces()
         {
             rotate( [90, 0, 0] )
             {
-                sk8Bracket();
+                construction();
             }
         }
 
@@ -407,7 +393,7 @@ module yAxisMountPieces()
         {
             rotate( [90, 0, 0] )
             {
-                sk8Bracket();
+                construction();
             }
         }
 
@@ -415,7 +401,7 @@ module yAxisMountPieces()
         {
             rotate( [90, 0, 0] )
             {
-                sk8Bracket();
+                construction();
             }
         }
 
@@ -423,7 +409,7 @@ module yAxisMountPieces()
         {
             rotate( [90, 0, 0] )
             {
-                sk8Bracket();
+                construction();
             }
         }
 

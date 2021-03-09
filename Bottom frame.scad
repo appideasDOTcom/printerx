@@ -4,7 +4,7 @@
 */ 
 
 use <Shared-modules.scad>
-include <printerx construction.scad>
+// include <printerx construction.scad>
 use <Frame foot mount.scad>
 
 // Render quality settings
@@ -24,9 +24,9 @@ renderFrame = false;
 // psuMountBlock();
 color( "blue" )
 {
-    controllerMount();
+    // controllerMount();
     // piMount();
-    // piFanMount();
+    piFanMount();
     // tftMount();
 }
 
@@ -1741,6 +1741,8 @@ bfpi_fanCornerDiameter = 2;
 // extra length added to this wall so that there's room for the USB ports and we don't need to make super-thin wood on the case
 bfpi_extraExternalWallLength = 26;
 
+// The pi fan is now mounted to a hat - create a block to plug the
+//   mounting hole on pre-v1 cases
 module piFanMount()
 {
     difference()
@@ -1748,28 +1750,28 @@ module piFanMount()
         {
             union()
             {
-                translate( [5, 0, 0] )
-                {
-                    hull()
-                    {
-                        {
-                            translate( [(bfpi_fanCornerDiameter/2), (bfpi_fanCornerDiameter/2), 0] ) cube( [bfpi_fanPlatformXYDimension - bfpi_fanCornerDiameter, bfpi_fanPlatformXYDimension - bfpi_fanCornerDiameter, bfpi_fanPlatformZDimension] );
-                        }
-                        {
-                            union()
-                            {
-                                translate( [(bfpi_fanCornerDiameter/2), (bfpi_fanCornerDiameter/2), 0] ) cylinder( d = bfpi_fanCornerDiameter, h = bfpi_fanPlatformZDimension);
-                                translate( [bfpi_fanPlatformXYDimension - (bfpi_fanCornerDiameter/2), (bfpi_fanCornerDiameter/2), 0] ) cylinder( d = bfpi_fanCornerDiameter, h = bfpi_fanPlatformZDimension);
-                                translate( [(bfpi_fanCornerDiameter/2), bfpi_fanPlatformXYDimension - (bfpi_fanCornerDiameter/2), 0] ) cylinder( d = bfpi_fanCornerDiameter, h = bfpi_fanPlatformZDimension);
-                                translate( [bfpi_fanPlatformXYDimension - (bfpi_fanCornerDiameter/2), bfpi_fanPlatformXYDimension - (bfpi_fanCornerDiameter/2), 0] ) cylinder( d = bfpi_fanCornerDiameter, h = bfpi_fanPlatformZDimension);
-                            }
-                        }
-                    }
-                }
+                // translate( [5, 0, 0] )
+                // {
+                //     hull()
+                //     {
+                //         {
+                //             translate( [(bfpi_fanCornerDiameter/2), (bfpi_fanCornerDiameter/2), 0] ) cube( [bfpi_fanPlatformXYDimension - bfpi_fanCornerDiameter, bfpi_fanPlatformXYDimension - bfpi_fanCornerDiameter, bfpi_fanPlatformZDimension] );
+                //         }
+                //         {
+                //             union()
+                //             {
+                //                 translate( [(bfpi_fanCornerDiameter/2), (bfpi_fanCornerDiameter/2), 0] ) cylinder( d = bfpi_fanCornerDiameter, h = bfpi_fanPlatformZDimension);
+                //                 translate( [bfpi_fanPlatformXYDimension - (bfpi_fanCornerDiameter/2), (bfpi_fanCornerDiameter/2), 0] ) cylinder( d = bfpi_fanCornerDiameter, h = bfpi_fanPlatformZDimension);
+                //                 translate( [(bfpi_fanCornerDiameter/2), bfpi_fanPlatformXYDimension - (bfpi_fanCornerDiameter/2), 0] ) cylinder( d = bfpi_fanCornerDiameter, h = bfpi_fanPlatformZDimension);
+                //                 translate( [bfpi_fanPlatformXYDimension - (bfpi_fanCornerDiameter/2), bfpi_fanPlatformXYDimension - (bfpi_fanCornerDiameter/2), 0] ) cylinder( d = bfpi_fanCornerDiameter, h = bfpi_fanPlatformZDimension);
+                //             }
+                //         }
+                //     }
+                // }
 
                 translate( [bfpi_fanPlatformXYDimension, (bfpi_fanPlatformXYDimension/2) - (bfpi_externalMountBlockWidth/2), 0] )
                 {
-                    translate( [5, 0, 0] ) cube( [12.6, bfpi_externalMountBlockWidth, bfpi_fanPlatformZDimension] );
+                    // translate( [5, 0, 0] ) cube( [12.6, bfpi_externalMountBlockWidth, bfpi_fanPlatformZDimension] );
 
                     translate( [12.2, 0, 0] )
                     {

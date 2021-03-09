@@ -9,7 +9,7 @@ $fa = 1;
 $fs = 0.1;
 
 pieceXDistance = 20; // match the printer frame's rail width
-pieceYDistance = 50;
+pieceYDistance = 55;
 pieceZDistance = 150;
 
 edgeHeight = 15;
@@ -74,7 +74,7 @@ module throughHoles()
         }
     }
 
-    translate( [(pieceXDistance/2), insideEdgeHeight + 10, -1] )
+    translate( [(pieceXDistance/2), insideEdgeHeight + 13, -1] )
     {
         m4ThroughHole( height = 30 );
 
@@ -84,7 +84,7 @@ module throughHoles()
         }
     }
 
-    translate( [(pieceXDistance/2), 15, insideEdgeHeight + 12] )
+    translate( [(pieceXDistance/2), 15, insideEdgeHeight + 16] )
     {
         rotate( [90, 0, 0] )
         {
@@ -115,7 +115,7 @@ module mainCutout()
                     }
                 }
 
-                translate( [-0.1, (insideCornerDiameter/2) + insideEdgeHeight + 13, insideEdgeHeight + 39] )
+                translate( [-0.1, (insideCornerDiameter/2) + insideEdgeHeight + 17, insideEdgeHeight + 43] )
                 {
                     rotate( [0, 90, 0] )
                     {
@@ -131,7 +131,7 @@ module mainCutout()
                     }
                 }
 
-                translate( [-0.1, (insideCornerDiameter/2) + insideEdgeHeight + 19, (insideCornerDiameter/2) + insideEdgeHeight * 1.6] )
+                translate( [-0.1, (insideCornerDiameter/2) + insideEdgeHeight + 24, 3 + (insideCornerDiameter/2) + insideEdgeHeight * 1.6] )
                 {
                     rotate( [0, 90, 0] )
                     {
@@ -153,7 +153,7 @@ module mainCutout()
             union()
             {
 
-                translate( [-0.1, (insideCornerDiameter/2) + insideEdgeHeight, insideEdgeHeight + 49] )
+                translate( [-0.1, (insideCornerDiameter/2) + insideEdgeHeight, insideEdgeHeight + 47] )
                 {
                     rotate( [0, 90, 0] )
                     {
@@ -161,7 +161,7 @@ module mainCutout()
                     }
                 }
 
-                translate( [-0.1, (insideCornerDiameter/2) + insideEdgeHeight + 11, insideEdgeHeight + 56.5] )
+                translate( [-0.1, (insideCornerDiameter/2) + insideEdgeHeight + 14, insideEdgeHeight + 57.0] )
                 {
                     rotate( [0, 90, 0] )
                     {
@@ -195,7 +195,7 @@ module mainCutout()
             union()
             {
 
-                translate( [-0.1, (insideCornerDiameter/2) + insideEdgeHeight, pieceZDistance - 36] )
+                translate( [-0.1, (insideCornerDiameter/2) + insideEdgeHeight - 0, pieceZDistance - 26] )
                 {
                     rotate( [0, 90, 0] )
                     {
@@ -203,7 +203,7 @@ module mainCutout()
                     }
                 }
 
-                translate( [-0.1, (insideCornerDiameter/2) + insideEdgeHeight, pieceZDistance - 62] )
+                translate( [-0.1, (insideCornerDiameter/2) + insideEdgeHeight, pieceZDistance - 64] )
                 {
                     rotate( [0, 90, 0] )
                     {
@@ -211,7 +211,7 @@ module mainCutout()
                     }
                 }
 
-                translate( [-0.1, (insideCornerDiameter/2) + insideEdgeHeight + 8, pieceZDistance - 68] )
+                translate( [-0.1, (insideCornerDiameter/2) + insideEdgeHeight + 11, pieceZDistance - 70] )
                 {
                     rotate( [0, 90, 0] )
                     {

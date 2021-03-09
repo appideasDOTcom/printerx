@@ -112,7 +112,7 @@ extraBaseHeight = 20; // make the base taller to recover unused Z axis space
 // These are probably the things you will want to print
 // bearingFlange();
 // bottomLeftBase();
-// bottomRightBase();
+bottomRightBase();
 // topLeftBase();
 // topRightBase();
 
@@ -562,36 +562,44 @@ module base()
             }
         }
         {
-            translate( [-1 * (cornerDiameter/2), pieceWidth - railWidth - (cornerDiameter/2), 0])
-            {
-                cylinder( d = cornerDiameter, h = pieceHeight + extraBaseHeight);
-            }
+			union()
+			{
+				translate( [-1 * (cornerDiameter/2), pieceWidth - railWidth - (cornerDiameter/2), 0])
+				{
+					cylinder( d = cornerDiameter, h = pieceHeight + extraBaseHeight - (cornerDiameter/2));
+					translate( [0, 0, (pieceHeight + extraBaseHeight) - (cornerDiameter/2)] ) sphere( d = (cornerDiameter/1) );
+				}
 
-            translate( [-1 * (pieceDepth - cornerDiameter/2), pieceWidth - railWidth - (cornerDiameter/2), 0])
-            {
-                cylinder( d = cornerDiameter, h = pieceHeight + extraBaseHeight);
-            }
+				translate( [-1 * (pieceDepth - cornerDiameter/2), pieceWidth - railWidth - (cornerDiameter/2), 0])
+				{
+					cylinder( d = cornerDiameter, h = pieceHeight + extraBaseHeight - (cornerDiameter/2) );
+					translate( [0, 0, (pieceHeight + extraBaseHeight) - (cornerDiameter/2)] ) sphere( d = (cornerDiameter/1) );
+				}
 
-            // Use the commented hull to stop at the rail
-            // translate( [-1 * cornerDiameter, -1 * railWidth, 0] )
-            // {
-            //     cube( [cornerDiameter, cornerDiameter, pieceHeight] );
-            // }
+				// Use the commented hull to stop at the rail
+				// translate( [-1 * cornerDiameter, -1 * railWidth, 0] )
+				// {
+				//     cube( [cornerDiameter, cornerDiameter, pieceHeight] );
+				// }
 
-            // translate( [-1 * pieceDepth, -1 * railWidth, 0] )
-            // {
-            //     cube( [cornerDiameter, cornerDiameter, pieceHeight] );
-            // }
+				// translate( [-1 * pieceDepth, -1 * railWidth, 0] )
+				// {
+				//     cube( [cornerDiameter, cornerDiameter, pieceHeight] );
+				// }
 
-            translate( [(-1 * pieceDepth) + (cornerDiameter/2), (-1 * (railWidth + insideWallDepth)) + (cornerDiameter/2), 0] )
-            {
-                cylinder( d = cornerDiameter, h = pieceHeight + extraBaseHeight ); 
-            }
+				translate( [(-1 * pieceDepth) + (cornerDiameter/2), (-1 * (railWidth + insideWallDepth)) + (cornerDiameter/2), 0] )
+				{
+					cylinder( d = cornerDiameter, h = pieceHeight + extraBaseHeight - (cornerDiameter/2 ) );
+					translate( [0, 0, (pieceHeight + extraBaseHeight) - (cornerDiameter/2)] ) sphere( d = (cornerDiameter/1) );
+				}
 
-            translate( [ -1 * (cornerDiameter/2), (-1 * (railWidth + insideWallDepth)) + (cornerDiameter/2), 0] )
-            {
-                cylinder( d = cornerDiameter, h = pieceHeight + extraBaseHeight ); 
-            }
+				translate( [ -1 * (cornerDiameter/2), (-1 * (railWidth + insideWallDepth)) + (cornerDiameter/2), 0] )
+				{
+					cylinder( d = cornerDiameter, h = pieceHeight + extraBaseHeight - (cornerDiameter/2) ); 
+					translate( [0, 0, (pieceHeight + extraBaseHeight) - (cornerDiameter/2)] ) sphere( d = (cornerDiameter/1) );
+				}
+			}
+
 
         }
     }
@@ -657,10 +665,42 @@ module supportWallEssCurves()
 
 module supportWall()
 {
+
+	hull()
+	{
+		{
+			translate( [5, -1 * (cornerDiameter/2), -5] ) cube( [5, (cornerDiameter/2), 5] );
+		}
+		{
+			translate( [wallThickness - (cornerDiameter/2), -1 * (cornerDiameter/2) - 0.9, -1 * (cornerDiameter/2)] ) sphere( d = (cornerDiameter/1) );
+		}
+	}
+
+	hull()
+	{
+		{
+			translate( [5,  railWidth, -5] ) cube( [5, (cornerDiameter/2), 5] );
+		}
+		{
+			translate( [wallThickness - (cornerDiameter/2), railWidth  + cornerDiameter + 0.9, -1 * (cornerDiameter/2) + 0] ) sphere( d = (cornerDiameter/1) );
+		}
+	}
+	
+	
+
+
+	
     hull()
     {
         {
-            cube( [wallThickness, railWidth, wallHeight] );
+			union()
+			{
+				translate( [(cornerDiameter/4), (cornerDiameter/4), -3] ) cube( [wallThickness - (cornerDiameter/4), railWidth - (cornerDiameter/2), wallHeight + 3 - (cornerDiameter/4)] );
+				translate( [(cornerDiameter/4), 0, -3] ) cube( [wallThickness - (cornerDiameter/4), railWidth, supportCubeDimension] );
+				//translate( [5, -1 * (cornerDiameter/2), -5] ) cube( [5, (cornerDiameter/2), 5] );
+				//translate( [5, railWidth, -5] ) cube( [5, (cornerDiameter/2), 5] );
+			}
+            
         }
         {
             union()
@@ -669,14 +709,30 @@ module supportWall()
                 {
                     cube( [supportCubeDimension, supportCubeDimension, supportCubeDimension] );
 
+					// translate( [(cornerDiameter/4), (cornerDiameter/4), supportCubeDimension + 2] ) sphere( d = (cornerDiameter/2) );
+
                     translate( [0, railWidth - supportCubeDimension, 0] )
                     {
                         cube( [supportCubeDimension, supportCubeDimension, supportCubeDimension] );
+						// translate( [(cornerDiameter/4), supportCubeDimension - (cornerDiameter/4), supportCubeDimension + 2] ) sphere( d = (cornerDiameter/2) );
                     }
+
+					translate( [wallThickness - (cornerDiameter/4), (cornerDiameter/4), wallHeight - (cornerDiameter/4)] )
+					{
+						sphere( d = (cornerDiameter/2) );
+						rotate( [0, 90, 0] ) cylinder( d = cornerDiameter/2, h = wallThickness - (cornerDiameter/4) );
+					}
+					translate( [wallThickness - (cornerDiameter/4), railWidth - (cornerDiameter/4), wallHeight - (cornerDiameter/4)] )
+					{
+						sphere( d = (cornerDiameter/2) );
+						rotate( [0, 90, 0] ) cylinder( d = cornerDiameter/2, h = wallThickness - (cornerDiameter/4) );
+					} 
                 }
             }
         }
     }
+
+	
 
 }
 
