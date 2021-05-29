@@ -105,10 +105,32 @@ void handleConnect()
 {
   String hardSSID = postValue( "ssid" );
   String hardPassword = postValue( "password" );
+
+  // TODO: Set parameters on the pi to connect to WiFi, reboot the pi, then show the user a "success" message
+
+  const String html =
+    "<!DOCTYPE HTML>"
+    "<html>"
+    "<head>"
+    "<meta name = \"viewport\" content = \"width = device-width, initial-scale = 1.0, maximum-scale = 1.0, user-scalable=0\">"
+    "<title>Connect to WiFi</title>"
+    "<style>"
+    "body { background-color: #D3E3F1; font-family: \"Open Sans\", sans-serif; Color: #000000; }"
+    "#header { width: 100%; text-align: center; }"
+    "input[type=text], input[type=password] { width: 50%; height: 30px; padding-left: 10px; }"
+    "</style>"
+    "</head>"
+    "<body>"
+    "<p>The printerX web server will now restart to connect to the WiFi network named <strong>" + hardSSID + "</strong></p>"
+    "<p>You should be able to access your printer in a web browser at <a href='http://printerx.local/'>http://printerx.local/</a> in about 30 seconds.</p>"
+    "<p>If your printer fails to connect to your network, <a href='/'>click here</a> to try again.</p>"
+    "<p>If you're done, CANCEL this screen and reconnect to your network.</p>"
+    "</body>"
+    "</html>";
   
-  server.send( 200, "text/html", connectionHtml() );
-  server_443.send( 200, "text/html", connectionHtml() );
-  server_80.send( 200, "text/html", connectionHtml() );
+  server.send( 200, "text/html", html );
+  server_443.send( 200, "text/html", html );
+  server_80.send( 200, "text/html", html );
   
   Serial.println( "Connected to WiFi: " + hardSSID );
   delay( 100 );
@@ -132,6 +154,7 @@ void startSoftAP()
   WiFi.softAPConfig( WiFi.softAPIP(), WiFi.softAPIP(), IPAddress( 255, 255, 255, 0 ) );
   WiFi.softAP( ssid.c_str() );
   dnsServer.start( DNS_PORT, "*", WiFi.softAPIP() );
+//  dnsServer.start( DNS_PORT, "printerx.local", IPAddress( 192, 168, 4, 99 ) );
   
   softIP = WiFi.softAPIP().toString();
   
@@ -195,7 +218,6 @@ const String connectionHtml()
     "<head>"
     "<meta name = \"viewport\" content = \"width = device-width, initial-scale = 1.0, maximum-scale = 1.0, user-scalable=0\">"
     "<title>Connect to WiFi</title>"
-    "<!-- <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'> -->"
     "<style>"
     "body { background-color: #D3E3F1; font-family: \"Open Sans\", sans-serif; Color: #000000; }"
     "#header { width: 100%; text-align: center; }"
@@ -204,14 +226,19 @@ const String connectionHtml()
     "</head>"
     "<body>"
     "<div id='header'><h3>Connect to your WiFi network</h3></div>"
+    "<div id='content'><p>To get printerX connected to your WiFi network,<br/>please provide your credentials below.</p></div>"
     "<FORM action=\"/connect\" method=\"post\">"
     "<P>"
     "<p><INPUT type=\"text\" name=\"ssid\" placeholder=\"SSID\" autocomplete=\"off\" autocorrect=\"off\" autocapitalize=\"off\" spellcheck=\"false\"></p>"
     "<p><INPUT type=\"password\" name=\"password\" placeholder=\"Password\" autocomplete=\"off\" autocorrect=\"off\" autocapitalize=\"off\" spellcheck=\"false\"></p>"
-    "<p><INPUT type=\"text\" name=\"timezone\" placeholder=\"Timezone Offset (e.g. -8)\" autocomplete=\"off\" autocorrect=\"off\" autocapitalize=\"off\" spellcheck=\"false\"></p><br>"
     "<p><INPUT type=\"submit\" value=\"CONNECT\"></p>"
     "</P>"
     "</FORM>"
+    "<!-- <P>"
+    "<FORM action=\"/disconnect\" method=\"post\">"
+    "<INPUT type=\"submit\" value=\"RESET\">"
+    "</FORM>"
+    "</P> -->"
     "</body>"
     "</html>";
 
