@@ -5,7 +5,7 @@
 #include <WiFiClient.h>
 #include <ArduinoJson.h>
 #include <EEPROM.h>
-#include <ArduinoOTA.h>
+#include <DNSServer.h>
 
 /**
  * A sketch to open a Wireless Access Point from within printerX's case using
@@ -16,13 +16,18 @@
  */
 
 // Setup a wireless access point so the user can be prompted to connect to a network
-String  ssidPrefix = "printerx-";
+String  ssidPrefix = "printerx-beta-";
 int serverPort = 5050;
 String ssid = "";
 String softIP  = "";
+const byte DNS_PORT = 53;
 
 IPAddress ip;
+
 ESP8266WebServer server( serverPort );
+ESP8266WebServer server_443( 443 );
+ESP8266WebServer server_80( 80 );
+DNSServer dnsServer;
 
 
 /**
@@ -52,10 +57,12 @@ void loop()
 {
   // Listen for API requests
   server.handleClient();
-
-  // initOta();
-  // Listen for OTA updates
-  ArduinoOTA.handle();
+  server_443.handleClient();
+  server_80.handleClient();
+  
+  // Redirect users to the login portal
+  dnsServer.processNextRequest();
+  delay( 1000 );
 }
 
 /**
@@ -70,18 +77,41 @@ void loop()
 void handleRoot()
 {
 	Serial.println( "Connecting" );
+ 
 	server.send( 200, "text/html", connectionHtml() );
+  server_443.send( 200, "text/html", connectionHtml() );
+  server_80.send( 200, "text/html", connectionHtml() );
+  
   delay( 100 );
+}
+
+/**
+ * Look through the known server instances to find a posted value
+ */
+String postValue( String key )
+{
+    String returnValue = server.arg( key );
+    if( returnValue.length() < 1 ) {
+      returnValue = server_443.arg( "ssid" );
+    }
+    if( returnValue.length() < 1 ) {
+      returnValue = server_80.arg( "ssid" );
+    }
+
+    return returnValue;
 }
 
 void handleConnect()
 {
-  //String hardSSID = server.arg( "ssid" );
-  //String hardPassword = server.arg( "password" );
-  server.send( 200, "text/html", "YOU ARE CONNECTED" );
-  Serial.println( "Connected to WiFi" );
-  delay( 100 );
+  String hardSSID = postValue( "ssid" );
+  String hardPassword = postValue( "password" );
   
+  server.send( 200, "text/html", connectionHtml() );
+  server_443.send( 200, "text/html", connectionHtml() );
+  server_80.send( 200, "text/html", connectionHtml() );
+  
+  Serial.println( "Connected to WiFi: " + hardSSID );
+  delay( 100 );
 }
 
 /**
@@ -97,10 +127,14 @@ void startSoftAP()
   String macPartOne = mac.substring( 12, 14 );
   String macPartTwo = mac.substring( 15 );
   ssid = ssidPrefix + macPartOne + macPartTwo; // "printerx-" followed by the last 4 characters of the device MAC address
-  
+
+  WiFi.mode( WIFI_AP );
+  WiFi.softAPConfig( WiFi.softAPIP(), WiFi.softAPIP(), IPAddress( 255, 255, 255, 0 ) );
   WiFi.softAP( ssid.c_str() );
+  dnsServer.start( DNS_PORT, "*", WiFi.softAPIP() );
+  
   softIP = WiFi.softAPIP().toString();
- 
+  
   Serial.println( getSoftAPStatus() );
 }
 
@@ -114,9 +148,20 @@ void startSoftAP()
  */
 void startWebServer()
 {
-  server.on( "/", handleRoot );
+  server.on( "/", handleConnect );
   server.on( "/connect", handleConnect );
+  server.onNotFound( handleRoot );
   server.begin();
+
+  server_443.on( "/", handleRoot );
+  server_443.on( "/connect", handleConnect );
+  server_443.onNotFound( handleRoot );
+  server_443.begin();
+
+  server_80.on( "/", handleRoot );
+  server_80.on( "/connect", handleConnect );
+  server_80.onNotFound( handleRoot );
+  server_80.begin();
 }
 
 /**
@@ -150,7 +195,7 @@ const String connectionHtml()
     "<head>"
     "<meta name = \"viewport\" content = \"width = device-width, initial-scale = 1.0, maximum-scale = 1.0, user-scalable=0\">"
     "<title>Connect to WiFi</title>"
-    "<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>"
+    "<!-- <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'> -->"
     "<style>"
     "body { background-color: #D3E3F1; font-family: \"Open Sans\", sans-serif; Color: #000000; }"
     "#header { width: 100%; text-align: center; }"
@@ -198,44 +243,3 @@ String redirect( String newIP )
 
   return returnValue;
 }
-
-// Requires connection to an established wifi network
-//void initOta()
-//{
-//  ArduinoOTA.onStart( []() 
-//  {
-//    String type;
-//    if( ArduinoOTA.getCommand() == U_FLASH )
-//    {
-//      type = "sketch";
-//    }
-//    else // U_SPIFFS
-//    {
-//      type = "filesystem";
-//    }
-//
-//    // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
-//    Serial.println( "Start updating " + type );
-//  });
-//  
-//  ArduinoOTA.onEnd( []() 
-//  {
-//    Serial.println( "\nEnd" );
-//  });
-//  
-//  ArduinoOTA.onProgress( [](unsigned int progress, unsigned int total ) 
-//  {
-//    Serial.printf( "Progress: %u%%\r", (progress / (total / 100)) );
-//  });
-//  
-//  ArduinoOTA.onError( []( ota_error_t error ) 
-//  {
-//    Serial.printf( "Error[%u]: ", error );
-//    if( error == OTA_AUTH_ERROR) { Serial.println( "Auth Failed" ); }
-//    else if(error == OTA_BEGIN_ERROR) { Serial.println("Begin Failed"); }
-//    else if(error == OTA_CONNECT_ERROR) { Serial.println("Connect Failed"); }
-//    else if(error == OTA_RECEIVE_ERROR) { Serial.println("Receive Failed"); }
-//    else if(error == OTA_END_ERROR) { Serial.println("End Failed"); }
-//  });
-//  ArduinoOTA.begin();
-//}
