@@ -6,29 +6,43 @@
 #include <ArduinoJson.h>
 #include <EEPROM.h>
 #include <DNSServer.h>
+#include <string.h>
+#include <SoftwareSerial.h>
 
 /**
  * A sketch to open a Wireless Access Point from within printerX's case using
- *    an ESP8266-12E
+ *    an ESP8266-12E, provide a captive portal, and update a printer's WiFi
+ *    access credentials
  * 
  * @author costmo
- * @since  20180902
  */
 
-// Setup a wireless access point so the user can be prompted to connect to a network
-String  ssidPrefix = "printerx-beta-";
+// SSID broadcast prefix for all printerX access points
+String  ssidPrefix = "printerx-";
+// Internal port for web access
 int serverPort = 5050;
+// User's SSID
 String ssid = "";
+// IP Address of the Software AP
 String softIP  = "";
+// Query port for captive portal DNS
 const byte DNS_PORT = 53;
+// Flag for serial receiver (not currently used)
+bool receiving = false;
+// Receipt buffer size
+int bufferSize = 512;
+// Invoming serial data buffer
+char buff [512];
+// Current position in the buffer
+int bufferIndex = 0;
 
+// Get third party libraries setup...
+SoftwareSerial softSerial( 3, 1 );
 IPAddress ip;
-
 ESP8266WebServer server( serverPort );
 ESP8266WebServer server_443( 443 );
 ESP8266WebServer server_80( 80 );
 DNSServer dnsServer;
-
 
 /**
  * Run on device power-on
@@ -38,11 +52,17 @@ DNSServer dnsServer;
  */
 void setup() 
 {
+  // wait for serial port to connect
   Serial.begin( 57600 );
+    while (!Serial) {
+      ;
+    }
   delay( 100 );
 
+  // Start our services
   startSoftAP();
   startWebServer();
+  softSerial.begin( 57600 );
 }
 
 
@@ -55,20 +75,46 @@ void setup()
  */
 void loop() 
 {
-  // Listen for API requests
+  // Listen for API requests on our running server/ports
   server.handleClient();
   server_443.handleClient();
   server_80.handleClient();
+
+  int incomingByte = 0;
   
-  // Redirect users to the login portal
+  // Redirect users to the login portal by virtue of DNS failure
   dnsServer.processNextRequest();
-  delay( 1000 );
+
+  // Ingest and handle incoming serial data
+  // Currently an academic excercise - we don't do anything with incoming serial requests
+  if( !receiving ) {
+    bufferIndex = 0;
+    memset( buff, 0, bufferSize );
+  }
+  if( Serial.available() > 0 ) {
+    receiving = true;
+    // read the incoming byte:
+    incomingByte = Serial.read();
+
+    // EOL or buffer boundary protection
+    if( incomingByte != 10 || bufferIndex == (bufferSize - 1) ) {
+      buff[bufferIndex] = (char)incomingByte;
+      bufferIndex++;
+    } else {
+      receiving = false;
+    }
+  }
+
+  if( !receiving && bufferIndex > 0 ) {
+    Serial.print( "Got string: " );
+    Serial.println( buff );
+  }
 }
 
 /**
  * Handler for requests to "/"
  * 
- * This should only provide the interface for logging into a network or show a "you are already connected" message
+ * This should only provide the interface for logging into a network
  * 
  * @return void
  * @author costmo
@@ -92,23 +138,27 @@ String postValue( String key )
 {
     String returnValue = server.arg( key );
     if( returnValue.length() < 1 ) {
-      returnValue = server_443.arg( "ssid" );
+      returnValue = server_443.arg( key );
     }
     if( returnValue.length() < 1 ) {
-      returnValue = server_80.arg( "ssid" );
+      returnValue = server_80.arg( key );
     }
 
     return returnValue;
 }
 
+/**
+ * Handle POST requests to /connect - an attempt to reconfigure the printer's WiFi credentials
+ */
 void handleConnect()
 {
   String hardSSID = postValue( "ssid" );
   String hardPassword = postValue( "password" );
+  bool doSet = false;
 
-  // TODO: Set parameters on the pi to connect to WiFi, reboot the pi, then show the user a "success" message
-
-  const String html =
+  // Show the user a message
+  // Common/top part first
+  String html =
     "<!DOCTYPE HTML>"
     "<html>"
     "<head>"
@@ -120,17 +170,44 @@ void handleConnect()
     "input[type=text], input[type=password] { width: 50%; height: 30px; padding-left: 10px; }"
     "</style>"
     "</head>"
-    "<body>"
-    "<p>The printerX web server will now restart to connect to the WiFi network named <strong>" + hardSSID + "</strong></p>"
-    "<p>You should be able to access your printer in a web browser at <a href='http://printerx.local/'>http://printerx.local/</a> in about 30 seconds.</p>"
-    "<p>If your printer fails to connect to your network, <a href='/'>click here</a> to try again.</p>"
-    "<p>If you're done, CANCEL this screen and reconnect to your network.</p>"
-    "</body>"
-    "</html>";
+    "<body>";
+
+    // Insufficient input
+    if( hardSSID.length() < 1 )
+    {
+      html +=
+        "<p style='font-weight:bold;color:red;'>You must supply an SSID.</p>"
+        "<p><a href='/'>Click here</a> to go back to the form and try again.</p>";
+    } else { // OK
+      doSet = true;
+      html +=
+        "<p>The printerX web server will now restart so that it can connect to the WiFi network named <strong>" + hardSSID + "</strong></p>"
+        "<p>You should be able to access your printer in a web browser at <a href='http://printerx.local/'>http://printerx.local/</a> in about 30 seconds.</p>"
+        "<p>If your printer fails to connect to your network, <a href='/'>click here</a> to try again.</p>"
+        "<p>If you're done, CANCEL this screen and reconnect to your network.</p>";
+    }
+    html +=
+      "</body>"
+      "</html>";
   
   server.send( 200, "text/html", html );
   server_443.send( 200, "text/html", html );
   server_80.send( 200, "text/html", html );
+
+  // Send the instruction to reset credentials to the rPi
+  if( doSet ) {
+
+    String sendString = "{\"action\":\"set-wifi\",\"ssid\":\"";
+    sendString += hardSSID;
+    sendString += "\",\"password\":\"";
+    sendString += hardPassword;
+    sendString += "\"}";
+
+    Serial.println( "SENDING:" );
+    Serial.println( sendString );
+
+    softSerial.println( sendString );
+  }
   
   Serial.println( "Connected to WiFi: " + hardSSID );
   delay( 100 );
@@ -154,7 +231,6 @@ void startSoftAP()
   WiFi.softAPConfig( WiFi.softAPIP(), WiFi.softAPIP(), IPAddress( 255, 255, 255, 0 ) );
   WiFi.softAP( ssid.c_str() );
   dnsServer.start( DNS_PORT, "*", WiFi.softAPIP() );
-//  dnsServer.start( DNS_PORT, "printerx.local", IPAddress( 192, 168, 4, 99 ) );
   
   softIP = WiFi.softAPIP().toString();
   
@@ -234,37 +310,11 @@ const String connectionHtml()
     "<p><INPUT type=\"submit\" value=\"CONNECT\"></p>"
     "</P>"
     "</FORM>"
-    "<!-- <P>"
+    "<P>"
     "<FORM action=\"/disconnect\" method=\"post\">"
-    "<INPUT type=\"submit\" value=\"RESET\">"
+    "<INPUT type=\"submit\" value=\"RESET TO DEFAULT\">"
     "</FORM>"
-    "</P> -->"
-    "</body>"
-    "</html>";
-
-  return returnValue;
-}
-
-/**
- * Attempt to redirect users after successful attempt to connect to a WiFi network
- * 
- * This doesn't currently work since the user is disconnected from the ESP prior to this being an option to be offered
- * 
- * @return String
- * @author costmo
- * @since  20180902
- */
-String redirect( String newIP )
-{
-  String returnValue =
-    "<!DOCTYPE HTML>"
-    "<html>"
-    "<head>"
-    "<script type=\"text/javascript\">"
-    " window.location = \"http://" + newIP + "/\""
-    "</script>"
-    "</head>"
-    "<body>"
+    "</P>"
     "</body>"
     "</html>";
 
