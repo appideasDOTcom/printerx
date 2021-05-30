@@ -1,0 +1,18 @@
+{
+  "name": "ostmoxy_wap",
+  "version": "1.0.0",
+  "description": "Wireless Access Point receiver for ostmoxy 3D printers",
+  "main": "bin/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "APPideas",
+  "license": "LGPL-3.0-or-later",
+  "dependencies": {
+    "node-gyp": "^8.1.0",
+    "pigpio": "^3.3.1",
+    "raspi": "^6.0.1",
+    "raspi-serial": "^6.0.0",
+    "strict-mode": "^1.1.5"
+  }
+}
