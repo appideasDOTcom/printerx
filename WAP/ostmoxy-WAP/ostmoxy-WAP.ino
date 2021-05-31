@@ -54,9 +54,9 @@ void setup()
 {
   // wait for serial port to connect
   Serial.begin( 57600 );
-    while (!Serial) {
-      ;
-    }
+  while (!Serial) {
+    ;
+  }
   delay( 100 );
 
   // Start our services
