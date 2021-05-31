@@ -18,7 +18,7 @@
  */
 
 // SSID broadcast prefix for all printerX access points
-String  ssidPrefix = "printerx-";
+String  ssidPrefix = "printerX-";
 // Internal port for web access
 int serverPort = 5050;
 // User's SSID
@@ -310,11 +310,11 @@ const String connectionHtml()
     "<p><INPUT type=\"submit\" value=\"CONNECT\"></p>"
     "</P>"
     "</FORM>"
-    "<P>"
+    "<!-- <P>"
     "<FORM action=\"/disconnect\" method=\"post\">"
     "<INPUT type=\"submit\" value=\"RESET TO DEFAULT\">"
     "</FORM>"
-    "</P>"
+    "</P> -->"
     "</body>"
     "</html>";
 
