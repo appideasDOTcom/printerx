@@ -4,8 +4,8 @@ include <Shared-modules.scad>
 $fa = 1;
 $fs = 0.1;
 
-knobDiameter = 23;
-knobHeight = 7;
+knobDiameter = 26;
+knobHeight = 5;
 knobScale = [1, 0.65, 1];
 nutHeight = 2.6;
 
@@ -46,7 +46,9 @@ module cutouts()
 {
 	union()
 	{
-		translate( [0, 0, (knobHeight/2) - (nutHeight/2)] ) buriedM3Nut( diameter = 6.9, height = nutHeight );
+		// No longer burying the nut
+		// translate( [0, 0, (knobHeight/2) - (nutHeight/2)] ) buriedM3Nut( diameter = 6.9, height = nutHeight );
+		translate( [0, 0, -0.1] ) buriedM3Nut( diameter = 6.9, height = nutHeight + 0.1 );
 		translate( [0, 0, -5] ) m3ThroughHole();
 	}
 }

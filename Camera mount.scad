@@ -4,9 +4,9 @@
 */
 
 // Minimum render angle
-$fa = 5;
+$fa = 1;
 // Minimum render size
-$fs = 1;
+$fs = 0.1;
 
 wallThickness = 3;
 cornerRadius = 2;
@@ -43,7 +43,7 @@ m5NutDepth = 4.3;
 
 armThickness = 7; // Should be >= the height of a corner bracket
 armCornerDiameter = 4;
-armReach = 80;
+armReach = 70;
 armHeight = 55;
 armWidth = 15;
 armLiftInset = 3;
@@ -76,9 +76,10 @@ passthroughGap = 18; // distance between passthrough holes -- currently disabled
 // armReach();
 // armLift();
 // screw();
+siliconShape_Circle();
 
 // Fully-articulated pieces
-renderArticulated();
+// renderArticulated();
 
 module renderArticulated() {
 
@@ -86,16 +87,16 @@ module renderArticulated() {
 
 	translate( [extraArmSideOffset, -1 * (armThickness/2) + (armCornerDiameter/2), armThickness - armLiftInset + extraArmDepth] ) armLift();
 
-	// translate( [armWidth + 3 + extraArmSideOffset, armThickness - 2, armHeight - 25] )
-	// rotate( [0, 0, 180] )
-	// rotate( [90, 0, 0] ) {
-	// 	translate( [0, 0, 22] ) body();
-	// 	translate( [(pcbWidth/2), (pcbHeight/1.5), 0] ) 
-	// 	{
-	// 		translate( [0, 0, 22] ) ballJoint();
-	// 		translate( [0, 0, 31] ) rotate( [180, 0, 0] ) import( "thirdparty/Ball_Joint/files/Screw_v3.stl" );		
-	// 	}
-	// }
+	translate( [armWidth + 3 + extraArmSideOffset, armThickness - 2, armHeight - 25] )
+	rotate( [0, 0, 180] )
+	rotate( [90, 0, 0] ) {
+		translate( [0, 0, 22] ) body();
+		translate( [(pcbWidth/2), (pcbHeight/1.5), 0] ) 
+		{
+			translate( [0, 0, 22] ) ballJoint();
+			translate( [0, 0, 31] ) rotate( [180, 0, 0] ) import( "thirdparty/Ball_Joint/files/Screw_v3.stl" );		
+		}
+	}
 
 
 	// translate( [8.6, armReach + (armCornerDiameter/2) + 0.4, armThickness + 0.8] ) {
@@ -291,6 +292,23 @@ module armReach()
 
 }
 
+module siliconShape_Circle() {
+	translate( [5.525, 1.5, 0] )
+	{
+		difference()
+		{
+			{
+				cylinder( d = armWidth , h = 7 );
+			}
+			{
+				translate( [0, 0, 3] )
+				m5ThroughHole( height = 4.1);
+			}
+		}
+	}
+
+}
+
 module armLift() {
 
 	difference()
@@ -304,7 +322,7 @@ module armLift() {
 					difference()
 					{
 						{
-							cylinder( d = armWidth , h = 2 );
+							%cylinder( d = armWidth , h = 2 );
 						}
 						{
 							translate( [-1 * (armWidth/2), -1 * (armWidth/2) - armCornerDiameter + 0.5 + 3, -0.1] ) cube( [armWidth, (armWidth/2) + 1, 2.2] );
@@ -354,7 +372,7 @@ module armLift() {
 		}
 		{
 			translate( [(armWidth/2) - (armCornerDiameter/2), (armCornerDiameter/2) - 0.5, 0] ) {
-				%translate( [0, 0, -3.1] ) m5ThroughHole( height = 20 );
+				translate( [0, 0, -3.1] ) m5ThroughHole( height = 20 );
 				translate( [0, 0, 10] ) m5Nut();
 				translate( [-1 * (m5NutDiameter/2), 0, m5HeadHeight - 0.1 + 5] ) cube( [m5NutDiameter, 5, m5NutDepth] );
 			}

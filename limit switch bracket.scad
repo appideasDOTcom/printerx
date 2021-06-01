@@ -1,7 +1,7 @@
 // Minimum render angle
-$fa = 1;
+$fa = 5;
 // Minimum render size
-$fs = 0.1;
+$fs = 1;
 
 
 actualWidth = 20.5;
@@ -48,7 +48,7 @@ componentWidth = 13;
 
 // piece: main|lid|all
 // orientation: print|view
-render( piece = "main", orientation = "view" );
+render( piece = "body", orientation = "view" );
 
 module render( piece = "main", orientation = "view" ) {
 	if( piece == "lid" ) {

@@ -7,7 +7,7 @@ $fs = 0.1;
 
 rodDiameter = 8;
 thickness = 7;
-length = 12;
+length = 8;
 openingWidth = 6;
 
 armDistance = 9;
@@ -23,7 +23,7 @@ module construction ()
 			union()
 			{
 				body();
-				#arms();
+				arms();
 			}
 		}
 		{
@@ -75,10 +75,11 @@ module arm()
 	}
 }
 
+// M3-sized cutouts
 module cutouts()
 {
 	nutWallThickness = 1.6;
-	boltDiameter = 4.2;
+	boltDiameter = 3.7;
 
 	translate( [(armDistance/2) - (distanceOffsetX * 2), (openingWidth/2) + nutWallThickness, (length/2)] )
 	{
@@ -93,6 +94,6 @@ module cutouts()
 
 module nutTrap()
 {
-	cylinder( h = 4.5, r = 4.0, $fn=6 );
+	cylinder( h = 4.5, r = (6.8/2), $fn=6 );
 }
 

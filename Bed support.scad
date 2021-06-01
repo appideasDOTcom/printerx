@@ -17,36 +17,75 @@ plateXY = glassXY;
 protuberanceAmount = 4.4;
 cornerRadius = 2;
 
-inlayAmount = glassHeight + plateHeight + 0.8;
-inlayTolerance = 0.8;
+inlayClamp = 2.0;
+
+inlayAmount = glassHeight + plateHeight + inlayClamp;
+inlayTolerance = 0; // clamp a little bit
 
 bodyHeight = inlayAmount + 8;
 bodyX = 25;
 bodyY = 25;
 
-carriageBoltCornerOffset = 5;
+carriageBoltCornerOffset = 2.5;
 
 floorWidth = 7;
 
 m3HeadHeight = 3.3;
 m3HeadDiameter = 6;
 m3ThroughHoleDiameter = 3.7;
-m3NutDiameter = 6.9;
+m3NutDiameter = 6.4;
 m3NutDepth = 2.6;
 
-m3HexHeadDiameter = 6.9;
+m3HexHeadDiameter = 6.8;
 m3HexHeadHeight = 2.4;
 
-springCatchDiamter = 11;
-springCatchDepth = 3.4;
-springCatchRingThickness = 0.6;
+springCatchDiamter = 8.5;
+springCatchDepth = 3.4; // Currently leaves 2.2mm before the hex head
+springCatchRingThickness = 0.4;
 
-printJig = true;
+printJig = false;
 
 
 // glass();
 // plate();
-bodyConstruction();
+// bodyConstruction();
+// pressFitJig();
+pressFitStick();
+// siliconShape_Bed();
+
+module siliconShape_Bed() {
+
+	difference() 
+	{
+		{
+			translate( [0, 0, (-1 * bodyHeight) + inlayAmount] )
+			{
+				linear_extrude( height = bodyHeight - inlayAmount )
+				{
+					offset( r = cornerRadius ) offset( r = (protuberanceAmount - cornerRadius)) square( size = [bodyX, floorWidth] );
+					offset( r = cornerRadius ) offset( r = (protuberanceAmount - cornerRadius)) square( size = [floorWidth, bodyY] );
+				}
+			}
+		}
+		{
+			union()
+			{
+				translate( [ 
+					-1 * (protuberanceAmount) - 0.1,
+					-10, 
+					-10 ] ) 
+						cube( [protuberanceAmount + 0.1, 50, 20] );
+				translate( [
+					-10,
+					-1 * (protuberanceAmount) - 0.1,
+					-10 ] ) 
+						cube( [50, protuberanceAmount + 0.1, 20] );
+			}
+		}
+	}
+
+
+}
 
 module bodyConstruction()
 {
@@ -71,21 +110,119 @@ module bodyConstruction()
 		}
 	}
 	if( !printJig ) {
-		springCatchSupport();
+		// springCatchSupport();
+	}
+
+	// A plug that can be easily drilled out to avoid having to print with supports
+	translate( [carriageBoltCornerOffset, carriageBoltCornerOffset, -1 * m3HexHeadHeight - 0.2] )
+	{
+		// m3ThroughHole( height = 0.2 );
+		translate( [0, 0, -3.7] ) m3ThroughHole( height = 0.2 );
 	}
 }
 
-tiedownWidth = 8.2;
+tiedownWidth = 8.3;
 tiedownCornerOffset = 2;
 tiedownAngle = 45;
-tiedownTopDepth = 1;
+tiedownTopDepth = 2.5;
 tiedownSideDepth = 1;
+
+pressFitWidth = tiedownWidth - 0.4;
+
+module pressFitStick() 
+{
+	hull()
+	{
+		{
+
+		}
+		{
+			union()
+			{
+				translate( [2, 2, 1.5] ) cylinder( d = 4, h = 1.5 );
+				translate( [tiedownWidth - 2.5, 2, 1.5] ) cylinder( d = 4, h = 1.5 );
+				translate( [0.5, 2, 0] ) cube( [6.8, 2, 3] );
+
+				translate( [0.5, 31, 0] ) cube( [6.8, 2, 3] );
+				translate( [2, 33, 1.5] ) cylinder( d = 4, h = 1.5 );
+				translate( [tiedownWidth - 2.5, 33, 1.5] ) cylinder( d = 4, h = 1.5 );
+			}
+		}
+	}
+}
+
+module pressFitJig()
+{
+	// %bodyConstruction();
+	difference()
+	{
+		{
+			translate( [-1 * protuberanceAmount - 5, -1 * protuberanceAmount - 5, inlayAmount - inlayClamp - 0.5] )
+			{
+				cube( [43.8, 43.8, 7] );
+			}
+		}
+		{
+			union()
+			{
+				difference()
+				{
+					{
+						union()
+						{
+							body();
+						}
+					}
+					{
+						
+						union()
+						{
+							tiedownCutout();
+						}
+					}
+				}
+
+				translate( [29.4, -15, 0] ) rotate( [0, 0, 45] ) cube( [40, 70, inlayAmount] );
+				translate( [0, -25, 0] ) rotate( [0, 0, 45] ) cube( [20, 40, inlayAmount] );
+
+				scaleUpFactor = 1.05;
+
+				translate( [0, 0, inlayAmount - tiedownTopDepth] )
+				{
+					translate( [40.4 - 0.3, (-1 * protuberanceAmount) + tiedownSideDepth + 0, -33] )
+					{
+						rotate( [0, -45, 0] )
+						{
+							rotate( [90, 0, 0] )
+							{
+								scale( [scaleUpFactor, scaleUpFactor, scaleUpFactor] ) tiedownForm();
+							}
+						}
+					}
+
+
+					translate( [(-1 * (protuberanceAmount + 2)) + tiedownSideDepth - 1 - 0, 40.4 - 0.3, -33] )
+					{
+						rotate([45, 0, 0]) rotate( [0, 90, 0] ) rotate( [0, 0, 90] )
+						{
+							scale( [scaleUpFactor, scaleUpFactor, scaleUpFactor] ) tiedownForm();
+						}
+					}
+				}
+
+
+
+
+			}
+		}
+	}
+}
 
 module tiedownCutout()
 {
 	translate( [0, 0, inlayAmount - tiedownTopDepth] )
 	{
-		translate( [34, -33, 0] )
+		translate( [35, -32, 0] )
 		{
 			rotate( [0, 0, tiedownAngle] )
 			{
@@ -96,7 +233,7 @@ module tiedownCutout()
 		difference()
 		{
 			{
-				translate( [38.4, (-1 * protuberanceAmount) + tiedownSideDepth, -33] )
+				translate( [40.4, (-1 * protuberanceAmount) + tiedownSideDepth, -33] )
 				{
 					rotate( [0, -45, 0] )
 					{
@@ -115,7 +252,7 @@ module tiedownCutout()
 		difference()
 		{
 			{
-				translate( [(-1 * (protuberanceAmount + 2)) + tiedownSideDepth, 38.4, -33] )
+				translate( [(-1 * (protuberanceAmount + 2)) + tiedownSideDepth - 1, 40.4, -33] )
 				{
 					rotate([45, 0, 0]) rotate( [0, 90, 0] ) rotate( [0, 0, 90] )
 					{
@@ -131,29 +268,29 @@ module tiedownCutout()
 			}
 		}
 
-		// translate( [(-1 * protuberanceAmount) + tiedownSideDepth, 2, (-1 * tiedownTopDepth) + 1] )
-		// {
-		// 	edgeCutout();
-		// }
-
-		// translate( [2, -1 * tiedownSideDepth - 0.2, (-1 * tiedownTopDepth) + 2] )
-		// {
-		// 	edgeCutoutCopy();
-		// }
+		// Chopp off a little of the overhang so that the metal folds more easily
+		translate( [(-1 * protuberanceAmount) - tiedownSideDepth, 4, 0] )
+		{
+			cube( [5, 4, 3] );
+		}
+		translate( [4, (-1 * protuberanceAmount) - tiedownSideDepth, 0] )
+		{
+			cube( [4, 5, 3] );
+		}
 	}
 
-	translate( [-1 * protuberanceAmount - inlayTolerance, (bodyY/2) + protuberanceAmount + 2.8, -1 * protuberanceAmount] ) 
+	translate( [-1 * protuberanceAmount - inlayTolerance, (bodyY/2) + protuberanceAmount + 5, -1 * protuberanceAmount] ) 
 	{
 		if( !printJig ) {
 			translate( [-2, 0, 0] ) rotate( [0, 90, 0] ) m3ThroughHole( height = (10 + protuberanceAmount) );
-			translate( [protuberanceAmount, 0, 0] ) rotate( [30, 0, 0] ) rotate( [0, 90, 0] ) m3Nut();
-			translate( [protuberanceAmount, (-1 * (m3NutDiameter/2)), 0] ) cube( [m3NutDepth + 0.2, m3NutDiameter, 5] );
+			translate( [protuberanceAmount + 0, 0, 0] ) rotate( [30, 0, 0] ) rotate( [0, 90, 0] ) m3Nut();
+			translate( [protuberanceAmount + 0, (-1 * (m3NutDiameter/2)), 0] ) cube( [m3NutDepth + 0.2, m3NutDiameter, 5] );
 		} else {
 			translate( [-2, 0, 0] ) rotate( [0, 90, 0] ) m3ThroughHole( height = (20 + protuberanceAmount) );
 		}
 	}
 
-	translate( [(bodyX/2) + protuberanceAmount + 2.8, -1 * inlayTolerance, -1 * protuberanceAmount] ) 
+	translate( [(bodyX/2) + protuberanceAmount + 5, -1 * inlayTolerance, -1 * protuberanceAmount] ) 
 	{
 		if( !printJig ) {
 			translate( [0, 8, 0] ) rotate( [90, 0, 0] ) m3ThroughHole( height = (10 + protuberanceAmount) );
@@ -222,7 +359,7 @@ module edgeCutoutCopy()
 
 module tiedownForm()
 {
-	cube( [tiedownWidth, 100, 2] );
+	cube( [tiedownWidth, 100, 3] );
 }
 
 
@@ -244,8 +381,11 @@ module carriageCutout()
 			m3ThroughHole( height = 20 );
 		}
 
-		translate( [0, 0, (-1 * m3HexHeadHeight)] ) cylinder( d = m3HexHeadDiameter, h = m3HexHeadHeight + 0.1, $fn = 6 );
-		translate( [0, 0, (-1 * bodyHeight) + glassHeight + plateHeight + inlayTolerance - 0.1] ) cylinder( d = springCatchDiamter, h = springCatchDepth + 0.1 );
+		translate( [0, 0, (-1 * m3HexHeadHeight)] ) {
+			cylinder( d = m3HexHeadDiameter, h = m3HexHeadHeight + 10, $fn = 6 );
+			// translate( [(-1 * (m3HexHeadDiameter/2)), 0, 0] ) cylinder( d = 0.8, h = 10 );
+		}
+		translate( [0, 0, (-1 * bodyHeight) + glassHeight + plateHeight + inlayTolerance + 0.3] ) cylinder( d = springCatchDiamter, h = springCatchDepth );
 	}
 }
 
