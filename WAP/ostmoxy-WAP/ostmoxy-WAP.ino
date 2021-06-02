@@ -14,6 +14,8 @@
  * A sketch to open a Wireless Access Point from within printerX's case using
  *    an ESP8266-12E, provide a captive portal, and update a printer's WiFi
  *    access credentials
+ *    
+ * Matches hardware: ostmoxy pihat version 2.2
  * 
  * @author costmo
  */
@@ -153,7 +155,7 @@ void startSoftAP()
   String mac = WiFi.macAddress();
   String macPartOne = mac.substring( 12, 14 );
   String macPartTwo = mac.substring( 15 );
-  ssid = ssidPrefix + macPartOne + macPartTwo; // "printerx-" followed by the last 4 characters of the device MAC address
+  ssid = ssidPrefix + macPartOne + macPartTwo; // "printerX-" followed by the last 4 characters of the device MAC address
 
   WiFi.mode( WIFI_AP );
   WiFi.softAPConfig( WiFi.softAPIP(), WiFi.softAPIP(), IPAddress( 255, 255, 255, 0 ) );
@@ -350,7 +352,7 @@ void handleConnect()
       html +=
         "<p>The <strong>printerX</strong> web server will now restart so that it can connect to<br/>the WiFi network named <strong>" + hardSSID + "</strong></p>"
         "<div id='exit_text'>"
-          "<p>You should be able to access your printer in a web browser at <a href='http://printerx.local/'>http://printerx.local/</a> in about 30 seconds.</p>"
+          "<p>You should be able to access your printer in a web browser at <a href='http://printerx.local/'>http://printerX.local/</a> in about 30 seconds.</p>"
           "<p>If your printer fails to connect to your network, <a href='/'>click here</a> to try again.</p>"
           "<p>If you are done, CANCEL this screen and reconnect to your network.</p>"
           "<p>For security purposes, this Wireless Access Point will only remain active for 10 minutes. If you wish to shut down the WAP right now, <a href='/shutdown'>click here</a>.</p>"
@@ -376,6 +378,7 @@ void handleConnect()
 
 //    Serial.println( "SENDING:" );
 //    Serial.println( sendString );
+    currentTick = 0; // reset the tick counter
 
     softSerial.println( sendString );
   }
@@ -401,7 +404,7 @@ const String connectionHtml()
         "<h3>Connect to your WiFi network</h3>"
       "</div>"
       "<div id='content'>"
-        "<p>To get printerX connected to your WiFi network,<br/>please provide your credentials below.</p>"
+        "<p>To get <strong>printerX</strong> connected to your WiFi network,<br/>please provide your credentials below.</p>"
         "<p>"
         "<FORM action='/connect' method='post'>"
           "<p><INPUT type='text' name='ssid' placeholder='SSID' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false'></p>"
