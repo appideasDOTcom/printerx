@@ -93,9 +93,8 @@
 			let jsonData = JSON.parse( input.toString() );
 			if( !jsonData || !jsonData.action || !jsonData.ssid )
 			{
-				console.log( "CAUGHT ERROR" );
-				console.log( error );
-				console.log( jsonData );
+				console.log( "JSON DATA WAS INVALID" );
+				console.log( input.toString() );
 				return;
 			}
 			// Set WiFi on request
@@ -146,7 +145,7 @@
 	// Listen to the serial port
 	raspi.init(
 		() => {
-			let serial = new Serial( {portId: '/dev/serial0', baudRate: 57600} );
+			let serial = new Serial( {portId: '/dev/serial0', baudRate: 9600} );
 			serial.open(
 				() => {
 					serial.on( 'data',

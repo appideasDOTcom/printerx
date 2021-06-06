@@ -76,7 +76,7 @@ int timeoutTicks = (10 * 60) * 10;
 void setup() 
 {
   // wait for serial port to connect
-  Serial.begin( 57600 );
+  Serial.begin( 9600 );
   while (!Serial) {
     ;
   }
@@ -85,7 +85,7 @@ void setup()
   // Start our services
   startSoftAP();
   startWebServer();
-  softSerial.begin( 57600 );
+  softSerial.begin( 9600 );
 }
 
 
