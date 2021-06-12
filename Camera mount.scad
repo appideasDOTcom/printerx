@@ -4,9 +4,9 @@
 */
 
 // Minimum render angle
-$fa = 1;
+$fa = 4;
 // Minimum render size
-$fs = 0.1;
+$fs = 1;
 
 wallThickness = 3;
 cornerRadius = 2;
@@ -44,7 +44,8 @@ m5NutDepth = 4.3;
 armThickness = 7; // Should be >= the height of a corner bracket
 armCornerDiameter = 4;
 armReach = 70;
-armHeight = 55;
+// armHeight = 55;
+armHeight = 105;
 armWidth = 15;
 armLiftInset = 3;
 extraArmDiameter = 6;
@@ -56,7 +57,7 @@ extraArmSideOffset = 35;
 cableOpeningWidth = 18;
 cableOpeningHeight = 1.4;
 cableOpeningStructureHeight = 6;
-cableOpeningBottom = 17.5;
+cableOpeningBottom = 22.5;
 
 faceDepth = depressionDepth - 2.2; // Depth of the face insert
 lensCutoutXY = 8.9;
@@ -69,16 +70,16 @@ faceCoverDepth = 8;
 
 passthroughGap = 18; // distance between passthrough holes -- currently disabled
 
-// Printable pieces
+/* Printable pieces */
 // ballJoint();
 // body();
 // face();
 // armReach();
-// armLift();
+armLift();
 // screw();
-siliconShape_Circle();
+// siliconShape_Circle();
 
-// Fully-articulated pieces
+/* Fully-articulated pieces */
 // renderArticulated();
 
 module renderArticulated() {
@@ -91,16 +92,16 @@ module renderArticulated() {
 	rotate( [0, 0, 180] )
 	rotate( [90, 0, 0] ) {
 		translate( [0, 0, 22] ) body();
-		translate( [(pcbWidth/2), (pcbHeight/1.5), 0] ) 
+		translate( [(pcbWidth/2), (pcbHeight/1.5), 0] )
 		{
 			translate( [0, 0, 22] ) ballJoint();
-			translate( [0, 0, 31] ) rotate( [180, 0, 0] ) import( "thirdparty/Ball_Joint/files/Screw_v3.stl" );		
+			translate( [0, 0, 31] ) rotate( [180, 0, 0] ) import( "thirdparty/Ball_Joint/files/Screw_v3.stl" );
 		}
 	}
 
 
 	// translate( [8.6, armReach + (armCornerDiameter/2) + 0.4, armThickness + 0.8] ) {
-	// 	rotate( [0, 0, 90] ) import( "output/Bed support.stl" );	
+	// 	rotate( [0, 0, 90] ) import( "output/Bed support.stl" );
 	// }
 }
 
@@ -168,7 +169,7 @@ module armConnectorLeft() {
 				// translate( [16, -35.98, 0] ) rotate( [0, 0, 180] ) essCurve( d = 60, h = armThickness );
 				translate( [37 + armWidth + armCornerDiameter, -1 * (armCornerDiameter * 2) + 28.98, 0] ) rotate( [0, 0, 0] ) essCurve( d = 38, h = armThickness );
 
-				translate( [10.5, -1 * armCornerDiameter, 0]  ) 
+				translate( [10.5, -1 * armCornerDiameter, 0]  )
 				{
 					hull()
 					{
@@ -206,7 +207,7 @@ module armThroughHoles() {
 		translate( [2.7, 10, 0] ) rotate( [90, 0, 0] ) {
 			m3ThroughHole( height = 20);
 			translate( [0, 0, 16 - m3HeadHeight + 0.1] ) m3Head();
-		} 
+		}
 
 		// translate( [4, -4, 0] ) rotate( [0, 90, 0] ) {
 		// 	m3ThroughHole( height = 20);
@@ -244,7 +245,7 @@ module armThroughHoles() {
 		}
 	}
 
-	
+
 }
 
 module armReach()
@@ -256,8 +257,8 @@ module armReach()
 			union()
 			{
 				translate( [-1 * (extraArmDiameter/2) + extraArmSideOffset, 0, 0] )
-				linear_extrude( height = armThickness ) 
-					offset( r = (armCornerDiameter/2) ) 
+				linear_extrude( height = armThickness )
+					offset( r = (armCornerDiameter/2) )
 					square( size = [(reachWidth - armCornerDiameter), (armReach - armCornerDiameter)] );
 
 
@@ -322,13 +323,13 @@ module armLift() {
 					difference()
 					{
 						{
-							%cylinder( d = armWidth , h = 2 );
+							cylinder( d = armWidth , h = 2 );
 						}
 						{
 							translate( [-1 * (armWidth/2), -1 * (armWidth/2) - armCornerDiameter + 0.5 + 3, -0.1] ) cube( [armWidth, (armWidth/2) + 1, 2.2] );
 						}
 					}
-					
+
 				}
 
 				hull()
@@ -372,7 +373,7 @@ module armLift() {
 		}
 		{
 			translate( [(armWidth/2) - (armCornerDiameter/2), (armCornerDiameter/2) - 0.5, 0] ) {
-				translate( [0, 0, -3.1] ) m5ThroughHole( height = 20 );
+				translate( [0, 0, -3.1] ) m5ThroughHole( height = 26 );
 				translate( [0, 0, 10] ) m5Nut();
 				translate( [-1 * (m5NutDiameter/2), 0, m5HeadHeight - 0.1 + 5] ) cube( [m5NutDiameter, 5, m5NutDepth] );
 			}
@@ -386,7 +387,7 @@ module armLift() {
 
 		}
 
-		
+
 	}
 }
 
@@ -399,7 +400,7 @@ module cablePassthroughShape()
 
 		}
 		{
-			union() 
+			union()
 			{
 				// Added a little thickness to reduce flex and vibration
 				translate( [(cableOpeningWidth/2), 0, 0] ) rotate( [90, 0, 0] ) cylinder( d = cableOpeningStructureHeight, h = armThickness );
@@ -412,7 +413,7 @@ module cablePassthroughShape()
 			}
 		}
 	}
-	
+
 
 }
 
@@ -423,7 +424,7 @@ module cablePassthroughCutout() {
 
 		}
 		{
-			union() 
+			union()
 			{
 				translate( [(cableOpeningWidth/2), 0, 0] ) rotate( [90, 0, 0] ) cylinder( d = cableOpeningHeight, h = armThickness + 0.2 );
 				translate( [-1 * (cableOpeningWidth/2), 0, 0] ) rotate( [90, 0, 0] ) cylinder( d = cableOpeningHeight, h = armThickness + 0.2 );
@@ -596,7 +597,7 @@ module lensCutout() {
 
 
 
-	
+
 
 
 
@@ -614,7 +615,7 @@ module housingBody()
 		offset( r = cornerRadius ) offset( delta = (wallThickness - cornerRadius)) square( size = [pcbWidth, pcbHeight] );
 	}
 
-	
+
 }
 
 module housingCutouts()
@@ -705,10 +706,10 @@ module essCurve( d, h )
             $fn=64;    //set sides to 64
             circle(r=(xDimension / 2));
           }
-          
+
         }
 
       }
-    
+
   }
 }
