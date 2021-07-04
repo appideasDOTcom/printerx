@@ -1,10 +1,10 @@
 /**
 * Electronics enclosures and other 3D printed pieces that mount
 *   to a printerx bottom frame, minus the anti-vibration feet
-*/ 
+*/
 
 use <Shared-modules.scad>
-// include <printerx construction.scad>
+include <printerx construction.scad>
 use <Frame foot mount.scad>
 
 // Render quality settings
@@ -14,7 +14,7 @@ $fs = 0.1;
 renderFrame = false;
 
 // Wood panels
-// topPanels();
+topPanels();
 // rightPanel();
 // leftPanel();
 // frontPanel();
@@ -22,11 +22,11 @@ renderFrame = false;
 
 // 3D printed pieces
 // psuMountBlock();
-color( "blue" )
+// color( "blue" )
 {
     // controllerMount();
     // piMount();
-    piFanMount();
+    // piFanMount(); // Not needed since the WAP piHat came into existence
     // tftMount();
 }
 
@@ -40,8 +40,8 @@ bf_wallThickness = 3;
 bf_cornerRoundness = bf_wallThickness * 2;
 
 // bfc = Bottom Frame Controller
-bfc_xDistanceBetweenBolts = 101.85;
-bfc_yDistanceBetweenBolts = 76.1; // SKR V1.3 = 76.1, SKR V1.4 = 76.3
+bfc_xDistanceBetweenBolts = 101.85; // Same for all SKR boards
+bfc_yDistanceBetweenBolts = 76.3; // SKR V1.3 = 76.1, SKR V1.4 & 2.0 = 76.3
 bfc_mountPostDiamter = 8;
 bfc_mountPostHeight = 6;
 
@@ -125,8 +125,8 @@ module topPanels()
 {
     union()
     {
-        topFrontPanel();
-        // topRearPanel(); // Now obsolete
+        // topCompletePanel();
+        topRearPanel(); // Now obsolete
     }
 }
 
@@ -155,6 +155,27 @@ bffp_middleConnectorCutoutZDimension = 8.2;
 bffp_rearCutoutXDimension = 85;
 bffp_rearCutoutYDimension = 60;
 bffp_rearCutoutZDimension = 20;
+
+module topCompletePanel()
+{
+    translate( [-1 * bffp_topOverhang, -1 * bffp_topOverhang, zAxisProfileLength + profileSize + bffp_topOverhang] )
+    {
+        difference()
+        {
+            {
+                cube( [bffp_frontXDimension, bffp_frontYDimension, bffp_frontZDimension] );
+            }
+            {
+                topPlateCutouts( isFront = 1 );
+
+                translate( [bffp_topOverhang, bffp_topOverhang, -1 * bffp_topOverhang + 0.4] )
+                {
+                    coverPlateFrameCutout();
+                }
+            }
+        }
+    }
+}
 
 module topFrontPanel()
 {
@@ -193,7 +214,7 @@ module topRearPanel()
             {
                 union()
                 {
-                   
+
                     translate( [bffp_topOverhang, -1 * (bffp_frontYDimension) + profileSize + 7, -1 * profileSize + bffp_topOverhang + 0.9] )
                     {
                         translate( [0, 0, 6.7] )
@@ -557,8 +578,8 @@ module frontPanel()
                 {
                     frontPanelThroughHoles();
                 }
-                
-                
+
+
             }
         }
     }
@@ -648,7 +669,7 @@ module rightPanel()
                     }
                 }
 
-                
+
                 piMountFaceCutout();
                 translate([xAxisProfileLength + (profileSize * 2) - bfpi_actualXDimension + 3, bfpi_platformFrontOffset, profileSize] )
                 translate( [bfpi_actualXDimension - 2.1 - bfpi_externalMountBlockDepth - 0.5, bfpi_platformYDimension - 43.8, 5] )
@@ -681,7 +702,7 @@ module rightPanel()
 
                     translate( [-10, -165, 60] )
                     {
-                        
+
                         rotate( [0, 90, 0] )
                         {
                             piCameraCableCutout();
@@ -696,7 +717,7 @@ module rightPanel()
                         }
                     }
                 }
-                
+
                 rightPanelFrameMountThroughHoles();
 
                 translate( [0, 0, zAxisProfileLength +profileSize] )
@@ -723,8 +744,8 @@ module rightPanel()
                     }
                 }
 
-                
-                
+
+
             }
         }
     }
@@ -821,7 +842,7 @@ module leftPanel()
 
                 psuZAxisMountCutout();
                 leftPanelframeMountThroughHoles();
-                
+
             }
         }
     }
@@ -861,7 +882,7 @@ module backPanel()
             }
 
 
-            
+
         }
     }
 
@@ -1220,7 +1241,7 @@ module controllerExternalMountBlocks( includeNut = 1 )
             }
         }
         {
-            controllerMountThroughHoles( includeNut = 1 );            
+            controllerMountThroughHoles( includeNut = 1 );
         }
     }
 
@@ -1436,7 +1457,7 @@ module tftMountSideSupport( sdCutout = 1 )
 
 module tftMountPosts()
 {
-    translate([bftm_boltOffset, 0, bftm_boltOffset]) 
+    translate([bftm_boltOffset, 0, bftm_boltOffset])
     {
         rotate( [90, 0, 0] )
         {
@@ -1523,7 +1544,7 @@ module tftMountPosts()
 
 module tftMountThroughHoles()
 {
-    translate([bftm_boltOffset, 10, bftm_boltOffset]) 
+    translate([bftm_boltOffset, 10, bftm_boltOffset])
     {
         rotate( [90, 0, 0] )
         {
@@ -1685,7 +1706,7 @@ module tftMountControlCutouts()
         cube( [bftm_knobCutoutXZDimension + 0.4, 10, bftm_knobCutoutXZDimension] );
     }
 
-    
+
 }
 
 // bfpi = Bottom Frame Raspbnerry Pi mount
@@ -1785,7 +1806,7 @@ module piFanMount()
             translate( [5, 0, 0] ) piFanMountThroughHoles();
         }
     }
-    
+
 }
 
 module piFanMountThroughHoles()
@@ -1850,7 +1871,7 @@ module piMount()
                     {
                         piMountPosts();
                     }
-                    
+
                     translate( [bfpi_actualXDimension, 0, 0] )
                     {
                         piMountWalls();
@@ -1892,7 +1913,7 @@ module piMount()
                     translate( [(bfpi_platformXDimension/2) - (bfpi_sdCutoutWidth/2) - 3, -1.1, 0] )
                     {
                         // #cube( [bfpi_sdCutoutWidth, bfpi_sdCutoutDepth, 10] );
-                        
+
                         hull()
                         {
                             {
@@ -1915,7 +1936,7 @@ module piMount()
                     {
                         piMountPostHoles();
                     }
-                    
+
                 }
             }
         }
@@ -2002,7 +2023,7 @@ module piMountAirFlowCutouts()
 
     translate( [2, 23, 1] )
     {
-        
+
         piMountPlasticSavingCutout();
         translate( [48, 0, bfpi_platformZDimension + 2] ) rotate( [0, 180, 0] ) piMountPlasticSavingCutout();
         translate( [0, 40, bfpi_platformZDimension + 2] ) rotate( [180, 0, 0] ) piMountPlasticSavingCutout();
@@ -2031,7 +2052,7 @@ module piMountCableTieFlowCutout()
     hull()
     {
         {
-            
+
         }
         {
             union()
@@ -2052,7 +2073,7 @@ module piMountAirFlowCutout()
     hull()
     {
         {
-            
+
         }
         {
             union()
@@ -2324,7 +2345,7 @@ module controllerMountCutouts()
         controllerMountFrameConnectorCutouts();
         controllerMountMountingHoles();
     }
-    
+
 }
 
 module controllerMountMountingCutout()
@@ -2465,7 +2486,7 @@ module controllerMountAirFlowCutout()
     hull()
     {
         {
-            
+
         }
         {
             union()
@@ -2558,7 +2579,7 @@ module controllerMountMountingHoles()
     {
         m3ThroughHole();
         m3Nut();
-        
+
         translate( [-1 * bfc_xDistanceBetweenBolts, 0, 0] )
         {
             m3ThroughHole();
@@ -2607,11 +2628,11 @@ module controllerMountWalls()
         // cube( [bf_wallThickness, bfc_yWallLength, bfc_yWallHeight] );
 
         controllerLeftCutoffAmount = 20;
-        
+
         translate( [-1 * bfc_platformXDimension + controllerLeftCutoffAmount, 0.5, profileSize + bfc_PlatformBottomBuffer] )
         {
             // floor
-            
+
             // X axis outside wall
             // translate( [0, bfc_platformYDimension - bf_wallThickness, 0] )
             // {

@@ -1,6 +1,6 @@
 include <thirdparty/MCAD/bearing.scad>
 
-// Modifications to Prusa's parts require the modifications I've made to the original models, which are in a public 
+// Modifications to Prusa's parts require the modifications I've made to the original models, which are in a public
 //    github fork here: https://github.com/appideasDOTcom/Original-Prusa-i3
 // include <thirdparty/prusa/Original-Prusa-i3/Printed-Parts/scad/x-end-idler.scad>
 // include <thirdparty/prusa/Original-Prusa-i3/Printed-Parts/scad/x-end-motor.scad>
@@ -112,7 +112,7 @@ extraBaseHeight = 20; // make the base taller to recover unused Z axis space
 // These are probably the things you will want to print
 // bearingFlange();
 // bottomLeftBase();
-bottomRightBase();
+// bottomRightBase();
 // topLeftBase();
 // topRightBase();
 
@@ -376,7 +376,7 @@ module bottomLeftBase( includeEndHoles = 1 )
                         retainerCutouts( includeEndHoles );
                     }
                 }
-                
+
                 translate( [-1 * pieceDepth, -1 * railWidth - 0.1, -0.1] )
                 {
                     rails();
@@ -391,7 +391,7 @@ module bottomLeftBase( includeEndHoles = 1 )
                 if( includeEndHoles == 1 )
                 {
                     cutoutHeight = (bearingHeight * 2) + bearingSpacerBufferHeight + bearingSpacerPlatformHeight;
-                    cutoutAmount = 0.6; // Cut a few layers out of the circle when printed on edge to force a small bridge on the top and to make the requisite <layer height> flats be outside of the zero-tolerance shapes 
+                    cutoutAmount = 0.6; // Cut a few layers out of the circle when printed on edge to force a small bridge on the top and to make the requisite <layer height> flats be outside of the zero-tolerance shapes
 
                     translate( [-1 * distanceFromTower - (bearingOuterDiameter/2) - cutoutAmount, -1 * (bearingOuterDiameter/2) - 2.5, pieceHeight - cutoutHeight + extraBaseHeight] )
                     {
@@ -461,7 +461,7 @@ module baseThroughHoles( includeEndHoles = 1 )
             m5HeadCutout();
         }
     }
-    
+
 
     translate( [-1 * insideThroughHoleOffset, -1 * (railWidth - 0.1), (railWidth/2)])
     {
@@ -516,7 +516,7 @@ module topBase()
             translate( [-1 * (pieceDepth - (cornerDiameter/2)), -1 * railWidth + (cornerDiameter/2), 0] )
             {
                 cube( [pieceDepth - cornerDiameter, pieceWidth - cornerDiameter, pieceHeight] );
-                
+
             }
         }
         {
@@ -532,18 +532,18 @@ module topBase()
 
             translate( [(-1 * pieceDepth) + (cornerDiameter/2), (-1 * (railWidth + insideWallDepth)) + (cornerDiameter/2), 0] )
             {
-                cylinder( d = cornerDiameter, h = pieceHeight ); 
+                cylinder( d = cornerDiameter, h = pieceHeight );
             }
 
             translate( [ -1 * (cornerDiameter/2), (-1 * (railWidth + insideWallDepth)) + (cornerDiameter/2), 0] )
             {
-                cylinder( d = cornerDiameter, h = pieceHeight ); 
+                cylinder( d = cornerDiameter, h = pieceHeight );
             }
 
         }
     }
     supportWallEssCurves();
-    
+
     translate( [-1 * wallThickness, -1 * railWidth, pieceHeight] )
     {
         supportWall();
@@ -558,7 +558,7 @@ module base()
             translate( [-1 * (pieceDepth - (cornerDiameter/2)), -1 * railWidth + (cornerDiameter/2), 0] )
             {
                 cube( [pieceDepth - cornerDiameter, pieceWidth - cornerDiameter, pieceHeight + extraBaseHeight] );
-                
+
             }
         }
         {
@@ -595,7 +595,7 @@ module base()
 
 				translate( [ -1 * (cornerDiameter/2), (-1 * (railWidth + insideWallDepth)) + (cornerDiameter/2), 0] )
 				{
-					cylinder( d = cornerDiameter, h = pieceHeight + extraBaseHeight - (cornerDiameter/2) ); 
+					cylinder( d = cornerDiameter, h = pieceHeight + extraBaseHeight - (cornerDiameter/2) );
 					translate( [0, 0, (pieceHeight + extraBaseHeight) - (cornerDiameter/2)] ) sphere( d = (cornerDiameter/1) );
 				}
 			}
@@ -616,7 +616,7 @@ module base()
     {
         supportWall();
     }
-    
+
 }
 
 module supportWallEssCurves()
@@ -685,11 +685,11 @@ module supportWall()
 			translate( [wallThickness - (cornerDiameter/2), railWidth  + cornerDiameter + 0.9, -1 * (cornerDiameter/2) + 0] ) sphere( d = (cornerDiameter/1) );
 		}
 	}
-	
-	
 
 
-	
+
+
+
     hull()
     {
         {
@@ -700,7 +700,7 @@ module supportWall()
 				//translate( [5, -1 * (cornerDiameter/2), -5] ) cube( [5, (cornerDiameter/2), 5] );
 				//translate( [5, railWidth, -5] ) cube( [5, (cornerDiameter/2), 5] );
 			}
-            
+
         }
         {
             union()
@@ -726,13 +726,13 @@ module supportWall()
 					{
 						sphere( d = (cornerDiameter/2) );
 						rotate( [0, 90, 0] ) cylinder( d = cornerDiameter/2, h = wallThickness - (cornerDiameter/4) );
-					} 
+					}
                 }
             }
         }
     }
 
-	
+
 
 }
 
@@ -946,7 +946,7 @@ module linearRodCutoutTest()
                         cube( [(linearRodCutoutDiameter + 3), (linearRodCutoutDiameter + 3), 2] );
                     }
                 }
-                
+
             }
         }
         {
@@ -954,7 +954,7 @@ module linearRodCutoutTest()
         }
     }
 
-    
+
 }
 
 module bearingRetainerTest()
@@ -1046,10 +1046,10 @@ module essCurve( d, h )
             $fn=64;    //set sides to 64
             circle(r=(xDimension / 2));
           }
-          
+
         }
 
       }
-    
+
   }
 }

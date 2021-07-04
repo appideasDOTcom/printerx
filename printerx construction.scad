@@ -1,14 +1,14 @@
 /**
 * Constructed printer models
 * This is out of date since the latest Z axis resize
-*/ 
+*/
 
 include <Shared-modules.scad>
 include <Z axis retainer block.scad>
 include <thirdparty/prusa/Original-Prusa-i3/Printed-Parts/scad/x-end-idler.scad>
 include <thirdparty/prusa/Original-Prusa-i3/Printed-Parts/scad/x-end-motor.scad>
 // include <2020 SK8 Bracket.scad>
-include <SK8 Tower.scad>
+// include <SK8 Tower.scad>
 include <Y belt tensioner.scad>
 use <Frame foot mount.scad>
 
@@ -39,7 +39,7 @@ sk8SideLength = 14;
 
 sk8SideOffset = (profileSize - sk8SideLength)/2;
 
-fulConstruction();
+// fulConstruction();
 
 
 
@@ -101,7 +101,7 @@ module zAxisMotorMount()
         {
             import( "output/Z axis motor mount.stl" );
         }
-        
+
     }
 }
 
